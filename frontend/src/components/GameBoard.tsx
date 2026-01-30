@@ -11,7 +11,6 @@ import {
   STATUS_ACTIVE,
 } from '../config';
 import { getBoardState, getGameStatus, getCurrentTurn } from '../contract';
-import { userSession } from '../auth';
 import { RefreshCw, Loader2 } from 'lucide-react';
 
 const GameBoard: React.FC = () => {
@@ -150,7 +149,7 @@ const GameBoard: React.FC = () => {
           ${value === PLAYER_X ? 'text-neo-accent' : 'text-neo-text'}
         `}
       >
-        {CELL_DISPLAY[value]}
+        {CELL_DISPLAY[value as number]}
       </button>
     );
   };
@@ -161,7 +160,7 @@ const GameBoard: React.FC = () => {
       <div className="mb-6 text-center">
         <div className="neo-inset px-4 py-3 rounded-xl mb-4">
           <p className="text-lg font-semibold text-neo-text">
-            {STATUS_DISPLAY[gameStatus]}
+            {STATUS_DISPLAY[gameStatus as number]}
           </p>
           {gameStatus === STATUS_ACTIVE && (
             <p className="text-sm text-neo-text opacity-70 mt-1">
