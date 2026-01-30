@@ -18,14 +18,14 @@ export const STATUS_O_WON = 2;
 export const STATUS_DRAW = 3;
 
 // Cell display
-export const CELL_DISPLAY = {
+export const CELL_DISPLAY: Record<number, string> = {
   [EMPTY]: '',
   [PLAYER_X]: 'X',
   [PLAYER_O]: 'O',
 };
 
 // Status display
-export const STATUS_DISPLAY = {
+export const STATUS_DISPLAY: Record<number, string> = {
   [STATUS_ACTIVE]: 'Game in Progress',
   [STATUS_X_WON]: 'You Win! 🎉',
   [STATUS_O_WON]: 'Computer Wins!',
