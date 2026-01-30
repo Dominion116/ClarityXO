@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { userSession, authenticate, disconnect } from './auth';
+import { useState, useEffect } from 'react';
+import { isUserSignedIn, authenticate, disconnect } from './auth';
 import GameBoard from './components/GameBoard';
 import WalletConnect from './components/WalletConnect';
 import { Gamepad2 } from 'lucide-react';
@@ -8,9 +8,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      setIsAuthenticated(true);
-    }
+    setIsAuthenticated(isUserSignedIn());
   }, []);
 
   const handleConnect = () => {

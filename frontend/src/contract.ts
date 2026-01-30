@@ -2,8 +2,6 @@ import {
   callReadOnlyFunction,
   cvToJSON,
   uintCV,
-  standardPrincipalCV,
-  ClarityValue,
 } from '@stacks/transactions';
 import { CONTRACT_ADDRESS, CONTRACT_NAME, NETWORK } from './config';
 

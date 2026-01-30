@@ -18,7 +18,25 @@ export function authenticate() {
 }
 
 export function getUserData() {
-  return userSession.loadUserData();
+  try {
+    return userSession.loadUserData();
+  } catch (error) {
+    console.error('Error loading user data:', error);
+    // Clear corrupted session data
+    userSession.signUserOut();
+    return null;
+  }
+}
+
+export function isUserSignedIn() {
+  try {
+    return userSession.isUserSignedIn();
+  } catch (error) {
+    console.error('Error checking sign in status:', error);
+    // Clear corrupted session data
+    userSession.signUserOut();
+    return false;
+  }
 }
 
 export function disconnect() {
