@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="#e0e5ec"/>
+  <g transform="translate(128, 128)">
+    <!-- X symbol -->
+    <line x1="-40" y1="-40" x2="40" y2="40" stroke="#667eea" stroke-width="16" stroke-linecap="round"/>
+    <line x1="40" y1="-40" x2="-40" y2="40" stroke="#667eea" stroke-width="16" stroke-linecap="round"/>
+    <!-- O symbol -->
+    <circle cx="0" cy="70" r="25" fill="none" stroke="#4a5568" stroke-width="12"/>
+  </g>
+</svg>

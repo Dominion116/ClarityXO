@@ -1,0 +1,16 @@
+[project]
+name = "clarityxo"
+description = "Blockchain Tic-Tac-Toe game on Stacks"
+authors = []
+telemetry = false
+cache_dir = "./.cache"
+requirements = []
+
+[contracts.tictactoe]
+path = "contracts/tictactoe.clar"
+clarity_version = 2
+epoch = 2.5
+
+[repl]
+costs_version = 3
+parser_version = 2

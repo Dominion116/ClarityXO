@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neo-bg: #e0e5ec;
+  --neo-shadow-dark: #a3b1c6;
+  --neo-shadow-light: #ffffff;
+  --neo-text: #4a5568;
+  --neo-accent: #667eea;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--neo-bg);
+  color: var(--neo-text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Neomorphic button base */
+.neo-button {
+  @apply px-6 py-3 rounded-xl font-medium transition-all duration-200;
+  background: var(--neo-bg);
+  color: var(--neo-text);
+  box-shadow: 8px 8px 16px var(--neo-shadow-dark), -8px -8px 16px var(--neo-shadow-light);
+}
+
+.neo-button:hover {
+  box-shadow: 6px 6px 12px var(--neo-shadow-dark), -6px -6px 12px var(--neo-shadow-light);
+}
+
+.neo-button:active {
+  box-shadow: inset 4px 4px 8px var(--neo-shadow-dark), inset -4px -4px 8px var(--neo-shadow-light);
+}
+
+.neo-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Neomorphic card */
+.neo-card {
+  @apply rounded-3xl p-8;
+  background: var(--neo-bg);
+  box-shadow: 12px 12px 24px var(--neo-shadow-dark), -12px -12px 24px var(--neo-shadow-light);
+}
+
+/* Neomorphic input/inset */
+.neo-inset {
+  @apply rounded-xl;
+  background: var(--neo-bg);
+  box-shadow: inset 6px 6px 12px var(--neo-shadow-dark), inset -6px -6px 12px var(--neo-shadow-light);
+}
