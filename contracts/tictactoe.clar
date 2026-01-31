@@ -173,7 +173,7 @@
   )
     (begin
       ;; Validate move
-      (asserts! (not (is-eq status STATUS_ACTIVE)) err-game-finished)
+      (asserts! (is-eq status STATUS_ACTIVE) err-game-finished)
       (asserts! (is-eq (var-get current-turn) PLAYER_X) err-not-your-turn)
       (asserts! (and (< row u3) (< col u3)) err-invalid-move)
       (asserts! (is-eq current-cell EMPTY) err-cell-occupied)
