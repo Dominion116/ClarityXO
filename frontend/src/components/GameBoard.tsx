@@ -105,17 +105,27 @@ const GameBoard: React.FC = () => {
           setTxStatus('Transaction submitted! Waiting for confirmation...');
           console.log('Transaction:', data.txId);
           
-          // Poll for updates
+          // Poll for updates more frequently initially
+          let pollCount = 0;
           const checkInterval = setInterval(async () => {
             await fetchGameState();
+            pollCount++;
+            
+            // Stop polling after 15 attempts (30 seconds)
+            if (pollCount >= 15) {
+              clearInterval(checkInterval);
+              setLoading(false);
+              setTxStatus('');
+            }
           }, 2000);
 
+          // Final refresh after longer timeout
           setTimeout(() => {
             clearInterval(checkInterval);
             setLoading(false);
             setTxStatus('');
             fetchGameState();
-          }, 10000);
+          }, 12000);
         },
         onCancel: () => {
           setLoading(false);
@@ -134,6 +144,7 @@ const GameBoard: React.FC = () => {
   const handleNewGame = async () => {
     setLoading(true);
     setTxStatus('Starting new game...');
+    setWinningLine(null); // Clear winning line immediately
 
     try {
       await openContractCall({
@@ -146,6 +157,7 @@ const GameBoard: React.FC = () => {
         onFinish: (data) => {
           console.log('New game transaction:', data.txId);
           setTxStatus('New game started!');
+          setWinningLine(null); // Clear again after transaction
           setTimeout(() => {
             setLoading(false);
             setTxStatus('');
@@ -195,21 +207,25 @@ const GameBoard: React.FC = () => {
   const getLineStyle = (line: number[]) => {
     const [a, b, c] = line;
     
+    // Calculate the center row/col for each cell in a 3x3 grid (percentage based)
+    // Row positions: 16.67%, 50%, 83.33% (center of each row)
+    // Col positions: 16.67%, 50%, 83.33% (center of each column)
+    
     // Horizontal lines
-    if (a === 0 && b === 1 && c === 2) return { width: '80%', transform: 'translateY(-200%)' };
-    if (a === 3 && b === 4 && c === 5) return { width: '80%', transform: 'translateY(0%)' };
-    if (a === 6 && b === 7 && c === 8) return { width: '80%', transform: 'translateY(200%)' };
+    if (a === 0 && b === 1 && c === 2) return { width: '90%', top: '16.67%', left: '50%', transform: 'translateX(-50%)' };
+    if (a === 3 && b === 4 && c === 5) return { width: '90%', top: '50%', left: '50%', transform: 'translateX(-50%)' };
+    if (a === 6 && b === 7 && c === 8) return { width: '90%', top: '83.33%', left: '50%', transform: 'translateX(-50%)' };
     
     // Vertical lines
-    if (a === 0 && b === 3 && c === 6) return { width: '80%', transform: 'rotate(90deg) translateX(-200%)' };
-    if (a === 1 && b === 4 && c === 7) return { width: '80%', transform: 'rotate(90deg)' };
-    if (a === 2 && b === 5 && c === 8) return { width: '80%', transform: 'rotate(90deg) translateX(200%)' };
+    if (a === 0 && b === 3 && c === 6) return { width: '90%', top: '50%', left: '16.67%', transform: 'translateY(-50%) rotate(90deg)' };
+    if (a === 1 && b === 4 && c === 7) return { width: '90%', top: '50%', left: '50%', transform: 'translateY(-50%) rotate(90deg)' };
+    if (a === 2 && b === 5 && c === 8) return { width: '90%', top: '50%', left: '83.33%', transform: 'translateY(-50%) rotate(90deg)' };
     
     // Diagonals
-    if (a === 0 && b === 4 && c === 8) return { width: '115%', transform: 'rotate(45deg)' };
-    if (a === 2 && b === 4 && c === 6) return { width: '115%', transform: 'rotate(-45deg)' };
+    if (a === 0 && b === 4 && c === 8) return { width: '127%', top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(45deg)' };
+    if (a === 2 && b === 4 && c === 6) return { width: '127%', top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-45deg)' };
     
-    return { width: '0%', transform: 'none' };
+    return { width: '0%', top: '50%', left: '50%', transform: 'none' };
   };
 
   return (
@@ -241,11 +257,13 @@ const GameBoard: React.FC = () => {
         
         {/* Winning Line Overlay */}
         {winningLine && (
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          <div className="absolute inset-0 pointer-events-none">
             <div 
               className="absolute bg-neo-accent h-1 sm:h-1.5 rounded-full animate-pulse"
               style={{
                 width: getLineStyle(winningLine).width,
+                top: getLineStyle(winningLine).top,
+                left: getLineStyle(winningLine).left,
                 transform: getLineStyle(winningLine).transform,
               }}
             />
