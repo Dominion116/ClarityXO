@@ -71,15 +71,20 @@ const GameBoard: React.FC = () => {
           setWinningLine(null);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching game state:', error);
+      // If rate limited (429), wait before next attempt
+      if (error?.message?.includes('429') || error?.status === 429) {
+        console.log('Rate limited, will retry later');
+      }
       // Don't update state on error - keep current board visible
     }
   }, [detectWinningLine]);
 
   useEffect(() => {
     fetchGameState();
-    const interval = setInterval(fetchGameState, 5000);
+    // Reduced polling frequency to avoid rate limits (every 10 seconds instead of 5)
+    const interval = setInterval(fetchGameState, 10000);
     return () => clearInterval(interval);
   }, [fetchGameState]);
 
@@ -112,19 +117,19 @@ const GameBoard: React.FC = () => {
           setTxStatus('Transaction submitted! Waiting for confirmation...');
           console.log('Transaction:', data.txId);
           
-          // Poll for updates more frequently initially
+          // Reduced polling frequency to avoid rate limits
           let pollCount = 0;
           const checkInterval = setInterval(async () => {
             await fetchGameState();
             pollCount++;
             
-            // Stop polling after 15 attempts (30 seconds)
-            if (pollCount >= 15) {
+            // Stop polling after 8 attempts (32 seconds)
+            if (pollCount >= 8) {
               clearInterval(checkInterval);
               setLoading(false);
               setTxStatus('');
             }
-          }, 2000);
+          }, 4000); // Changed from 2s to 4s
 
           // Final refresh after longer timeout
           setTimeout(() => {
@@ -132,7 +137,7 @@ const GameBoard: React.FC = () => {
             setLoading(false);
             setTxStatus('');
             fetchGameState();
-          }, 12000);
+          }, 35000); // Increased timeout
         },
         onCancel: () => {
           setLoading(false);
