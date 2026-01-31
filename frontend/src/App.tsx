@@ -3,9 +3,13 @@ import { isUserSignedIn, authenticate, disconnect } from './auth';
 import GameBoard from './components/GameBoard';
 import WalletConnect from './components/WalletConnect';
 import Navbar from './components/Navbar';
+import Leaderboard from './components/Leaderboard';
+
+type Page = 'game' | 'leaderboard';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentPage, setCurrentPage] = useState<Page>('game');
 
   useEffect(() => {
     setIsAuthenticated(isUserSignedIn());
@@ -21,39 +25,43 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-neo-bg flex flex-col">
+    <div className="min-h-screen bg-neo-bg flex flex-col overflow-x-hidden">
       {/* Navbar */}
       <Navbar
         isAuthenticated={isAuthenticated}
         onConnect={handleConnect}
         onDisconnect={handleDisconnect}
         WalletComponent={WalletConnect}
+        currentPage={currentPage}
+        onNavigate={setCurrentPage}
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center py-6 sm:py-8 md:py-12 px-3 sm:px-4 md:px-6">
-        {/* Game Area */}
-        {isAuthenticated ? (
+      <div className="flex-1 flex flex-col items-center w-full max-w-7xl mx-auto py-6 sm:py-8 md:py-12 px-4 sm:px-6 md:px-8">
+        {/* Page Content */}
+        {currentPage === 'leaderboard' ? (
+          <Leaderboard />
+        ) : isAuthenticated ? (
           <GameBoard />
         ) : (
-          <div className="neo-card text-center max-w-md w-full mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-neo-text mb-3 sm:mb-4">
+          <div className="neo-card text-center max-w-lg w-full mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-neo-text mb-4">
               Welcome to ClarityXO
             </h2>
-            <p className="text-sm sm:text-base text-neo-text opacity-70 mb-4 sm:mb-6">
+            <p className="text-sm sm:text-base text-neo-text opacity-70 mb-6">
               Connect your Stacks wallet to start playing Tic-Tac-Toe on the
               blockchain. Each move requires a transaction signature!
             </p>
-            <button onClick={handleConnect} className="neo-button w-full text-sm sm:text-base">
+            <button onClick={handleConnect} className="neo-button w-full text-sm sm:text-base py-3">
               Connect Wallet to Play
             </button>
           </div>
         )}
 
         {/* Footer */}
-        <div className="mt-8 sm:mt-12 text-center text-xs sm:text-sm text-neo-text opacity-50 px-4">
-          <p>Built with Clarity smart contracts on Stacks blockchain</p>
-          <p className="mt-2">Contract: ST30VGN68PSGVWGNMD0HH2WQMM5T486EK3WBNTHCY.ClarityXO</p>
+        <div className="mt-8 sm:mt-12 w-full text-center text-xs sm:text-sm text-neo-text opacity-50 px-4">
+          <p className="break-words">Built with Clarity smart contracts on Stacks blockchain</p>
+          <p className="mt-2 break-all">Contract: ST30VGN68PSGVWGNMD0HH2WQMM5T486EK3WBNTHCY.ClarityXO</p>
         </div>
       </div>
     </div>
