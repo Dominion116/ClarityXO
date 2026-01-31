@@ -15,7 +15,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({
 }) => {
   if (!isAuthenticated) {
     return (
-      <button onClick={onConnect} className="neo-button flex items-center gap-2 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3">
+      <button onClick={onConnect} className="neo-button flex items-center gap-2 text-sm px-3 py-2 sm:px-6 sm:py-3">
         <Wallet className="w-4 h-4" />
         <span className="hidden sm:inline">Connect Wallet</span>
         <span className="sm:hidden">Connect</span>
@@ -30,13 +30,13 @@ const WalletConnect: React.FC<WalletConnectProps> = ({
     : '';
 
   return (
-    <div className="flex items-center gap-2 sm:gap-3">
-      <div className="neo-inset px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-mono text-neo-text">
+    <div className="flex items-center gap-2">
+      <div className="neo-inset px-3 py-2 text-xs sm:text-sm font-mono text-neo-text">
         {truncatedAddress}
       </div>
       <button
         onClick={onDisconnect}
-        className="neo-button flex items-center gap-2 !px-2 sm:!px-4 !py-2"
+        className="neo-button flex items-center gap-2 !px-2 !py-2 sm:!px-3"
         title="Disconnect"
       >
         <LogOut className="w-4 h-4" />
