@@ -19,9 +19,9 @@ const Navbar: React.FC<NavbarProps> = ({
   WalletComponent,
 }) => {
   return (
-    <nav className="sticky top-0 z-50 w-full bg-neo-bg border-b border-neo-shadow-dark/20">
+    <nav className="sticky top-0 z-50 w-full bg-neo-bg border-b border-neo-shadow-dark/20 overflow-x-hidden">
       <div className="neo-card !rounded-none !shadow-neo-sm">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo and Brand */}
             <div className="flex items-center gap-2 sm:gap-3">
@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Mobile Navigation */}
-          <div className="md:hidden flex items-center justify-center gap-4 pb-3 pt-2 border-t border-neo-shadow-dark/10 mt-2">
+          <div className="md:hidden flex items-center justify-center gap-4 sm:gap-6 pb-3 pt-2 border-t border-neo-shadow-dark/10 mt-2">
             <a
               href="https://github.com/Dominion116/ClarityXO"
               target="_blank"
