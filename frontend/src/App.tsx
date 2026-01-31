@@ -21,7 +21,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-neo-bg flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-neo-bg flex flex-col items-center py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6">
       {/* Header */}
       <div className="neo-card mb-4 sm:mb-6 md:mb-8 w-full max-w-4xl">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
