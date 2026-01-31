@@ -54,19 +54,26 @@ const GameBoard: React.FC = () => {
         getGameStatus(),
         getCurrentTurn(),
       ]);
-      setBoard(boardState);
-      setGameStatus(status);
-      setCurrentTurn(turn);
       
-      // Detect winning line if game is won
-      if (status === 1 || status === 2) {
-        const line = detectWinningLine(boardState);
-        setWinningLine(line);
-      } else {
-        setWinningLine(null);
+      // Only update board if we get valid data (not all zeros for an active game with moves)
+      const hasValidData = boardState && Array.isArray(boardState) && boardState.length === 9;
+      
+      if (hasValidData) {
+        setBoard(boardState);
+        setGameStatus(status);
+        setCurrentTurn(turn);
+        
+        // Detect winning line if game is won
+        if (status === 1 || status === 2) {
+          const line = detectWinningLine(boardState);
+          setWinningLine(line);
+        } else {
+          setWinningLine(null);
+        }
       }
     } catch (error) {
       console.error('Error fetching game state:', error);
+      // Don't update state on error - keep current board visible
     }
   }, [detectWinningLine]);
 
