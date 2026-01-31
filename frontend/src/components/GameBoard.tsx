@@ -202,7 +202,7 @@ const GameBoard: React.FC = () => {
         onClick={() => handleCellClick(index)}
         disabled={!isClickable}
         className={`
-          aspect-square rounded-xl sm:rounded-2xl text-3xl sm:text-4xl md:text-5xl font-bold
+          aspect-square rounded-xl sm:rounded-2xl text-4xl sm:text-5xl font-bold
           transition-all duration-200 relative
           ${isEmpty ? 'neo-inset' : 'shadow-neo'}
           ${isClickable ? 'hover:shadow-neo-inset-sm cursor-pointer active:scale-95' : 'cursor-not-allowed'}
@@ -241,10 +241,10 @@ const GameBoard: React.FC = () => {
   };
 
   return (
-    <div className="neo-card max-w-md w-full">
+    <div className="neo-card max-w-lg w-full">
       {/* Status Bar */}
-      <div className="mb-4 sm:mb-6 text-center">
-        <div className="neo-inset px-3 sm:px-4 py-2 sm:py-3 rounded-xl mb-3 sm:mb-4">
+      <div className="mb-6 text-center">
+        <div className="neo-inset px-4 py-3 rounded-xl mb-4">
           <p className="text-base sm:text-lg font-semibold text-neo-text">
             {STATUS_DISPLAY[gameStatus as number]}
           </p>
@@ -256,15 +256,15 @@ const GameBoard: React.FC = () => {
         </div>
 
         {txStatus && (
-          <div className="neo-inset px-3 sm:px-4 py-2 rounded-xl flex items-center justify-center gap-2">
+          <div className="neo-inset px-4 py-2 rounded-xl flex items-center justify-center gap-2">
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            <p className="text-xs sm:text-sm text-neo-text">{txStatus}</p>
+            <p className="text-sm text-neo-text break-words">{txStatus}</p>
           </div>
         )}
       </div>
 
       {/* Game Board */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 relative">
+      <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6 relative">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(renderCell)}
         
         {/* Winning Line Overlay */}
