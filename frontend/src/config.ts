@@ -1,8 +1,8 @@
 import { StacksTestnet } from '@stacks/network';
 
-// Contract details
-export const CONTRACT_ADDRESS = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM'; // Update with your deployed contract address
-export const CONTRACT_NAME = 'tictactoe';
+// Contract details - DEPLOYED ON TESTNET
+export const CONTRACT_ADDRESS = 'ST30VGN68PSGVWGNMD0HH2WQMM5T486EK3WBNTHCY';
+export const CONTRACT_NAME = 'ClarityXO';
 
 // Network configuration
 export const NETWORK = new StacksTestnet();
