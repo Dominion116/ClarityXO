@@ -19,6 +19,33 @@ const GameBoard: React.FC = () => {
   const [currentTurn, setCurrentTurn] = useState<number>(PLAYER_X);
   const [loading, setLoading] = useState(false);
   const [txStatus, setTxStatus] = useState<string>('');
+  const [winningLine, setWinningLine] = useState<number[] | null>(null);
+
+  // Detect winning line from board state
+  const detectWinningLine = useCallback((boardState: number[]) => {
+    const lines = [
+      [0, 1, 2], // row 0
+      [3, 4, 5], // row 1
+      [6, 7, 8], // row 2
+      [0, 3, 6], // col 0
+      [1, 4, 7], // col 1
+      [2, 5, 8], // col 2
+      [0, 4, 8], // diagonal
+      [2, 4, 6], // diagonal
+    ];
+
+    for (const line of lines) {
+      const [a, b, c] = line;
+      if (
+        boardState[a] !== 0 &&
+        boardState[a] === boardState[b] &&
+        boardState[a] === boardState[c]
+      ) {
+        return line;
+      }
+    }
+    return null;
+  }, []);
 
   const fetchGameState = useCallback(async () => {
     try {
@@ -30,10 +57,18 @@ const GameBoard: React.FC = () => {
       setBoard(boardState);
       setGameStatus(status);
       setCurrentTurn(turn);
+      
+      // Detect winning line if game is won
+      if (status === 1 || status === 2) {
+        const line = detectWinningLine(boardState);
+        setWinningLine(line);
+      } else {
+        setWinningLine(null);
+      }
     } catch (error) {
       console.error('Error fetching game state:', error);
     }
-  }, []);
+  }, [detectWinningLine]);
 
   useEffect(() => {
     fetchGameState();
@@ -135,6 +170,7 @@ const GameBoard: React.FC = () => {
     const isEmpty = value === 0;
     const isClickable =
       isEmpty && gameStatus === STATUS_ACTIVE && currentTurn === PLAYER_X && !loading;
+    const isWinningCell = winningLine?.includes(index);
 
     return (
       <button
@@ -143,15 +179,37 @@ const GameBoard: React.FC = () => {
         disabled={!isClickable}
         className={`
           aspect-square rounded-xl sm:rounded-2xl text-3xl sm:text-4xl md:text-5xl font-bold
-          transition-all duration-200
+          transition-all duration-200 relative
           ${isEmpty ? 'neo-inset' : 'shadow-neo'}
           ${isClickable ? 'hover:shadow-neo-inset-sm cursor-pointer active:scale-95' : 'cursor-not-allowed'}
           ${value === PLAYER_X ? 'text-neo-accent' : 'text-neo-text'}
+          ${isWinningCell ? 'bg-neo-accent/10 ring-2 ring-neo-accent' : ''}
         `}
       >
         {CELL_DISPLAY[value as number]}
       </button>
     );
+  };
+
+  // Calculate line style based on winning combination
+  const getLineStyle = (line: number[]) => {
+    const [a, b, c] = line;
+    
+    // Horizontal lines
+    if (a === 0 && b === 1 && c === 2) return { width: '80%', transform: 'translateY(-200%)' };
+    if (a === 3 && b === 4 && c === 5) return { width: '80%', transform: 'translateY(0%)' };
+    if (a === 6 && b === 7 && c === 8) return { width: '80%', transform: 'translateY(200%)' };
+    
+    // Vertical lines
+    if (a === 0 && b === 3 && c === 6) return { width: '80%', transform: 'rotate(90deg) translateX(-200%)' };
+    if (a === 1 && b === 4 && c === 7) return { width: '80%', transform: 'rotate(90deg)' };
+    if (a === 2 && b === 5 && c === 8) return { width: '80%', transform: 'rotate(90deg) translateX(200%)' };
+    
+    // Diagonals
+    if (a === 0 && b === 4 && c === 8) return { width: '115%', transform: 'rotate(45deg)' };
+    if (a === 2 && b === 4 && c === 6) return { width: '115%', transform: 'rotate(-45deg)' };
+    
+    return { width: '0%', transform: 'none' };
   };
 
   return (
@@ -178,8 +236,21 @@ const GameBoard: React.FC = () => {
       </div>
 
       {/* Game Board */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 relative">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(renderCell)}
+        
+        {/* Winning Line Overlay */}
+        {winningLine && (
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <div 
+              className="absolute bg-neo-accent h-1 sm:h-1.5 rounded-full animate-pulse"
+              style={{
+                width: getLineStyle(winningLine).width,
+                transform: getLineStyle(winningLine).transform,
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Controls */}
