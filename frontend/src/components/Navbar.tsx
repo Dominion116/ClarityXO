@@ -5,6 +5,8 @@ interface NavbarProps {
   isAuthenticated: boolean;
   onConnect: () => void;
   onDisconnect: () => void;
+  currentPage: 'game' | 'leaderboard';
+  onNavigate: (page: 'game' | 'leaderboard') => void;
   WalletComponent: React.ComponentType<{
     isAuthenticated: boolean;
     onConnect: () => void;
@@ -16,6 +18,8 @@ const Navbar: React.FC<NavbarProps> = ({
   isAuthenticated,
   onConnect,
   onDisconnect,
+  currentPage,
+  onNavigate,
   WalletComponent,
 }) => {
   return (
@@ -24,7 +28,10 @@ const Navbar: React.FC<NavbarProps> = ({
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo and Brand */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <button 
+              onClick={() => onNavigate('game')}
+              className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity"
+            >
               <div className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl shadow-neo-sm">
                 <Gamepad2 className="w-5 h-5 sm:w-6 sm:h-6 text-neo-accent" />
               </div>
@@ -36,7 +43,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   Blockchain Tic-Tac-Toe
                 </p>
               </div>
-            </div>
+            </button>
 
             {/* Navigation Links - Desktop */}
             <div className="hidden md:flex items-center gap-6">
@@ -49,20 +56,24 @@ const Navbar: React.FC<NavbarProps> = ({
                 <Github className="w-4 h-4" />
                 <span>GitHub</span>
               </a>
-              <a
-                href="#how-to-play"
-                className="flex items-center gap-2 text-sm text-neo-text hover:text-neo-accent transition-colors"
+              <button
+                onClick={() => onNavigate('game')}
+                className={`flex items-center gap-2 text-sm transition-colors ${
+                  currentPage === 'game' ? 'text-neo-accent' : 'text-neo-text hover:text-neo-accent'
+                }`}
               >
                 <FileText className="w-4 h-4" />
-                <span>How to Play</span>
-              </a>
-              <a
-                href="#stats"
-                className="flex items-center gap-2 text-sm text-neo-text hover:text-neo-accent transition-colors"
+                <span>Play Game</span>
+              </button>
+              <button
+                onClick={() => onNavigate('leaderboard')}
+                className={`flex items-center gap-2 text-sm transition-colors ${
+                  currentPage === 'leaderboard' ? 'text-neo-accent' : 'text-neo-text hover:text-neo-accent'
+                }`}
               >
                 <Trophy className="w-4 h-4" />
-                <span>Stats</span>
-              </a>
+                <span>Leaderboard</span>
+              </button>
             </div>
 
             {/* Wallet Connection */}
@@ -86,20 +97,24 @@ const Navbar: React.FC<NavbarProps> = ({
               <Github className="w-4 h-4" />
               <span>Code</span>
             </a>
-            <a
-              href="#how-to-play"
-              className="flex flex-col items-center gap-1 text-xs text-neo-text hover:text-neo-accent transition-colors"
+            <button
+              onClick={() => onNavigate('game')}
+              className={`flex flex-col items-center gap-1 text-xs transition-colors ${
+                currentPage === 'game' ? 'text-neo-accent' : 'text-neo-text hover:text-neo-accent'
+              }`}
             >
               <FileText className="w-4 h-4" />
-              <span>Guide</span>
-            </a>
-            <a
-              href="#stats"
-              className="flex flex-col items-center gap-1 text-xs text-neo-text hover:text-neo-accent transition-colors"
+              <span>Play</span>
+            </button>
+            <button
+              onClick={() => onNavigate('leaderboard')}
+              className={`flex flex-col items-center gap-1 text-xs transition-colors ${
+                currentPage === 'leaderboard' ? 'text-neo-accent' : 'text-neo-text hover:text-neo-accent'
+              }`}
             >
               <Trophy className="w-4 h-4" />
               <span>Stats</span>
-            </a>
+            </button>
           </div>
         </div>
       </div>

@@ -3,9 +3,13 @@ import { isUserSignedIn, authenticate, disconnect } from './auth';
 import GameBoard from './components/GameBoard';
 import WalletConnect from './components/WalletConnect';
 import Navbar from './components/Navbar';
+import Leaderboard from './components/Leaderboard';
+
+type Page = 'game' | 'leaderboard';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentPage, setCurrentPage] = useState<Page>('game');
 
   useEffect(() => {
     setIsAuthenticated(isUserSignedIn());
@@ -28,12 +32,16 @@ function App() {
         onConnect={handleConnect}
         onDisconnect={handleDisconnect}
         WalletComponent={WalletConnect}
+        currentPage={currentPage}
+        onNavigate={setCurrentPage}
       />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center w-full max-w-7xl mx-auto py-6 sm:py-8 md:py-12 px-4 sm:px-6 md:px-8">
-        {/* Game Area */}
-        {isAuthenticated ? (
+        {/* Page Content */}
+        {currentPage === 'leaderboard' ? (
+          <Leaderboard />
+        ) : isAuthenticated ? (
           <GameBoard />
         ) : (
           <div className="neo-card text-center max-w-lg w-full mt-8">
