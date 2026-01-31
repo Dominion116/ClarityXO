@@ -121,33 +121,21 @@
   )
 )
 
-;; Simple AI: Find first empty cell (can be enhanced with minimax)
-(define-private (find-empty-cell (start uint))
+;; Simple AI: Find first empty cell using fold
+(define-private (find-empty-cell-helper (index uint) (acc uint))
   (let ((board (var-get game-board)))
-    (if (is-eq (default-to PLAYER_X (element-at board start)) EMPTY)
-      start
-      (if (< start u8)
-        (find-empty-cell (+ start u1))
-        u0
-      )
+    (if (and
+          (is-eq acc u999)
+          (is-eq (default-to PLAYER_X (element-at board index)) EMPTY))
+      index
+      acc
     )
   )
 )
 
-;; Computer makes a move
-(define-private (computer-move-internal)
-  (let (
-    (empty-idx (find-empty-cell u0))
-    (row (/ empty-idx u3))
-    (col (mod empty-idx u3))
-  )
-    (begin
-      (set-cell row col PLAYER_O)
-      (var-set moves-count (+ (var-get moves-count) u1))
-      (var-set current-turn PLAYER_X)
-      (update-game-status)
-      (ok true)
-    )
+(define-private (find-first-empty)
+  (let ((result (fold find-empty-cell-helper (list u0 u1 u2 u3 u4 u5 u6 u7 u8) u999)))
+    (if (is-eq result u999) u0 result)
   )
 )
 
@@ -184,9 +172,21 @@
       (var-set current-turn PLAYER_O)
       (update-game-status)
       
-      ;; If game still active, computer makes move
+      ;; If game still active, computer makes move inline
       (if (is-eq (var-get game-status) STATUS_ACTIVE)
-        (computer-move-internal)
+        (let (
+          (empty-idx (find-first-empty))
+          (comp-row (/ empty-idx u3))
+          (comp-col (mod empty-idx u3))
+        )
+          (begin
+            (set-cell comp-row comp-col PLAYER_O)
+            (var-set moves-count (+ (var-get moves-count) u1))
+            (var-set current-turn PLAYER_X)
+            (update-game-status)
+            (ok true)
+          )
+        )
         (ok true)
       )
     )
