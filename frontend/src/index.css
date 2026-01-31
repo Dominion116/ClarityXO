@@ -49,9 +49,15 @@ body {
 
 /* Neomorphic card */
 .neo-card {
-  @apply rounded-3xl p-8;
+  @apply rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8;
   background: var(--neo-bg);
-  box-shadow: 12px 12px 24px var(--neo-shadow-dark), -12px -12px 24px var(--neo-shadow-light);
+  box-shadow: 8px 8px 16px var(--neo-shadow-dark), -8px -8px 16px var(--neo-shadow-light);
+}
+
+@media (min-width: 640px) {
+  .neo-card {
+    box-shadow: 12px 12px 24px var(--neo-shadow-dark), -12px -12px 24px var(--neo-shadow-light);
+  }
 }
 
 /* Neomorphic input/inset */

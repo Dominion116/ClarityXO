@@ -142,10 +142,10 @@ const GameBoard: React.FC = () => {
         onClick={() => handleCellClick(index)}
         disabled={!isClickable}
         className={`
-          aspect-square rounded-2xl text-5xl font-bold
+          aspect-square rounded-xl sm:rounded-2xl text-3xl sm:text-4xl md:text-5xl font-bold
           transition-all duration-200
           ${isEmpty ? 'neo-inset' : 'shadow-neo'}
-          ${isClickable ? 'hover:shadow-neo-inset-sm cursor-pointer' : 'cursor-not-allowed'}
+          ${isClickable ? 'hover:shadow-neo-inset-sm cursor-pointer active:scale-95' : 'cursor-not-allowed'}
           ${value === PLAYER_X ? 'text-neo-accent' : 'text-neo-text'}
         `}
       >
@@ -157,28 +157,28 @@ const GameBoard: React.FC = () => {
   return (
     <div className="neo-card max-w-md w-full">
       {/* Status Bar */}
-      <div className="mb-6 text-center">
-        <div className="neo-inset px-4 py-3 rounded-xl mb-4">
-          <p className="text-lg font-semibold text-neo-text">
+      <div className="mb-4 sm:mb-6 text-center">
+        <div className="neo-inset px-3 sm:px-4 py-2 sm:py-3 rounded-xl mb-3 sm:mb-4">
+          <p className="text-base sm:text-lg font-semibold text-neo-text">
             {STATUS_DISPLAY[gameStatus as number]}
           </p>
           {gameStatus === STATUS_ACTIVE && (
-            <p className="text-sm text-neo-text opacity-70 mt-1">
+            <p className="text-xs sm:text-sm text-neo-text opacity-70 mt-1">
               {currentTurn === PLAYER_X ? "Your turn (X)" : "Computer's turn (O)"}
             </p>
           )}
         </div>
 
         {txStatus && (
-          <div className="neo-inset px-4 py-2 rounded-xl flex items-center justify-center gap-2">
+          <div className="neo-inset px-3 sm:px-4 py-2 rounded-xl flex items-center justify-center gap-2">
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            <p className="text-sm text-neo-text">{txStatus}</p>
+            <p className="text-xs sm:text-sm text-neo-text">{txStatus}</p>
           </div>
         )}
       </div>
 
       {/* Game Board */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(renderCell)}
       </div>
 
@@ -186,7 +186,7 @@ const GameBoard: React.FC = () => {
       <button
         onClick={handleNewGame}
         disabled={loading}
-        className="neo-button w-full flex items-center justify-center gap-2"
+        className="neo-button w-full flex items-center justify-center gap-2 text-sm sm:text-base"
       >
         <RefreshCw className="w-4 h-4" />
         New Game

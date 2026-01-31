@@ -15,9 +15,10 @@ const WalletConnect: React.FC<WalletConnectProps> = ({
 }) => {
   if (!isAuthenticated) {
     return (
-      <button onClick={onConnect} className="neo-button flex items-center gap-2">
+      <button onClick={onConnect} className="neo-button flex items-center gap-2 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3">
         <Wallet className="w-4 h-4" />
-        Connect Wallet
+        <span className="hidden sm:inline">Connect Wallet</span>
+        <span className="sm:hidden">Connect</span>
       </button>
     );
   }
@@ -25,17 +26,18 @@ const WalletConnect: React.FC<WalletConnectProps> = ({
   const userData = getUserData();
   const address = userData?.profile?.stxAddress?.testnet || '';
   const truncatedAddress = address
-    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    ? `${address.slice(0, 4)}...${address.slice(-3)}`
     : '';
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="neo-inset px-4 py-2 text-sm font-mono text-neo-text">
+    <div className="flex items-center gap-2 sm:gap-3">
+      <div className="neo-inset px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-mono text-neo-text">
         {truncatedAddress}
       </div>
       <button
         onClick={onDisconnect}
-        className="neo-button flex items-center gap-2 !px-4"
+        className="neo-button flex items-center gap-2 !px-2 sm:!px-4 !py-2"
+        title="Disconnect"
       >
         <LogOut className="w-4 h-4" />
       </button>
