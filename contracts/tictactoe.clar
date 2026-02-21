@@ -121,66 +121,125 @@
   )
 )
 
-;; Simple AI: Find first empty cell using fold
-(define-private (find-empty-cell-helper (index uint) (acc uint))
-  (let ((board (var-get game-board)))
-    (if (and
-          (is-eq acc u999)
-          (is-eq (default-to PLAYER_X (element-at board index)) EMPTY))
-      index
-      acc
+;; ─── AI Helpers ───────────────────────────────────────────────────────────────
+
+;; Check if placing `player` at `index` would complete a winning line.
+;; We temporarily simulate the move on the current board values.
+(define-private (would-win (index uint) (player uint))
+  (let (
+    (board (var-get game-board))
+    (c0 (if (is-eq index u0) player (default-to EMPTY (element-at board u0))))
+    (c1 (if (is-eq index u1) player (default-to EMPTY (element-at board u1))))
+    (c2 (if (is-eq index u2) player (default-to EMPTY (element-at board u2))))
+    (c3 (if (is-eq index u3) player (default-to EMPTY (element-at board u3))))
+    (c4 (if (is-eq index u4) player (default-to EMPTY (element-at board u4))))
+    (c5 (if (is-eq index u5) player (default-to EMPTY (element-at board u5))))
+    (c6 (if (is-eq index u6) player (default-to EMPTY (element-at board u6))))
+    (c7 (if (is-eq index u7) player (default-to EMPTY (element-at board u7))))
+    (c8 (if (is-eq index u8) player (default-to EMPTY (element-at board u8))))
+  )
+    (or
+      (check-line c0 c1 c2)
+      (check-line c3 c4 c5)
+      (check-line c6 c7 c8)
+      (check-line c0 c3 c6)
+      (check-line c1 c4 c7)
+      (check-line c2 c5 c8)
+      (check-line c0 c4 c8)
+      (check-line c2 c4 c6)
     )
   )
 )
 
-(define-private (find-first-empty)
-  (let ((result (fold find-empty-cell-helper (list u0 u1 u2 u3 u4 u5 u6 u7 u8) u999)))
-    (if (is-eq result u999) u0 result)
+;; Return `index` if that cell is empty, else `fallback`
+(define-private (pick-if-empty (index uint) (fallback uint))
+  (if (is-eq (default-to PLAYER_X (element-at (var-get game-board) index)) EMPTY)
+    index
+    fallback
   )
 )
 
-;; Public Functions
-
-;; Start a new game
-(define-public (start-new-game)
-  (begin
-    (var-set game-board (list u0 u0 u0 u0 u0 u0 u0 u0 u0))
-    (var-set game-status STATUS_ACTIVE)
-    (var-set current-turn PLAYER_X)
-    (var-set player-address (some tx-sender))
-    (var-set moves-count u0)
-    (ok true)
+;; Scan a list of candidate indices; return the first one where `player` would win.
+;; Uses fold; u999 is the sentinel for "none found".
+(define-private (find-winning-move-for (player uint))
+  (fold
+    (lambda (index acc)
+      (if (and (is-eq acc u999)
+               (is-eq (default-to PLAYER_X (element-at (var-get game-board) index)) EMPTY)
+               (would-win index player))
+        index
+        acc
+      )
+    )
+    (list u0 u1 u2 u3 u4 u5 u6 u7 u8)
+    u999
   )
 )
 
-;; Player makes a move
+;; Priority-based AI move selection:
+;;   1. Win immediately
+;;   2. Block opponent win
+;;   3. Center
+;;   4. Any corner
+;;   5. Any edge
+(define-private (choose-ai-move)
+  (let (
+    (win-move   (find-winning-move-for PLAYER_O))
+    (block-move (find-winning-move-for PLAYER_X))
+  )
+    (if (not (is-eq win-move u999))
+      win-move  ;; 1. Take the win
+      (if (not (is-eq block-move u999))
+        block-move  ;; 2. Block X
+        ;; 3. Center
+        (if (is-eq (default-to PLAYER_X (element-at (var-get game-board) u4)) EMPTY)
+          u4
+          ;; 4. Corners (pick first available)
+          (let ((corner (fold (lambda (i acc) (if (and (is-eq acc u999) (is-eq (default-to PLAYER_X (element-at (var-get game-board) i)) EMPTY)) i acc))
+                              (list u0 u2 u6 u8)
+                              u999)))
+            (if (not (is-eq corner u999))
+              corner
+              ;; 5. Edges
+              (fold (lambda (i acc) (if (and (is-eq acc u999) (is-eq (default-to PLAYER_X (element-at (var-get game-board) i)) EMPTY)) i acc))
+                    (list u1 u3 u5 u7)
+                    u999)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+;; ─── Updated make-move ────────────────────────────────────────────────────────
+
 (define-public (make-move (row uint) (col uint))
   (let (
     (current-cell (get-cell row col))
     (status (var-get game-status))
   )
     (begin
-      ;; Validate move
       (asserts! (is-eq status STATUS_ACTIVE) err-game-finished)
       (asserts! (is-eq (var-get current-turn) PLAYER_X) err-not-your-turn)
       (asserts! (and (< row u3) (< col u3)) err-invalid-move)
       (asserts! (is-eq current-cell EMPTY) err-cell-occupied)
-      
-      ;; Make player move
+
+      ;; Player move
       (set-cell row col PLAYER_X)
       (var-set moves-count (+ (var-get moves-count) u1))
       (var-set current-turn PLAYER_O)
       (update-game-status)
-      
-      ;; If game still active, computer makes move inline
+
+      ;; AI move (only if game still active)
       (if (is-eq (var-get game-status) STATUS_ACTIVE)
         (let (
-          (empty-idx (find-first-empty))
-          (comp-row (/ empty-idx u3))
-          (comp-col (mod empty-idx u3))
+          (ai-idx  (choose-ai-move))
+          (ai-row  (/ ai-idx u3))
+          (ai-col  (mod ai-idx u3))
         )
           (begin
-            (set-cell comp-row comp-col PLAYER_O)
+            (set-cell ai-row ai-col PLAYER_O)
             (var-set moves-count (+ (var-get moves-count) u1))
             (var-set current-turn PLAYER_X)
             (update-game-status)
