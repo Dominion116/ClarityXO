@@ -124,7 +124,6 @@
 ;; ─── AI Helpers ───────────────────────────────────────────────────────────────
 
 ;; Check if placing `player` at `index` would complete a winning line.
-;; We temporarily simulate the move on the current board values.
 (define-private (would-win (index uint) (player uint))
   (let (
     (board (var-get game-board))
@@ -151,29 +150,41 @@
   )
 )
 
-;; Return `index` if that cell is empty, else `fallback`
-(define-private (pick-if-empty (index uint) (fallback uint))
-  (if (is-eq (default-to PLAYER_X (element-at (var-get game-board) index)) EMPTY)
-    index
-    fallback
+;; Fold helper for find-winning-move-for.
+;; Accumulator is a tuple {player, result} so we can thread `player` through fold.
+(define-private (winning-fold-helper (index uint) (acc { player: uint, result: uint }))
+  (if (and
+        (is-eq (get result acc) u999)
+        (is-eq (default-to PLAYER_X (element-at (var-get game-board) index)) EMPTY)
+        (would-win index (get player acc)))
+    { player: (get player acc), result: index }
+    acc
   )
 )
 
-;; Scan a list of candidate indices; return the first one where `player` would win.
-;; Uses fold; u999 is the sentinel for "none found".
+;; Return the first index where `player` would win, or u999 if none.
 (define-private (find-winning-move-for (player uint))
-  (fold
-    (lambda (index acc)
-      (if (and (is-eq acc u999)
-               (is-eq (default-to PLAYER_X (element-at (var-get game-board) index)) EMPTY)
-               (would-win index player))
-        index
-        acc
-      )
+  (get result
+    (fold winning-fold-helper
+      (list u0 u1 u2 u3 u4 u5 u6 u7 u8)
+      { player: player, result: u999 }
     )
-    (list u0 u1 u2 u3 u4 u5 u6 u7 u8)
-    u999
   )
+)
+
+;; Fold helper for scanning a candidate list for the first empty cell.
+;; Used for both corner and edge fallback passes.
+(define-private (first-empty-fold-helper (index uint) (acc uint))
+  (if (and
+        (is-eq acc u999)
+        (is-eq (default-to PLAYER_X (element-at (var-get game-board) index)) EMPTY))
+    index
+    acc
+  )
+)
+
+(define-private (find-first-empty-in (candidates (list 4 uint)))
+  (fold first-empty-fold-helper candidates u999)
 )
 
 ;; Priority-based AI move selection:
@@ -188,22 +199,15 @@
     (block-move (find-winning-move-for PLAYER_X))
   )
     (if (not (is-eq win-move u999))
-      win-move  ;; 1. Take the win
+      win-move
       (if (not (is-eq block-move u999))
-        block-move  ;; 2. Block X
-        ;; 3. Center
+        block-move
         (if (is-eq (default-to PLAYER_X (element-at (var-get game-board) u4)) EMPTY)
           u4
-          ;; 4. Corners (pick first available)
-          (let ((corner (fold (lambda (i acc) (if (and (is-eq acc u999) (is-eq (default-to PLAYER_X (element-at (var-get game-board) i)) EMPTY)) i acc))
-                              (list u0 u2 u6 u8)
-                              u999)))
+          (let ((corner (find-first-empty-in (list u0 u2 u6 u8))))
             (if (not (is-eq corner u999))
               corner
-              ;; 5. Edges
-              (fold (lambda (i acc) (if (and (is-eq acc u999) (is-eq (default-to PLAYER_X (element-at (var-get game-board) i)) EMPTY)) i acc))
-                    (list u1 u3 u5 u7)
-                    u999)
+              (find-first-empty-in (list u1 u3 u5 u7))
             )
           )
         )
@@ -212,7 +216,7 @@
   )
 )
 
-;; ─── Updated make-move ────────────────────────────────────────────────────────
+;; ─── make-move ────────────────────────────────────────────────────────────────
 
 (define-public (make-move (row uint) (col uint))
   (let (
@@ -234,9 +238,9 @@
       ;; AI move (only if game still active)
       (if (is-eq (var-get game-status) STATUS_ACTIVE)
         (let (
-          (ai-idx  (choose-ai-move))
-          (ai-row  (/ ai-idx u3))
-          (ai-col  (mod ai-idx u3))
+          (ai-idx (choose-ai-move))
+          (ai-row (/ ai-idx u3))
+          (ai-col (mod ai-idx u3))
         )
           (begin
             (set-cell ai-row ai-col PLAYER_O)
