@@ -3,24 +3,22 @@ import { StacksMainnet, StacksTestnet } from '@stacks/network';
 import { standardPrincipalCV, stringAsciiCV, uintCV } from '@stacks/transactions';
 import { CONFIG } from '../config';
 
-const LS_KEY = "clarityxo_lb_v2";
-const LS_HIST_KEY = "clarityxo_history_v2";
+const LS_KEY = "clarityxo_lb_monthly_v1";
+const LS_HIST_KEY = "clarityxo_history_monthly_v1";
 const PTS = { win: 3, draw: 1, loss: 0 };
 
-export function getWeekKey(date = new Date()) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const day = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - day);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-  return `${d.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+export function getMonthKey(date = new Date()) {
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth() + 1;
+  return `${year}-${String(month).padStart(2, "0")}`;
 }
 
-export function getWeekEnd() {
+export function getMonthEnd() {
   const now = new Date();
-  const day = now.getUTCDay();
-  const daysUntilSun = day === 0 ? 7 : 7 - day;
-  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilSun, 23, 59, 59));
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const lastDay = new Date(Date.UTC(year, month + 1, 0));
+  const end = new Date(Date.UTC(year, month, lastDay.getUTCDate(), 23, 59, 59));
   return end;
 }
 
@@ -39,22 +37,22 @@ export function loadLB() {
   try {
     const raw = localStorage.getItem(LS_KEY);
     const data = raw ? JSON.parse(raw) : null;
-    const thisWeek = getWeekKey();
-    if (!data || data.week !== thisWeek) {
-      if (data && data.week && Object.keys(data.players || {}).length > 0) {
-        archiveWeek(data);
+    const thisMonth = getMonthKey();
+    if (!data || data.month !== thisMonth) {
+      if (data && data.month && Object.keys(data.players || {}).length > 0) {
+        archiveMonth(data);
       }
-      return { week: thisWeek, players: {} };
+      return { month: thisMonth, players: {} };
     }
     return data;
-  } catch { return { week: getWeekKey(), players: {} }; }
+  } catch { return { month: getMonthKey(), players: {} }; }
 }
 
 export function saveLB(data) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch {}
 }
 
-export function archiveWeek(data) {
+export function archiveMonth(data) {
   try {
     const hist = JSON.parse(localStorage.getItem(LS_HIST_KEY) || "[]");
     const sorted = Object.entries(data.players)
@@ -62,7 +60,7 @@ export function archiveWeek(data) {
       .sort((a, b) => b.pts - a.pts || b.wins - a.wins);
     sorted.forEach((p, i) => {
       hist.push({
-        week: data.week, addr: p.addr,
+        month: data.month, addr: p.addr,
         pts: p.pts, wins: p.wins, draws: p.draws, losses: p.losses,
         nftEarned: i < 5,
       });
@@ -101,7 +99,7 @@ export function getPlayerList(data) {
 }
 
 export function clearLeaderboardData() {
-  if (!window.confirm("Clear all leaderboard data for this week? This cannot be undone.")) return false;
+  if (!window.confirm("Clear all leaderboard data for this month? This cannot be undone.")) return false;
   localStorage.removeItem(LS_KEY);
   return true;
 }
@@ -114,7 +112,7 @@ export async function claimNFT(walletAddr, addLog) {
 
   const myRank = players.findIndex(p => p.addr === walletAddr);
   if (myRank === -1 || myRank >= 5) {
-    alert("You are not in the top 5 this week. Keep playing to earn a spot!");
+    alert("You are not in the top 5 this month. Keep playing to earn a spot!");
     return;
   }
 
@@ -131,7 +129,7 @@ export async function claimNFT(walletAddr, addLog) {
       functionName: "mint-trophy",
       functionArgs: [
         standardPrincipalCV(walletAddr),
-        stringAsciiCV(getWeekKey()),
+        stringAsciiCV(getMonthKey()),
         uintCV(myRank + 1),
       ],
       appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%22%230a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },

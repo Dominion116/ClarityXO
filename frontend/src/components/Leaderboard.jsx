@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadLB, getPlayerList, clearLeaderboardData, claimNFT, getWeekEnd, formatCountdown } from '../utils/leaderboardLogic';
+import { loadLB, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
 
 export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [data, setData] = useState(null);
@@ -15,7 +15,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   useEffect(() => {
     refresh();
     const interval = setInterval(() => {
-      const ms = getWeekEnd() - Date.now();
+      const ms = getMonthEnd() - Date.now();
       setCountdown(formatCountdown(ms));
     }, 1000);
     return () => clearInterval(interval);
@@ -65,14 +65,14 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
           <div className="nft-banner-left">
             <div className="nft-icon">◈</div>
             <div>
-              <div className="nft-label">Weekly Prize</div>
+              <div className="nft-label">Monthly Prize</div>
               <div className="nft-desc">
-                <strong>Top 5 players this week earn a ClarityXO Trophy NFT</strong> minted to your Stacks wallet at week end. Win = 3 pts · Draw = 1 pt · Loss = 0 pts.
+                <strong>Top 5 players this month earn a ClarityXO Trophy NFT</strong> minted to your Stacks wallet at month end. Win = 3 pts · Draw = 1 pt · Loss = 0 pts.
               </div>
             </div>
           </div>
           <div className="nft-timer-wrap">
-            <div className="nft-timer-label">Week resets in</div>
+            <div className="nft-timer-label">Month resets in</div>
             <div className="nft-timer" id="nft-countdown">{countdown}</div>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       <div className="lb-header">
         <div className="lb-header-left">
           <div className="lb-title">Leaderboard</div>
-          <div className="lb-week" id="lb-week-label">Week {data.week}</div>
+          <div className="lb-week" id="lb-month-label">Month {data.month}</div>
         </div>
         <div className="lb-meta" id="lb-last-updated">
           Updated {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
@@ -112,7 +112,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       {/* Stats */}
       <div className="lb-stats">
         <div className="lb-stat">
-          <div className="lb-stat-label">Games This Week</div>
+          <div className="lb-stat-label">Games This Month</div>
           <div className="lb-stat-val" id="lb-total-games">{totalGames}</div>
         </div>
         <div className="lb-stat">
@@ -195,7 +195,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
 
       {players.length === 0 && (
         <div className="lb-empty" id="lb-empty">
-          No games recorded this week.<br />Play a game to claim your spot.
+          No games recorded this month.<br />Play a game to claim your spot.
         </div>
       )}
 
@@ -207,7 +207,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       </div>
 
       <div className="footer">
-        Points reset weekly · NFT minted on Stacks · <span className="yr">{new Date().getFullYear()}</span>
+        Points reset monthly · NFT minted on Stacks · <span className="yr">{new Date().getFullYear()}</span>
       </div>
     </div>
   );
