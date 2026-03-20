@@ -1,0 +1,148 @@
+import { openContractCall } from '@stacks/connect';
+import { StacksMainnet, StacksTestnet } from '@stacks/network';
+import { standardPrincipalCV, stringAsciiCV, uintCV } from '@stacks/transactions';
+import { CONFIG } from '../config';
+
+const LS_KEY = "clarityxo_lb_v2";
+const LS_HIST_KEY = "clarityxo_history_v2";
+const PTS = { win: 3, draw: 1, loss: 0 };
+
+export function getWeekKey(date = new Date()) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+export function getWeekEnd() {
+  const now = new Date();
+  const day = now.getUTCDay();
+  const daysUntilSun = day === 0 ? 7 : 7 - day;
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilSun, 23, 59, 59));
+  return end;
+}
+
+export function formatCountdown(ms) {
+  if (ms <= 0) return "00:00:00";
+  const totalSec = Math.floor(ms / 1000);
+  const d = Math.floor(totalSec / 86400);
+  const h = Math.floor((totalSec % 86400) / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  if (d > 0) return `${d}d ${String(h).padStart(2,"0")}h ${String(m).padStart(2,"0")}m`;
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+export function loadLB() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    const data = raw ? JSON.parse(raw) : null;
+    const thisWeek = getWeekKey();
+    if (!data || data.week !== thisWeek) {
+      if (data && data.week && Object.keys(data.players || {}).length > 0) {
+        archiveWeek(data);
+      }
+      return { week: thisWeek, players: {} };
+    }
+    return data;
+  } catch { return { week: getWeekKey(), players: {} }; }
+}
+
+export function saveLB(data) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch {}
+}
+
+export function archiveWeek(data) {
+  try {
+    const hist = JSON.parse(localStorage.getItem(LS_HIST_KEY) || "[]");
+    const sorted = Object.entries(data.players)
+      .map(([addr, s]) => ({ ...s, addr }))
+      .sort((a, b) => b.pts - a.pts || b.wins - a.wins);
+    sorted.forEach((p, i) => {
+      hist.push({
+        week: data.week, addr: p.addr,
+        pts: p.pts, wins: p.wins, draws: p.draws, losses: p.losses,
+        nftEarned: i < 5,
+      });
+    });
+    localStorage.setItem(LS_HIST_KEY, JSON.stringify(hist));
+  } catch {}
+}
+
+export function recordResult(addr, outcome) {
+  const key = addr || "anonymous";
+  const pts = PTS[outcome];
+  const data = loadLB();
+
+  if (!data.players[key]) {
+    data.players[key] = { pts: 0, wins: 0, draws: 0, losses: 0, lastSeen: null };
+  }
+  data.players[key].pts += pts;
+  data.players[key][outcome === "win" ? "wins" : outcome === "draw" ? "draws" : "losses"]++;
+  data.players[key].lastSeen = new Date().toISOString();
+
+  saveLB(data);
+  return pts;
+}
+
+export function getPlayerList(data) {
+  return Object.entries(data.players)
+    .map(([addr, s]) => ({
+      addr,
+      pts: s.pts,
+      wins: s.wins,
+      draws: s.draws,
+      losses: s.losses,
+      games: s.wins + s.draws + s.losses,
+    }))
+    .sort((a, b) => b.pts - a.pts || b.wins - a.wins || a.losses - b.losses);
+}
+
+export function clearLeaderboardData() {
+  if (!window.confirm("Clear all leaderboard data for this week? This cannot be undone.")) return false;
+  localStorage.removeItem(LS_KEY);
+  return true;
+}
+
+export async function claimNFT(walletAddr, addLog) {
+  const data = loadLB();
+  const players = getPlayerList(data);
+
+  if (!walletAddr) { alert("Connect your wallet first to verify eligibility."); return; }
+
+  const myRank = players.findIndex(p => p.addr === walletAddr);
+  if (myRank === -1 || myRank >= 5) {
+    alert("You are not in the top 5 this week. Keep playing to earn a spot!");
+    return;
+  }
+
+  const pts = players[myRank].pts;
+  addLog(`Claiming NFT Trophy for rank #${myRank + 1} (${pts} pts)…`, "info");
+
+  try {
+    const network = CONFIG.network === "mainnet" ? new StacksMainnet() : new StacksTestnet();
+    
+    await openContractCall({
+      network,
+      contractAddress: CONFIG.nftContractAddress,
+      contractName: CONFIG.nftContractName,
+      functionName: "mint-trophy",
+      functionArgs: [
+        standardPrincipalCV(walletAddr),
+        stringAsciiCV(getWeekKey()),
+        uintCV(myRank + 1),
+      ],
+      appDetails: { name: "ClarityXO", icon: "" },
+      onFinish: (d) => {
+        addLog(`NFT Trophy minted! TX: ${d.txId?.slice(0,16)}…`, "success");
+      },
+      onCancel: () => addLog("NFT claim cancelled.", "error"),
+    });
+    return true; // indicates success intent
+  } catch (e) {
+    addLog(`NFT claim error: ${e.message}`, "error");
+    return false;
+  }
+}
