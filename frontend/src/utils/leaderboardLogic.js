@@ -134,7 +134,7 @@ export async function claimNFT(walletAddr, addLog) {
         stringAsciiCV(getWeekKey()),
         uintCV(myRank + 1),
       ],
-      appDetails: { name: "ClarityXO", icon: "" },
+      appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%22%230a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },
       onFinish: (d) => {
         addLog(`NFT Trophy minted! TX: ${d.txId?.slice(0,16)}…`, "success");
       },

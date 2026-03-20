@@ -18,7 +18,8 @@
   --mono:    'IBM Plex Mono', 'Courier New', monospace;
 }
 
-body {
+body, #root {
+  width: 100%;
   background: var(--bg);
   color: var(--text);
   font-family: var(--mono);
