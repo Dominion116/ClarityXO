@@ -6,8 +6,13 @@ telemetry = false
 cache_dir = "./.cache"
 requirements = []
 
-[contracts.tictactoe]
-path = "contracts/tictactoe.clar"
+[contracts.clarity-xo-game]
+path = "contracts/clarity-xo-game.clar"
+clarity_version = 2
+epoch = 2.5
+
+[contracts.clarity-xo-trophy]
+path = "contracts/clarity-xo-trophy.clar"
 clarity_version = 2
 epoch = 2.5
 
