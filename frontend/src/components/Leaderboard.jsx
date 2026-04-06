@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadLB, fetchLeaderboardFromContract, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
+import { fetchLeaderboardFromContract, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
 import { CONFIG } from '../config';
 
 export default function Leaderboard({ walletAddr, addLog, navigate }) {
@@ -14,24 +14,14 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
     try {
       setLoading(true);
       
-      // Try to load from contract first
+      // Fetch  from contract
       const contractData = await fetchLeaderboardFromContract();
-      if (contractData && Object.keys(contractData.players).length > 0) {
-        setData(contractData);
-        setPlayers(getPlayerList(contractData));
-        return;
-      }
-      
-      // Fallback to localStorage
-      const localData = loadLB();
-      setData(localData);
-      setPlayers(getPlayerList(localData));
+      setData(contractData);
+      setPlayers(getPlayerList(contractData));
     } catch (e) {
       console.error("Error loading leaderboard:", e);
-      // Fallback to localStorage on error
-      const localData = loadLB();
-      setData(localData);
-      setPlayers(getPlayerList(localData));
+      setData({ players: {} });
+      setPlayers([]);
     } finally {
       setLoading(false);
     }
@@ -56,13 +46,13 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
     if (clearLeaderboardData(walletAddr)) refresh();
   };
 
-  const handleClaim = () => {
+  const handleClaim = async () => {
     if (!claimReady) {
       addLog("NFT claims open when the countdown ends.", "info");
       return;
     }
-    if (claimNFT(walletAddr, addLog)) {
-      navigate('game'); // Original app navigated back to game upon claim click
+    if (await claimNFT(walletAddr, addLog, data)) {
+      navigate('game');
     }
   };
 

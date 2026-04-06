@@ -4,16 +4,10 @@ import { uintCV, principalCV } from '@stacks/transactions';
 import { CONFIG } from '../config';
 import { callReadOnly, encodeCVArg, getCurrentMonth } from './stacks';
 
-const LS_KEY = "clarityxo_lb_monthly_v1";
-const LS_HIST_KEY = "clarityxo_history_monthly_v1";
 const PTS = { win: 3, draw: 1, loss: 0 };
-const BLOCKS_PER_MONTH = 4320;
 
-export function getMonthKey(date = new Date()) {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth() + 1;
-  return `${year}-${String(month).padStart(2, "0")}`;
-}
+// Track players discovered this session (from game results)
+let discoveredPlayers = new Set();
 
 export function getMonthEnd() {
   const now = new Date();
@@ -24,7 +18,6 @@ export function getMonthEnd() {
   return end;
 }
 
-// Calculate current month number from blocks
 export async function getCurrentMonthNumber() {
   try {
     const res = await fetch(
@@ -32,7 +25,7 @@ export async function getCurrentMonthNumber() {
     );
     const data = await res.json();
     const burnHeight = data.burn_block_height || 0;
-    return Math.floor(burnHeight / BLOCKS_PER_MONTH);
+    return Math.floor(burnHeight / 4320); // BLOCKS_PER_MONTH
   } catch (e) {
     console.error("Error fetching current month:", e);
     return 0;
@@ -50,40 +43,13 @@ export function formatCountdown(ms) {
   return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
-export function loadLB() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    const data = raw ? JSON.parse(raw) : null;
-    const thisMonth = getMonthKey();
-    if (!data || data.month !== thisMonth) {
-      if (data && data.month && Object.keys(data.players || {}).length > 0) {
-        archiveMonth(data);
-      }
-      return { month: thisMonth, players: {}, _source: "local" };
-    }
-    return { ...data, _source: "local" };
-  } catch { return { month: getMonthKey(), players: {}, _source: "local" }; }
-}
-
 // Fetch leaderboard stats from the smart contract
 export async function fetchLeaderboardFromContract() {
   try {
-    const month = await getCurrentMonth();
-    
-    // Get list of known players from localStorage (historical cache)
-    const hist = JSON.parse(localStorage.getItem(LS_HIST_KEY) || "[]");
-    const knownPlayers = new Set();
-    hist.forEach(h => knownPlayers.add(h.addr));
-    
-    // Also check current month's local data
-    const localData = loadLB();
-    Object.keys(localData.players || {}).forEach(addr => knownPlayers.add(addr));
-    
-    // Query each known player's stats from contract
+    // Query each discovered player's stats from contract
     const contractPlayers = {};
-    for (const addr of knownPlayers) {
-      if (addr === "anonymous") continue; // Skip anonymous in contract queries
-      
+    
+    for (const addr of discoveredPlayers) {
       try {
         const response = await callReadOnly("get-my-stats-this-month", [
           encodeCVArg(principalCV(addr))
@@ -105,49 +71,17 @@ export async function fetchLeaderboardFromContract() {
       }
     }
     
-    const thisMonth = getMonthKey();
-    return { month: thisMonth, players: contractPlayers, _source: "contract" };
+    return { players: contractPlayers, _source: "contract" };
   } catch (e) {
     console.error("Error fetching from contract:", e);
-    return null;
+    return { players: {}, _source: "contract" };
   }
 }
 
-export function saveLB(data) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch {}
-}
-
-export function archiveMonth(data) {
-  try {
-    const hist = JSON.parse(localStorage.getItem(LS_HIST_KEY) || "[]");
-    const sorted = Object.entries(data.players)
-      .map(([addr, s]) => ({ ...s, addr }))
-      .sort((a, b) => b.pts - a.pts || b.wins - a.wins);
-    sorted.forEach((p, i) => {
-      hist.push({
-        month: data.month, addr: p.addr,
-        pts: p.pts, wins: p.wins, draws: p.draws, losses: p.losses,
-        nftEarned: i < 5,
-      });
-    });
-    localStorage.setItem(LS_HIST_KEY, JSON.stringify(hist));
-  } catch {}
-}
-
+// Record result - only tracks player discovery, no localStorage saving
 export function recordResult(addr, outcome) {
-  const key = addr || "anonymous";
-  const pts = PTS[outcome];
-  const data = loadLB();
-
-  if (!data.players[key]) {
-    data.players[key] = { pts: 0, wins: 0, draws: 0, losses: 0, lastSeen: null };
-  }
-  data.players[key].pts += pts;
-  data.players[key][outcome === "win" ? "wins" : outcome === "draw" ? "draws" : "losses"]++;
-  data.players[key].lastSeen = new Date().toISOString();
-
-  saveLB(data);
-  return pts;
+  recordPlayerDiscovered(addr);
+  return PTS[outcome];
 }
 
 export function getPlayerList(data) {
@@ -165,25 +99,24 @@ export function getPlayerList(data) {
 
 export function clearLeaderboardData(walletAddr) {
   if (walletAddr !== CONFIG.contractAddress) return false;
-  if (!window.confirm("Clear all leaderboard data for this month? This cannot be undone.")) return false;
-  localStorage.removeItem(LS_KEY);
+  if (!window.confirm("Clear all leaderboard data for this month? This cannot be undone. Contact contract owner.")) return false;
+  console.log("To clear on-chain leaderboard, contract owner must invoke clear function");
   return true;
 }
 
-export async function claimNFT(walletAddr, addLog) {
-  const data = loadLB();
-  const players = getPlayerList(data);
-
-  if (!walletAddr) { alert("Connect your wallet first to verify eligibility."); return; }
+export async function claimNFT(walletAddr, addLog, leaderboardData) {
+  if (!walletAddr) { alert("Connect your wallet first to verify eligibility."); return false; }
   if (Date.now() < getMonthEnd().getTime()) {
     addLog("NFT claims open when the countdown ends.", "info");
     return false;
   }
 
+  const players = getPlayerList(leaderboardData);
   const myRank = players.findIndex(p => p.addr === walletAddr);
+  
   if (myRank === -1 || myRank >= 5) {
     alert("You are not in the top 5 this month. Keep playing to earn a spot!");
-    return;
+    return false;
   }
 
   const pts = players[myRank].pts;
