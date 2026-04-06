@@ -126,6 +126,10 @@ export async function claimNFT(walletAddr, addLog) {
   const players = getPlayerList(data);
 
   if (!walletAddr) { alert("Connect your wallet first to verify eligibility."); return; }
+  if (Date.now() < getMonthEnd().getTime()) {
+    addLog("NFT claims open when the countdown ends.", "info");
+    return false;
+  }
 
   const myRank = players.findIndex(p => p.addr === walletAddr);
   if (myRank === -1 || myRank >= 5) {

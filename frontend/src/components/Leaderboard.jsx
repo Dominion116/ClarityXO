@@ -7,6 +7,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [players, setPlayers] = useState([]);
   const [countdown, setCountdown] = useState("—");
   const isDeployer = walletAddr === CONFIG.contractAddress;
+  const claimReady = countdown === "00:00:00";
 
   const loadLeaderboard = () => {
     const d = loadLB();
@@ -21,6 +22,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
 
   useEffect(() => {
     loadLeaderboard();
+    setCountdown(formatCountdown(getMonthEnd() - Date.now()));
     const interval = setInterval(() => {
       const ms = getMonthEnd() - Date.now();
       setCountdown(formatCountdown(ms));
@@ -33,8 +35,13 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   };
 
   const handleClaim = () => {
-    claimNFT(walletAddr, addLog);
-    navigate('game'); // Original app navigated back to game upon claim click
+    if (!claimReady) {
+      addLog("NFT claims open when the countdown ends.", "info");
+      return;
+    }
+    if (claimNFT(walletAddr, addLog)) {
+      navigate('game'); // Original app navigated back to game upon claim click
+    }
   };
 
   if (!data) return null;
@@ -209,7 +216,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       {/* Actions */}
       <div className="lb-actions">
         {isDeployer && <button className="lb-action-btn" onClick={refresh}>↻ Refresh</button>}
-        <button className="lb-action-btn" onClick={handleClaim}>◈ Claim NFT (Top 5)</button>
+        <button className="lb-action-btn" onClick={handleClaim} disabled={!claimReady}>◈ Claim NFT (Top 5)</button>
         {isDeployer && <button className="lb-action-btn danger" onClick={handleClear}>Clear Data</button>}
       </div>
 
