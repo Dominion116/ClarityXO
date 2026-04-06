@@ -1,11 +1,12 @@
 import { openContractCall } from '@stacks/connect';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
-import { standardPrincipalCV, stringAsciiCV, uintCV } from '@stacks/transactions';
+import { uintCV } from '@stacks/transactions';
 import { CONFIG } from '../config';
 
 const LS_KEY = "clarityxo_lb_monthly_v1";
 const LS_HIST_KEY = "clarityxo_history_monthly_v1";
 const PTS = { win: 3, draw: 1, loss: 0 };
+const BLOCKS_PER_MONTH = 4320;
 
 export function getMonthKey(date = new Date()) {
   const year = date.getUTCFullYear();
@@ -20,6 +21,21 @@ export function getMonthEnd() {
   const lastDay = new Date(Date.UTC(year, month + 1, 0));
   const end = new Date(Date.UTC(year, month, lastDay.getUTCDate(), 23, 59, 59));
   return end;
+}
+
+// Calculate current month number from blocks
+export async function getCurrentMonthNumber() {
+  try {
+    const res = await fetch(
+      `https://stacks-node-api.${CONFIG.network}.stacks.co/v2/info`
+    );
+    const data = await res.json();
+    const burnHeight = data.burn_block_height || 0;
+    return Math.floor(burnHeight / BLOCKS_PER_MONTH);
+  } catch (e) {
+    console.error("Error fetching current month:", e);
+    return 0;
+  }
 }
 
 export function formatCountdown(ms) {
@@ -126,15 +142,13 @@ export async function claimNFT(walletAddr, addLog) {
       network,
       contractAddress: CONFIG.nftContractAddress,
       contractName: CONFIG.nftContractName,
-      functionName: "mint-trophy",
+      functionName: "claim-trophy",
       functionArgs: [
-        standardPrincipalCV(walletAddr),
-        stringAsciiCV(getMonthKey()),
-        uintCV(myRank + 1),
+        uintCV(await getCurrentMonthNumber() - 1),
       ],
       appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%22%230a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },
       onFinish: (d) => {
-        addLog(`NFT Trophy minted! TX: ${d.txId?.slice(0,16)}…`, "success");
+        addLog(`NFT Trophy claimed! TX: ${d.txId?.slice(0,16)}…`, "success");
       },
       onCancel: () => addLog("NFT claim cancelled.", "error"),
     });

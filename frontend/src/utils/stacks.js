@@ -1,5 +1,9 @@
 import { CONTRACT_ADDRESS, CONTRACT_NAME, NETWORK } from "../config";
 import { EMPTY } from "./constants";
+import { uintCV, principalCV, serializeCV } from "@stacks/transactions";
+
+// ── Constants ──────────────────────────────────────────────────────────────
+const BLOCKS_PER_MONTH = 4320; // ~1 block per 10 min → ~4320 per month
 
 // ── Stacks helpers ────────────────────────────────────────────────────────
 export async function callReadOnly(fnName, args = []) {
@@ -12,6 +16,26 @@ export async function callReadOnly(fnName, args = []) {
   });
   const json = await res.json();
   return json;
+}
+
+// ── Helper to encode CV arguments to hex format ─────────────────────────────
+export function encodeCVArg(cv) {
+  return "0x" + serializeCV(cv).toString("hex");
+}
+
+// ── Helper to get current month (blocks / BLOCKS_PER_MONTH)
+export async function getCurrentMonth() {
+  try {
+    const res = await fetch(
+      `https://stacks-node-api.${NETWORK}.stacks.co/v2/info`
+    );
+    const data = await res.json();
+    const burnHeight = data.burn_block_height || 0;
+    return Math.floor(burnHeight / BLOCKS_PER_MONTH);
+  } catch (e) {
+    console.error("Error fetching current month:", e);
+    return 0;
+  }
 }
 
 export function parseBoardFromClarityValue(cv) {

@@ -17,6 +17,7 @@ export default function App() {
   const [moveCount, setMoveCount] = useState(0);
   const [processing, setProcessing] = useState(false);
   const [walletAddr, setWalletAddr] = useState(null);
+  const [gameId, setGameId] = useState(null);
   const [logs, setLogs] = useState([]);
   const [newCells, setNewCells] = useState(new Set());
   const [winLine, setWinLine] = useState(null);
@@ -33,24 +34,55 @@ export default function App() {
 
   const syncChainState = useCallback(async () => {
     try {
-      const [boardRes, statusRes, movesRes] = await Promise.all([
-        callReadOnly("get-board-state"),
-        callReadOnly("get-game-status"),
-        callReadOnly("get-moves-count"),
+      if (!walletAddr) {
+        log("Wallet not connected. Cannot sync chain state.", "error");
+        return;
+      }
+
+      // Import here to avoid circular dependencies
+      const { uintCV, principalCV } = await import("@stacks/transactions");
+      const { encodeCVArg } = await import("./utils/stacks");
+
+      // Get the active game ID for this player
+      const activeGameRes = await callReadOnly("get-active-game", [
+        encodeCVArg(principalCV(walletAddr))
       ]);
-      const chainBoard = parseBoardFromClarityValue(boardRes);
-      const chainStatus = parseUintResult(statusRes);
-      const chainMoves = parseUintResult(movesRes);
-      setBoard(chainBoard);
-      setStatus(chainStatus);
-      setMoveCount(chainMoves);
-      if (chainStatus !== STATUS_ACTIVE) {
-        setWinLine(getWinningLine(chainBoard));
+      
+      const activeGameId = parseUintResult(activeGameRes);
+      if (activeGameId === 0) {
+        log("No active game found.", "info");
+        setGameId(null);
+        return;
+      }
+
+      setGameId(activeGameId);
+
+      // Get full game state
+      const fullGameRes = await callReadOnly("get-full-game-state", [
+        encodeCVArg(uintCV(activeGameId))
+      ]);
+
+      if (fullGameRes.result) {
+        // Parse the response: (ok { board: ..., status: ..., moves: ..., ... })
+        const chainBoard = parseBoardFromClarityValue({ result: fullGameRes.result.match(/board:\s*\(list[^)]*\)/)?.[0] || "(list u0 u0 u0 u0 u0 u0 u0 u0 u0)" });
+        const statusMatch = fullGameRes.result.match(/status:\s*u(\d+)/);
+        const movesMatch = fullGameRes.result.match(/moves:\s*u(\d+)/);
+
+        const chainStatus = statusMatch ? parseInt(statusMatch[1], 10) : STATUS_ACTIVE;
+        const chainMoves = movesMatch ? parseInt(movesMatch[1], 10) : 0;
+
+        setBoard(chainBoard);
+        setStatus(chainStatus);
+        setMoveCount(chainMoves);
+        if (chainStatus !== STATUS_ACTIVE) {
+          setWinLine(getWinningLine(chainBoard));
+        }
+        log("Chain state synced.", "success");
       }
     } catch (e) {
       log(`Sync failed: ${e.message}`, "error");
     }
-  }, [log]);
+  }, [log, walletAddr]);
 
   const connectWallet = useCallback(async () => {
     try {
