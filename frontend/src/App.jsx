@@ -206,6 +206,12 @@ export default function App() {
       return;
     }
 
+    // Check if game is started on-chain first
+    if (!gameStarted) {
+      log("Game not started on-chain yet. Please click 'Start Game' first.", "error");
+      return;
+    }
+
     // Submit to chain
     try {
       setProcessing(true);
@@ -232,7 +238,7 @@ export default function App() {
     } finally {
       setProcessing(false);
     }
-  }, [board, processing, status, walletAddr, log, syncChainState]);
+  }, [board, processing, status, gameStarted, walletAddr, log, syncChainState]);
 
   const resetLocal = useCallback(() => {
     setBoard(Array(9).fill(EMPTY));
