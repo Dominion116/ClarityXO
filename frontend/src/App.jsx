@@ -1,8 +1,11 @@
 import React, { useState, useCallback } from "react";
+import { showConnect, openContractCall } from "@stacks/connect";
+import { StacksTestnet, StacksMainnet } from "@stacks/network";
+import { uintCV, principalCV } from "@stacks/transactions";
 import { CONFIG } from "./config";
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from "./utils/constants";
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
-import { callReadOnly, parseBoardFromClarityValue, parseUintResult } from "./utils/stacks";
+import { callReadOnly, parseBoardFromClarityValue, parseUintResult, encodeCVArg } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
 import './index.css';
 
@@ -40,9 +43,7 @@ export default function App() {
         return;
       }
 
-      // Import here to avoid circular dependencies
-      const { uintCV, principalCV } = await import("@stacks/transactions");
-      const { encodeCVArg } = await import("./utils/stacks");
+      // Sync chain state
 
       // Get the active game ID for this player
       const activeGameRes = await callReadOnly("get-active-game", [
@@ -94,8 +95,6 @@ export default function App() {
 
     try {
       setProcessing(true);
-      const { openContractCall } = await import("@stacks/connect");
-      const { StacksTestnet, StacksMainnet } = await import("@stacks/network");
       const network = CONFIG.network === "mainnet" ? new StacksMainnet() : new StacksTestnet();
 
       await openContractCall({
@@ -125,7 +124,6 @@ export default function App() {
         log("No Stacks wallet detected. Install Leather (Hiro) wallet.", "error");
         return;
       }
-      const { showConnect } = await import("@stacks/connect");
       showConnect({
         appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%22%230a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },
         onFinish: (data) => {
@@ -215,9 +213,6 @@ export default function App() {
     // Submit to chain
     try {
       setProcessing(true);
-      const { openContractCall } = await import("@stacks/connect");
-      const { uintCV } = await import("@stacks/transactions");
-      const { StacksTestnet, StacksMainnet } = await import("@stacks/network");
       const network = CONFIG.network === "mainnet" ? new StacksMainnet() : new StacksTestnet();
 
       await openContractCall({
@@ -260,8 +255,6 @@ export default function App() {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
     try {
       setProcessing(true);
-      const { openContractCall } = await import("@stacks/connect");
-      const { StacksTestnet, StacksMainnet } = await import("@stacks/network");
       const network = CONFIG.network === "mainnet" ? new StacksMainnet() : new StacksTestnet();
       
       await openContractCall({
