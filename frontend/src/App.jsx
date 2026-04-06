@@ -240,7 +240,7 @@ export default function App() {
     }
   }, [board, processing, status, gameStarted, walletAddr, log, syncChainState]);
 
-  const resetLocal = useCallback(() => {
+  const resetLocal = useCallback(async () => {
     setBoard(Array(9).fill(EMPTY));
     setStatus(STATUS_ACTIVE);
     setMoveCount(0);
@@ -248,8 +248,13 @@ export default function App() {
     setNewCells(new Set());
     setGameStarted(false);
     setGameId(null);
-    log("Board reset locally. Game state cleared.", "info");
-  }, [log]);
+    log("Board reset locally. Starting new game on-chain...", "info");
+    
+    // Auto-start game on new game
+    if (walletAddr) {
+      setTimeout(() => startGame(), 500);
+    }
+  }, [log, walletAddr, startGame]);
 
   const resign = useCallback(async () => {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }

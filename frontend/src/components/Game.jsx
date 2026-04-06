@@ -101,9 +101,8 @@ export default function Game({
       </div>
 
       <div className="btn-row">
-        <button className="btn btn-primary" id="btn-start" onClick={startGame} disabled={processing || !walletAddr}>Start Game</button>
-        <button className="btn btn-primary" id="btn-new" onClick={resetLocal}>New Game</button>
-        <button className="btn btn-secondary" id="btn-resign" onClick={resign}>Resign</button>
+        <button className="btn btn-primary" id="btn-new" onClick={resetLocal} disabled={processing || !walletAddr}>New Game</button>
+        <button className="btn btn-secondary" id="btn-resign" onClick={resign} disabled={processing || !walletAddr}>Resign</button>
       </div>
 
       <div className="contract-info" id="contract-info">
