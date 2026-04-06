@@ -1,8 +1,8 @@
 export const CONFIG = {
-  contractAddress: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
-  contractName: "clarity-xo",
+  contractAddress: "ST30VGN68PSGVWGNMD0HH2WQMM5T486EK3WBNTHCY",
+  contractName: "clarity-xo-game",
   network: "testnet",
-  nftContractAddress: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
+  nftContractAddress: "ST30VGN68PSGVWGNMD0HH2WQMM5T486EK3WBNTHCY",
   nftContractName: "clarity-xo-trophy",
 };
 

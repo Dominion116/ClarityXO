@@ -1,21 +1,21 @@
-;; ═══════════════════════════════════════════════════════════════════════════
-;;  ClarityXO — GAME CONTRACT
+;; 
+;;  ClarityXO  GAME CONTRACT
 ;;  clarity-xo-game.clar
 ;;
 ;;  Responsibilities:
-;;    · Multi-session tic-tac-toe (one active game per player at a time)
-;;    · On-chain AI opponent (same priority algorithm as original)
-;;    · Monthly points ledger: win=3, draw=1, loss=0
-;;    · Read-only helpers the NFT contract and frontend rely on
+;;     Multi-session tic-tac-toe (one active game per player at a time)
+;;     On-chain AI opponent (same priority algorithm as original)
+;;     Monthly points ledger: win=3, draw=1, loss=0
+;;     Read-only helpers the NFT contract and frontend rely on
 ;;
 ;;  NOT in this contract:
-;;    · NFT minting / claiming (see clarity-xo-trophy.clar)
-;; ═══════════════════════════════════════════════════════════════════════════
+;;     NFT minting / claiming (see clarity-xo-trophy.clar)
+;; 
 
 
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 ;;  CONSTANTS
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (define-constant contract-owner tx-sender)
 
@@ -44,13 +44,13 @@
 (define-constant PTS_DRAW u1)
 (define-constant PTS_LOSS u0)
 
-;; ~1 block per 10 min → ~4320 blocks per month (30 days)
+;; ~1 block per 10 min  ~4320 blocks per month (30 days)
 (define-constant BLOCKS_PER_MONTH u4320)
 
 
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 ;;  GAME STATE  (keyed by game-id)
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (define-data-var next-game-id uint u1)
 
@@ -64,9 +64,9 @@
 (define-map player-active-game principal uint)
 
 
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 ;;  MONTHLY LEADERBOARD
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (define-map monthly-stats
   { month: uint, player: principal }
@@ -79,9 +79,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  READ-ONLY — month helpers
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
+;;  READ-ONLY  month helpers
+;; 
 
 (define-read-only (current-month)
   (/ burn-block-height BLOCKS_PER_MONTH)
@@ -103,9 +103,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  READ-ONLY — game helpers
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
+;;  READ-ONLY  game helpers
+;; 
 
 (define-read-only (get-game-board (game-id uint))
   (ok (default-to
@@ -144,9 +144,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  PRIVATE — board helpers
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
+;;  PRIVATE  board helpers
+;; 
 
 (define-private (get-index (row uint) (col uint))
   (+ (* row u3) col)
@@ -193,9 +193,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  PRIVATE — AI helpers
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
+;;  PRIVATE  AI helpers
+;; 
 
 (define-private (would-win-on (board (list 9 uint)) (index uint) (player uint))
   (is-eq (check-winner-on (set-cell-in board index player)) player)
@@ -267,9 +267,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  PRIVATE — record points
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
+;;  PRIVATE  record points
+;; 
 
 (define-private (record-points (player principal) (pts uint) (outcome (string-ascii 4)))
   (let (
@@ -296,9 +296,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  PUBLIC — start-game
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
+;;  PUBLIC  start-game
+;; 
 
 (define-public (start-game)
   (let (
@@ -321,11 +321,11 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  PUBLIC — make-move
+;; 
+;;  PUBLIC  make-move
 ;;  Returns { game-id, status, ai-move }
 ;;  ai-move = u999 when the game ended before the AI played
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (define-public (make-move (row uint) (col uint))
   (let (
@@ -352,7 +352,7 @@
         (moves-x  (+ moves u1))
         (winner-x (check-winner-on board-x))
       )
-        ;; ── Player wins ────────────────────────────────────────────
+        ;;  Player wins 
         (if (is-eq winner-x PLAYER_X)
           (begin
             (map-set game-boards   game-id board-x)
@@ -362,7 +362,7 @@
             (record-points player PTS_WIN "win")
             (ok { game-id: game-id, status: STATUS_X_WON, ai-move: u999 })
           )
-          ;; ── Draw after player move ─────────────────────────────
+          ;;  Draw after player move 
           (if (is-eq moves-x u9)
             (begin
               (map-set game-boards   game-id board-x)
@@ -372,7 +372,7 @@
               (record-points player PTS_DRAW "draw")
               (ok { game-id: game-id, status: STATUS_DRAW, ai-move: u999 })
             )
-            ;; ── AI move ───────────────────────────────────────────
+            ;;  AI move 
             (let (
               (ai-idx   (choose-ai-move-on board-x))
               (board-o  (set-cell-in board-x ai-idx PLAYER_O))
@@ -416,9 +416,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  PUBLIC — resign-game
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
+;;  PUBLIC  resign-game
+;; 
 
 (define-public (resign-game)
   (let (

@@ -1,32 +1,32 @@
-;; ═══════════════════════════════════════════════════════════════════════════
-;;  ClarityXO — TROPHY NFT CONTRACT
+;; 
+;;  ClarityXO  TROPHY NFT CONTRACT
 ;;  clarity-xo-trophy.clar
 ;;
 ;;  Responsibilities:
-;;    · SIP-009 compliant NFT (clarity-xo-trophy)
-;;    · Owner takes a monthly snapshot, whitelists the top-5 players
+;;     SIP-009 compliant NFT (clarity-xo-trophy)
+;;     Owner takes a monthly snapshot, whitelists the top-5 players
 ;;      for that month via `set-month-winners`
-;;    · Each whitelisted player claims their own NFT by calling
+;;     Each whitelisted player claims their own NFT by calling
 ;;      `claim-trophy`, paying a small STX mint fee to the owner
-;;    · One trophy per player per month — no double claims
+;;     One trophy per player per month  no double claims
 ;;
 ;;  Deploy AFTER clarity-xo-game.clar.
 ;;  Replace GAME_CONTRACT_PRINCIPAL below with the deployed address.
-;; ═══════════════════════════════════════════════════════════════════════════
+;; 
 
 
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 ;;  TRAIT IMPLEMENTATION  (SIP-009)
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (impl-trait .nft-trait.nft-trait)
 
 (define-non-fungible-token clarity-xo-trophy uint)
 
 
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 ;;  CONSTANTS
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (define-constant contract-owner tx-sender)
 
@@ -43,21 +43,21 @@
 ;; Owner can update this via set-mint-fee
 (define-data-var mint-fee uint u500000)
 
-;; ~4320 blocks per month (30 days × 24 h × 6 blocks/h)
+;; ~4320 blocks per month (30 days  24 h  6 blocks/h)
 (define-constant BLOCKS_PER_MONTH u4320)
 
 ;; Token counter
 (define-data-var last-token-id uint u0)
 
-;; Base metadata URI — swap for your IPFS/Arweave gateway
+;; Base metadata URI  swap for your IPFS/Arweave gateway
 (define-data-var base-uri (string-ascii 80) "https://clarityxo.xyz/nft/")
 
 
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 ;;  STORAGE
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
-;; month-id → list of up to 5 whitelisted principals (set by owner)
+;; month-id  list of up to 5 whitelisted principals (set by owner)
 (define-map month-winners uint (list 5 principal))
 
 ;; tracks whether a player has claimed their trophy for a given month
@@ -73,9 +73,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 ;;  READ-ONLY HELPERS
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (define-read-only (current-month)
   (/ burn-block-height BLOCKS_PER_MONTH)
@@ -119,9 +119,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  OWNER — admin functions
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
+;;  OWNER  admin functions
+;; 
 
 ;; Called by owner at end of each month after reading the game contract's
 ;; monthly-stats map off-chain and determining the top 5.
@@ -155,8 +155,8 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
-;;  PUBLIC — claim-trophy
+;; 
+;;  PUBLIC  claim-trophy
 ;;
 ;;  Called by the player themselves.
 ;;  Steps:
@@ -165,7 +165,7 @@
 ;;    3. Caller must not have already claimed.
 ;;    4. Caller must transfer the mint fee in the same transaction.
 ;;       The fee goes directly to the contract owner.
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (define-public (claim-trophy (month uint))
   (let (
@@ -184,7 +184,7 @@
       (is-none (map-get? claimed { month: month, player: player }))
       err-already-claimed)
 
-    ;; Collect mint fee from the caller → send to contract owner
+    ;; Collect mint fee from the caller  send to contract owner
     (match (stx-transfer? fee player contract-owner)
       success
         (let (
@@ -203,9 +203,9 @@
 )
 
 
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 ;;  SIP-009 INTERFACE
-;; ───────────────────────────────────────────────────────────────────────────
+;; 
 
 (define-read-only (get-last-token-id)
   (ok (var-get last-token-id))
