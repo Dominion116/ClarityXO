@@ -1,23 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { loadLB, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
+import { loadLB, fetchLeaderboardFromContract, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
 import { CONFIG } from '../config';
 
 export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [data, setData] = useState(null);
   const [players, setPlayers] = useState([]);
   const [countdown, setCountdown] = useState("—");
+  const [loading, setLoading] = useState(false);
   const isDeployer = walletAddr === CONFIG.contractAddress;
   const claimReady = countdown === "00:00:00";
 
-  const loadLeaderboard = () => {
-    const d = loadLB();
-    setData(d);
-    setPlayers(getPlayerList(d));
+  const loadLeaderboard = async () => {
+    try {
+      setLoading(true);
+      
+      // Try to load from contract first
+      const contractData = await fetchLeaderboardFromContract();
+      if (contractData && Object.keys(contractData.players).length > 0) {
+        setData(contractData);
+        setPlayers(getPlayerList(contractData));
+        return;
+      }
+      
+      // Fallback to localStorage
+      const localData = loadLB();
+      setData(localData);
+      setPlayers(getPlayerList(localData));
+    } catch (e) {
+      console.error("Error loading leaderboard:", e);
+      // Fallback to localStorage on error
+      const localData = loadLB();
+      setData(localData);
+      setPlayers(getPlayerList(localData));
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const refresh = () => {
+  const refresh = async () => {
     if (!isDeployer) return;
-    loadLeaderboard();
+    await loadLeaderboard();
   };
 
   useEffect(() => {

@@ -1,7 +1,8 @@
 import { openContractCall } from '@stacks/connect';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
-import { uintCV } from '@stacks/transactions';
+import { uintCV, principalCV } from '@stacks/transactions';
 import { CONFIG } from '../config';
+import { callReadOnly, encodeCVArg, getCurrentMonth } from './stacks';
 
 const LS_KEY = "clarityxo_lb_monthly_v1";
 const LS_HIST_KEY = "clarityxo_history_monthly_v1";
@@ -58,10 +59,58 @@ export function loadLB() {
       if (data && data.month && Object.keys(data.players || {}).length > 0) {
         archiveMonth(data);
       }
-      return { month: thisMonth, players: {} };
+      return { month: thisMonth, players: {}, _source: "local" };
     }
-    return data;
-  } catch { return { month: getMonthKey(), players: {} }; }
+    return { ...data, _source: "local" };
+  } catch { return { month: getMonthKey(), players: {}, _source: "local" }; }
+}
+
+// Fetch leaderboard stats from the smart contract
+export async function fetchLeaderboardFromContract() {
+  try {
+    const month = await getCurrentMonth();
+    
+    // Get list of known players from localStorage (historical cache)
+    const hist = JSON.parse(localStorage.getItem(LS_HIST_KEY) || "[]");
+    const knownPlayers = new Set();
+    hist.forEach(h => knownPlayers.add(h.addr));
+    
+    // Also check current month's local data
+    const localData = loadLB();
+    Object.keys(localData.players || {}).forEach(addr => knownPlayers.add(addr));
+    
+    // Query each known player's stats from contract
+    const contractPlayers = {};
+    for (const addr of knownPlayers) {
+      if (addr === "anonymous") continue; // Skip anonymous in contract queries
+      
+      try {
+        const response = await callReadOnly("get-my-stats-this-month", [
+          encodeCVArg(principalCV(addr))
+        ]);
+        
+        if (response.result && response.result.includes("ok")) {
+          // Parse the contract response: (ok { pts: u..., wins: u..., draws: u..., losses: u... })
+          const pts = parseInt(response.result.match(/pts:\s*u(\d+)/)?.[1] || "0", 10);
+          const wins = parseInt(response.result.match(/wins:\s*u(\d+)/)?.[1] || "0", 10);
+          const draws = parseInt(response.result.match(/draws:\s*u(\d+)/)?.[1] || "0", 10);
+          const losses = parseInt(response.result.match(/losses:\s*u(\d+)/)?.[1] || "0", 10);
+          
+          if (pts > 0 || wins > 0 || draws > 0 || losses > 0) {
+            contractPlayers[addr] = { pts, wins, draws, losses };
+          }
+        }
+      } catch (e) {
+        console.error(`Error fetching stats for ${addr}:`, e);
+      }
+    }
+    
+    const thisMonth = getMonthKey();
+    return { month: thisMonth, players: contractPlayers, _source: "contract" };
+  } catch (e) {
+    console.error("Error fetching from contract:", e);
+    return null;
+  }
 }
 
 export function saveLB(data) {
