@@ -114,7 +114,8 @@ export function getPlayerList(data) {
     .sort((a, b) => b.pts - a.pts || b.wins - a.wins || a.losses - b.losses);
 }
 
-export function clearLeaderboardData() {
+export function clearLeaderboardData(walletAddr) {
+  if (walletAddr !== CONFIG.contractAddress) return false;
   if (!window.confirm("Clear all leaderboard data for this month? This cannot be undone.")) return false;
   localStorage.removeItem(LS_KEY);
   return true;

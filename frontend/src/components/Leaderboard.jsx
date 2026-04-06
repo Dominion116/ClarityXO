@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { loadLB, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
+import { CONFIG } from '../config';
 
 export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [data, setData] = useState(null);
   const [players, setPlayers] = useState([]);
   const [countdown, setCountdown] = useState("—");
+  const isDeployer = walletAddr === CONFIG.contractAddress;
 
-  const refresh = () => {
+  const loadLeaderboard = () => {
     const d = loadLB();
     setData(d);
     setPlayers(getPlayerList(d));
   };
 
+  const refresh = () => {
+    if (!isDeployer) return;
+    loadLeaderboard();
+  };
+
   useEffect(() => {
-    refresh();
+    loadLeaderboard();
     const interval = setInterval(() => {
       const ms = getMonthEnd() - Date.now();
       setCountdown(formatCountdown(ms));
@@ -22,7 +29,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   }, []);
 
   const handleClear = () => {
-    if (clearLeaderboardData()) refresh();
+    if (clearLeaderboardData(walletAddr)) refresh();
   };
 
   const handleClaim = () => {
@@ -201,9 +208,9 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
 
       {/* Actions */}
       <div className="lb-actions">
-        <button className="lb-action-btn" onClick={refresh}>↻ Refresh</button>
+        {isDeployer && <button className="lb-action-btn" onClick={refresh}>↻ Refresh</button>}
         <button className="lb-action-btn" onClick={handleClaim}>◈ Claim NFT (Top 5)</button>
-        <button className="lb-action-btn danger" onClick={handleClear}>Clear Data</button>
+        {isDeployer && <button className="lb-action-btn danger" onClick={handleClear}>Clear Data</button>}
       </div>
 
       <div className="footer">
