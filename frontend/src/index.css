@@ -1,5 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html { overflow-x: hidden; }
+
 :root {
   --bg:      #0a0a0a;
   --surface: #111;
@@ -19,7 +21,9 @@
 }
 
 body, #root {
-  width: 100%;
+  width: 100vw;
+  max-width: 100%;
+  overflow-x: hidden;
   background: var(--bg);
   color: var(--text);
   font-family: var(--mono);
@@ -34,7 +38,7 @@ body, #root {
 ::-webkit-scrollbar-thumb { background: var(--ghost); }
 
 /* ── PAGE TRANSITIONS ─────────────────────────────── */
-.page { display: none; width: 100%; }
+.page { display: none; width: 100%; max-width: 100%; overflow-x: hidden; box-sizing: border-box; }
 .page.active { display: flex; flex-direction: column; align-items: center; animation: pageFadeIn 0.2s ease; }
 
 @keyframes pageFadeIn {
@@ -45,6 +49,7 @@ body, #root {
 /* ── HEADER ───────────────────────────────────────── */
 header {
   width: 100%;
+  max-width: 100%;
   border-bottom: 1px solid var(--border2);
   padding: 0 40px;
   display: flex;
@@ -52,6 +57,8 @@ header {
   justify-content: space-between;
   position: sticky; top: 0;
   background: var(--bg); z-index: 100;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 .header-left { display: flex; align-items: stretch; }
 .logo {
@@ -182,10 +189,10 @@ svg.mark { overflow: visible; }
   color: var(--ghost); border: 1px solid var(--border); border-top: none; word-break: break-all;
 }
 
-.log-wrap { width: 100%; margin-top: 16px; }
+.log-wrap { width: 100%; margin-top: 16px; box-sizing: border-box; }
 .log-title { font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--ghost); padding-bottom: 6px; }
-.log { border: 1px solid var(--border); max-height: 120px; overflow-y: auto; }
-.log-line { padding: 6px 14px; font-size: 10px; letter-spacing: .1em; border-bottom: 1px solid var(--bg); animation: pageFadeIn 0.2s; }
+.log { border: 1px solid var(--border); max-height: 120px; overflow-y: auto; overflow-x: hidden; width: 100%; box-sizing: border-box; }
+.log-line { padding: 6px 14px; font-size: 10px; letter-spacing: .1em; border-bottom: 1px solid var(--bg); animation: pageFadeIn 0.2s; box-sizing: border-box; word-break: break-word; }
 .log-line.info    { color: var(--muted); }
 .log-line.success { color: var(--green); }
 .log-line.error   { color: var(--red); }
@@ -410,83 +417,92 @@ svg.mark { overflow: visible; }
 
 /* Mobile: < 480px (small phones) */
 @media (max-width: 479px) {
-  header { padding: 0 12px; }
-  .header-left { flex: 1; }
-  .logo { font-size: 11px; padding-right: 12px; letter-spacing: .25em; }
-  nav { flex: 1; }
-  .nav-item { padding: 0 10px; font-size: 9px; letter-spacing: .15em; }
+  html, body, #root { width: 100vw; max-width: 100%; overflow-x: hidden; }
+  
+  header { padding: 0 12px; overflow-x: hidden; }
+  .header-left { flex: 1; min-width: 0; }
+  .logo { font-size: 11px; padding-right: 12px; letter-spacing: .25em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  nav { flex: 1; min-width: 0; }
+  .nav-item { padding: 0 10px; font-size: 9px; letter-spacing: .15em; white-space: nowrap; }
   .badge { font-size: 8px; padding: 3px 8px; }
   
-  #page-game { padding: 16px 8px; max-width: 100%; }
-  .eyebrow { font-size: 9px; margin-bottom: 16px; }
-  .wallet-bar { padding: 8px 10px; font-size: 9px; flex-wrap: wrap; }
+  .page { width: 100vw; max-width: 100%; padding: 0; box-sizing: border-box; }
+  #page-game { padding: 12px; max-width: 100vw; width: 100vw; box-sizing: border-box; }
+  .eyebrow { font-size: 9px; margin-bottom: 12px; }
+  .wallet-bar { padding: 8px 10px; font-size: 9px; flex-wrap: wrap; width: 100%; max-width: 100%; box-sizing: border-box; }
   .wallet-bar-btns { width: 100%; gap: 4px; margin-top: 4px; }
-  .ghost-btn { padding: 5px 10px; font-size: 8px; flex: 1; }
+  .ghost-btn { padding: 5px 10px; font-size: 8px; flex: 1; min-width: 0; }
   
-  .status-bar { padding: 10px 10px; font-size: 9px; }
+  .status-bar { padding: 10px 10px; font-size: 9px; width: 100%; max-width: 100%; box-sizing: border-box; }
   .move-count { font-size: 8px; }
   
-  .board { max-width: 100%; }
+  .board { max-width: calc(100vw - 24px); margin: 0 auto; }
   svg.mark { width: 100%; height: 100%; }
   .x-line1, .x-line2 { stroke-width: 2; }
   
-  .info-row { font-size: 9px; }
-  .info-cell { padding: 8px 10px; font-size: 8px; }
+  .info-row { font-size: 9px; width: 100%; max-width: 100%; box-sizing: border-box; }
+  .info-cell { padding: 8px 10px; font-size: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .info-cell .mark-x, .info-cell .mark-o { font-size: 10px; }
   
-  .btn { padding: 12px; font-size: 9px; }
-  .contract-info { font-size: 8px; padding: 8px 10px; }
+  .btn-row { width: 100%; max-width: 100%; box-sizing: border-box; }
+  .btn { padding: 12px; font-size: 9px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .contract-info { font-size: 8px; padding: 8px 10px; width: 100%; max-width: 100%; box-sizing: border-box; }
   
+  .log-wrap { width: 100%; max-width: 100%; margin-top: 12px; box-sizing: border-box; }
   .log-title { font-size: 8px; }
-  .log-line { padding: 5px 10px; font-size: 9px; }
+  .log { max-height: 80px; width: 100%; max-width: 100%; box-sizing: border-box; }
+  .log-line { padding: 5px 10px; font-size: 9px; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; }
   
-  #page-leaderboard { padding: 16px 8px; max-width: 100%; }
-  .nft-banner { padding: 0; }
-  .nft-banner-inner { padding: 12px 12px; flex-direction: column; gap: 8px; }
-  .nft-icon { width: 28px; height: 28px; font-size: 12px; }
+  footer { width: 100%; max-width: 100%; box-sizing: border-box; }
+  #page-leaderboard { padding: 12px; max-width: 100vw; width: 100vw; box-sizing: border-box; }
+  .nft-banner { padding: 0; width: 100%; max-width: 100%; box-sizing: border-box; }
+  .nft-banner-inner { padding: 12px 12px; flex-direction: column; gap: 8px; width: 100%; box-sizing: border-box; }
+  .nft-icon { width: 28px; height: 28px; font-size: 12px; flex-shrink: 0; }
   .nft-label { font-size: 8px; }
   .nft-desc { font-size: 9px; }
   .nft-timer-label { font-size: 8px; }
   .nft-timer { font-size: 14px; }
-  .nft-qualifiers { padding: 8px 10px; gap: 4px; flex-wrap: wrap; }
-  .nft-q-label { font-size: 8px; }
-  .nft-slot { min-width: calc(50% - 4px); height: 24px; font-size: 8px; padding: 0 6px; }
+  .nft-banner-left { width: 100%; }
+  .nft-qualifiers { padding: 8px 10px; gap: 4px; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
+  .nft-q-label { font-size: 8px; flex-shrink: 0; }
+  .nft-slot { min-width: calc(50% - 4px); height: 24px; font-size: 8px; padding: 0 6px; box-sizing: border-box; }
   
-  .lb-header { padding: 10px 12px; }
+  .lb-header { padding: 10px 12px; width: 100%; box-sizing: border-box; }
   .lb-title { font-size: 10px; }
   .lb-week { font-size: 8px; }
   .lb-meta { font-size: 8px; }
   
-  .pts-legend { flex-direction: column; }
-  .pts-item { min-width: 100%; padding: 8px 10px; }
+  .pts-legend { flex-direction: column; width: 100%; box-sizing: border-box; }
+  .pts-item { min-width: 100%; padding: 8px 10px; box-sizing: border-box; }
   .pts-badge { font-size: 12px; }
   .pts-detail { font-size: 8px; }
   
-  .lb-stats { grid-template-columns: repeat(2, 1fr); gap: 0; }
-  .lb-stat { padding: 10px 12px; }
+  .lb-stats { grid-template-columns: repeat(2, 1fr); gap: 0; width: 100%; box-sizing: border-box; }
+  .lb-stat { padding: 10px 12px; box-sizing: border-box; }
   .lb-stat-label { font-size: 8px; margin-bottom: 4px; }
   .lb-stat-val { font-size: 18px; }
   .lb-stat:nth-child(2) { border-right: none; }
   .lb-stat:nth-child(3) { border-right: 1px solid var(--border); border-top: 1px solid var(--border); }
   .lb-stat:nth-child(4) { border-top: 1px solid var(--border); }
   
-  .lb-table { font-size: 9px; }
+  .lb-table { font-size: 9px; width: 100%; box-sizing: border-box; }
   .lb-table thead { font-size: 8px; }
-  .lb-table th { padding: 8px 10px; font-size: 8px; }
-  .lb-table td { padding: 10px 8px; font-size: 9px; }
+  .lb-table th { padding: 8px 10px; font-size: 8px; box-sizing: border-box; }
+  .lb-table td { padding: 10px 8px; font-size: 9px; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .lb-table th:nth-child(n+4), .lb-table td:nth-child(n+4) { display: none; }
-  .lb-medal { width: 20px; height: 20px; font-size: 8px; }
-  .nft-pip { width: 4px; height: 4px; }
+  .lb-medal { width: 20px; height: 20px; font-size: 8px; flex-shrink: 0; }
+  .nft-pip { width: 4px; height: 4px; flex-shrink: 0; }
   
-  .lb-empty { padding: 32px 12px; font-size: 9px; }
-  .lb-actions { flex-wrap: wrap; }
-  .lb-action-btn { flex: 1; min-width: calc(50% - 0.5px); padding: 10px; font-size: 8px; }
+  .lb-empty { padding: 32px 12px; font-size: 9px; width: 100%; box-sizing: border-box; }
+  .lb-actions { flex-wrap: wrap; width: 100%; box-sizing: border-box; }
+  .lb-action-btn { flex: 1; min-width: calc(50% - 0.5px); padding: 10px; font-size: 8px; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
-  .footer { margin: 16px 0 12px; font-size: 8px; }
+  .footer { margin: 12px 0 8px; font-size: 8px; width: 100%; box-sizing: border-box; }
 }
 
 /* Tablet: 480px - 1024px */
 @media (min-width: 480px) and (max-width: 1024px) {
+  .page { max-width: 100%; box-sizing: border-box; }
   header { padding: 0 24px; }
   .logo { font-size: 12px; padding-right: 24px; }
   .nav-item { padding: 0 16px; font-size: 9px; }
@@ -541,6 +557,7 @@ svg.mark { overflow: visible; }
 
 /* Desktop: > 1024px */
 @media (min-width: 1025px) {
+  .page { max-width: 100%; box-sizing: border-box; }
   header { padding: 0 40px; }
   .logo { font-size: 13px; padding-right: 32px; }
   .nav-item { padding: 0 22px; font-size: 10px; }
