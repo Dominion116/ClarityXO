@@ -18,6 +18,7 @@ export default function App() {
   const [processing, setProcessing] = useState(false);
   const [walletAddr, setWalletAddr] = useState(null);
   const [gameId, setGameId] = useState(null);
+  const [gameStarted, setGameStarted] = useState(false);
   const [logs, setLogs] = useState([]);
   const [newCells, setNewCells] = useState(new Set());
   const [winLine, setWinLine] = useState(null);
@@ -205,7 +206,9 @@ export default function App() {
     setMoveCount(0);
     setWinLine(null);
     setNewCells(new Set());
-    log("Board reset locally. Note: on-chain state is unchanged.", "info");
+    setGameStarted(false);
+    setGameId(null);
+    log("Board reset locally. Game state cleared.", "info");
   }, [log]);
 
   const resign = useCallback(async () => {
@@ -267,6 +270,7 @@ export default function App() {
           winLine={winLine}
           syncChainState={syncChainState}
           connectWallet={connectWallet}
+          startGame={startGame}
           makeMove={makeMove}
           resetLocal={resetLocal}
           resign={resign}

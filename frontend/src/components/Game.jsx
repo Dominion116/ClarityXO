@@ -13,6 +13,7 @@ export default function Game({
   winLine,
   syncChainState,
   connectWallet,
+  startGame,
   makeMove,
   resetLocal,
   resign
