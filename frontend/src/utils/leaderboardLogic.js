@@ -64,7 +64,22 @@ export async function fetchLeaderboardFromContract() {
 }
 
 export function recordResult(addr, outcome) {
-  return PTS[outcome];
+  const walletAddr = addr || 'anonymous';
+  const earned = PTS[outcome];
+
+  fetch(apiUrl('/api/leaderboard/result'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      walletAddr,
+      outcome,
+      month: getMonthKey(),
+    }),
+  }).catch(err => {
+    console.error('Failed to persist leaderboard result:', err);
+  });
+
+  return earned;
 }
 
 export function getPlayerList(data) {
@@ -83,7 +98,14 @@ export function getPlayerList(data) {
 export function clearLeaderboardData(walletAddr) {
   if (walletAddr !== CONFIG.contractAddress) return false;
   if (!window.confirm("Clear all leaderboard data for this month? This cannot be undone. Contact contract owner.")) return false;
-  console.log('Leaderboard clear requested by deployer');
+
+  const month = getMonthKey();
+  fetch(apiUrl(`/api/leaderboard?month=${encodeURIComponent(month)}`), {
+    method: 'DELETE',
+  }).catch(err => {
+    console.error('Failed to clear leaderboard on backend:', err);
+  });
+
   return true;
 }
 
