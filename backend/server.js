@@ -81,6 +81,15 @@ app.post('/api/leaderboard/result', (req, res) => {
   return res.json({ ok: true, earned: ptsMap[outcome], month: monthKey, stats: p });
 });
 
+app.delete('/api/leaderboard', (req, res) => {
+  const { month } = req.query;
+  const monthKey = month || getMonthKey();
+  const store = readStore();
+  store.months[monthKey] = { players: {} };
+  writeStore(store);
+  res.json({ ok: true, month: monthKey });
+});
+
 app.listen(PORT, () => {
   console.log(`Leaderboard backend listening on :${PORT}`);
 });
