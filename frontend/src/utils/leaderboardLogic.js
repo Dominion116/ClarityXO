@@ -9,6 +9,15 @@ const PTS = { win: 3, draw: 1, loss: 0 };
 // Track players discovered this session (from game results)
 let discoveredPlayers = new Set();
 
+const MOCK_LEADERBOARD_PLAYERS = {
+  SP2C2YB2M7WZ8Q4P8A9VQYQMW9C03R9X62H2W8A1K: { pts: 41, wins: 13, draws: 2, losses: 4 },
+  SP1A9H5Y3N7Q4Z6P2K8T9R5M1X3C7V9B2D8E4F6G: { pts: 36, wins: 11, draws: 3, losses: 5 },
+  SP3D6K9Q2R4V7M1X8P5A2Y6C9N3B7H4T1W8Z5J2L: { pts: 31, wins: 9, draws: 4, losses: 6 },
+  SP18W6Q3N9R2D5X7V4A1K8M2Y5C9P3H6T4B7Z1F8: { pts: 27, wins: 8, draws: 3, losses: 7 },
+  SP2Z4P8M1C7V3B9N6D2A5X8Y1Q4R7T3H9K6W2J5L: { pts: 22, wins: 6, draws: 4, losses: 8 },
+  SP35R1T8Y4U7I2O9P6A3S5D8F1G4H7J2K9L6Z3X5C: { pts: 17, wins: 5, draws: 2, losses: 9 },
+};
+
 export function recordPlayerDiscovered(addr) {
   if (addr && addr !== 'anonymous') {
     discoveredPlayers.add(addr);
@@ -52,6 +61,11 @@ export function formatCountdown(ms) {
 // Fetch leaderboard stats from the smart contract
 export async function fetchLeaderboardFromContract() {
   try {
+    // Demo mode fallback when there are no discovered on-chain players yet.
+    if (discoveredPlayers.size === 0) {
+      return { players: MOCK_LEADERBOARD_PLAYERS, _source: 'mock' };
+    }
+
     // Query each discovered player's stats from contract
     const contractPlayers = {};
     
@@ -77,10 +91,14 @@ export async function fetchLeaderboardFromContract() {
       }
     }
     
+    if (Object.keys(contractPlayers).length === 0) {
+      return { players: MOCK_LEADERBOARD_PLAYERS, _source: 'mock' };
+    }
+
     return { players: contractPlayers, _source: "contract" };
   } catch (e) {
     console.error("Error fetching from contract:", e);
-    return { players: {}, _source: "contract" };
+    return { players: MOCK_LEADERBOARD_PLAYERS, _source: 'mock' };
   }
 }
 
