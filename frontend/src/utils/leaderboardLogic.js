@@ -2,12 +2,18 @@ import { openContractCall } from '@stacks/connect';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
 import { uintCV, principalCV } from '@stacks/transactions';
 import { CONFIG } from '../config';
-import { callReadOnly, encodeCVArg, getCurrentMonth } from './stacks';
+import { callReadOnly, encodeCVArg } from './stacks';
 
 const PTS = { win: 3, draw: 1, loss: 0 };
 
 // Track players discovered this session (from game results)
 let discoveredPlayers = new Set();
+
+export function recordPlayerDiscovered(addr) {
+  if (addr && addr !== 'anonymous') {
+    discoveredPlayers.add(addr);
+  }
+}
 
 export function getMonthEnd() {
   const now = new Date();
