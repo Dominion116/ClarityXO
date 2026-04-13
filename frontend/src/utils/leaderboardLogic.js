@@ -1,27 +1,18 @@
 import { openContractCall } from '@stacks/connect';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
-import { uintCV, principalCV } from '@stacks/transactions';
+import { uintCV } from '@stacks/transactions';
 import { CONFIG } from '../config';
-import { callReadOnly, encodeCVArg } from './stacks';
 
 const PTS = { win: 3, draw: 1, loss: 0 };
 
-// Track players discovered this session (from game results)
-let discoveredPlayers = new Set();
+function getMonthKey(date = new Date()) {
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth() + 1;
+  return `${year}-${String(month).padStart(2, '0')}`;
+}
 
-const MOCK_LEADERBOARD_PLAYERS = {
-  SP2C2YB2M7WZ8Q4P8A9VQYQMW9C03R9X62H2W8A1K: { pts: 41, wins: 13, draws: 2, losses: 4 },
-  SP1A9H5Y3N7Q4Z6P2K8T9R5M1X3C7V9B2D8E4F6G: { pts: 36, wins: 11, draws: 3, losses: 5 },
-  SP3D6K9Q2R4V7M1X8P5A2Y6C9N3B7H4T1W8Z5J2L: { pts: 31, wins: 9, draws: 4, losses: 6 },
-  SP18W6Q3N9R2D5X7V4A1K8M2Y5C9P3H6T4B7Z1F8: { pts: 27, wins: 8, draws: 3, losses: 7 },
-  SP2Z4P8M1C7V3B9N6D2A5X8Y1Q4R7T3H9K6W2J5L: { pts: 22, wins: 6, draws: 4, losses: 8 },
-  SP35R1T8Y4U7I2O9P6A3S5D8F1G4H7J2K9L6Z3X5C: { pts: 17, wins: 5, draws: 2, losses: 9 },
-};
-
-export function recordPlayerDiscovered(addr) {
-  if (addr && addr !== 'anonymous') {
-    discoveredPlayers.add(addr);
-  }
+function apiUrl(path) {
+  return `${CONFIG.leaderboardApiBaseUrl}${path}`;
 }
 
 export function getMonthEnd() {
@@ -61,50 +52,18 @@ export function formatCountdown(ms) {
 // Fetch leaderboard stats from the smart contract
 export async function fetchLeaderboardFromContract() {
   try {
-    // Demo mode fallback when there are no discovered on-chain players yet.
-    if (discoveredPlayers.size === 0) {
-      return { players: MOCK_LEADERBOARD_PLAYERS, _source: 'mock' };
-    }
-
-    // Query each discovered player's stats from contract
-    const contractPlayers = {};
-    
-    for (const addr of discoveredPlayers) {
-      try {
-        const response = await callReadOnly("get-my-stats-this-month", [
-          encodeCVArg(principalCV(addr))
-        ]);
-        
-        if (response.result && response.result.includes("ok")) {
-          // Parse the contract response: (ok { pts: u..., wins: u..., draws: u..., losses: u... })
-          const pts = parseInt(response.result.match(/pts:\s*u(\d+)/)?.[1] || "0", 10);
-          const wins = parseInt(response.result.match(/wins:\s*u(\d+)/)?.[1] || "0", 10);
-          const draws = parseInt(response.result.match(/draws:\s*u(\d+)/)?.[1] || "0", 10);
-          const losses = parseInt(response.result.match(/losses:\s*u(\d+)/)?.[1] || "0", 10);
-          
-          if (pts > 0 || wins > 0 || draws > 0 || losses > 0) {
-            contractPlayers[addr] = { pts, wins, draws, losses };
-          }
-        }
-      } catch (e) {
-        console.error(`Error fetching stats for ${addr}:`, e);
-      }
-    }
-    
-    if (Object.keys(contractPlayers).length === 0) {
-      return { players: MOCK_LEADERBOARD_PLAYERS, _source: 'mock' };
-    }
-
-    return { players: contractPlayers, _source: "contract" };
+    const month = getMonthKey();
+    const res = await fetch(apiUrl(`/api/leaderboard?month=${encodeURIComponent(month)}`));
+    if (!res.ok) throw new Error(`Leaderboard API error: ${res.status}`);
+    const payload = await res.json();
+    return { month: payload.month || month, players: payload.players || {}, _source: payload.source || 'backend' };
   } catch (e) {
-    console.error("Error fetching from contract:", e);
-    return { players: MOCK_LEADERBOARD_PLAYERS, _source: 'mock' };
+    console.error('Error fetching leaderboard from backend:', e);
+    return { month: getMonthKey(), players: {}, _source: 'backend-error' };
   }
 }
 
-// Record result - only tracks player discovery, no localStorage saving
 export function recordResult(addr, outcome) {
-  recordPlayerDiscovered(addr);
   return PTS[outcome];
 }
 
@@ -124,7 +83,7 @@ export function getPlayerList(data) {
 export function clearLeaderboardData(walletAddr) {
   if (walletAddr !== CONFIG.contractAddress) return false;
   if (!window.confirm("Clear all leaderboard data for this month? This cannot be undone. Contact contract owner.")) return false;
-  console.log("To clear on-chain leaderboard, contract owner must invoke clear function");
+  console.log('Leaderboard clear requested by deployer');
   return true;
 }
 
