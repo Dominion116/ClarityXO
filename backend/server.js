@@ -31,6 +31,10 @@ function readStore() {
   return JSON.parse(raw);
 }
 
+function writeStore(store) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2));
+}
+
 function getMonthData(store, monthKey) {
   if (!store.months[monthKey]) {
     store.months[monthKey] = { players: {} };
@@ -47,6 +51,34 @@ app.get('/api/leaderboard', (req, res) => {
   const month = req.query.month || getMonthKey();
   const monthData = getMonthData(store, month);
   res.json({ month, players: monthData.players, source: 'backend' });
+});
+
+app.post('/api/leaderboard/result', (req, res) => {
+  const { walletAddr, outcome, month } = req.body || {};
+  const validOutcomes = new Set(['win', 'draw', 'loss']);
+
+  if (!walletAddr || typeof walletAddr !== 'string') {
+    return res.status(400).json({ error: 'walletAddr is required' });
+  }
+  if (!validOutcomes.has(outcome)) {
+    return res.status(400).json({ error: 'outcome must be win|draw|loss' });
+  }
+
+  const ptsMap = { win: 3, draw: 1, loss: 0 };
+  const monthKey = month || getMonthKey();
+  const store = readStore();
+  const monthData = getMonthData(store, monthKey);
+
+  if (!monthData.players[walletAddr]) {
+    monthData.players[walletAddr] = { pts: 0, wins: 0, draws: 0, losses: 0 };
+  }
+
+  const p = monthData.players[walletAddr];
+  p.pts += ptsMap[outcome];
+  p[`${outcome}s`] += 1;
+
+  writeStore(store);
+  return res.json({ ok: true, earned: ptsMap[outcome], month: monthKey, stats: p });
 });
 
 app.listen(PORT, () => {
