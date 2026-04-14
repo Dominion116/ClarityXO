@@ -206,6 +206,44 @@ The app is configured for **Stacks Testnet** by default. To use mainnet:
 2. Deploy contract to mainnet
 3. Update `CONTRACT_ADDRESS` with mainnet deployment
 
+## 🚀 Backend Deployment
+
+The leaderboard backend now uses MongoDB Atlas for persistence and is ready to deploy on Render.
+
+### Required Environment Variables
+
+For the backend service on Render, set:
+
+- `MONGODB_URI` - your MongoDB Atlas connection string
+- `MONGODB_DB` - optional, defaults to `clarityxo`
+- `MONGODB_COLLECTION` - optional, defaults to `leaderboard_months`
+- `CORS_ORIGIN` - optional frontend URL, or a comma-separated list of allowed origins
+
+### Deploy to Render
+
+1. Create a MongoDB Atlas cluster and database user.
+2. Copy the connection string into `MONGODB_URI`.
+3. Create a new Render Web Service from this repo.
+4. Use the included [render.yaml](render.yaml) blueprint or configure:
+   - `rootDir`: `backend`
+   - `buildCommand`: `npm install`
+   - `startCommand`: `npm start`
+5. After deployment, set the frontend env var `VITE_LEADERBOARD_API_BASE_URL` to the Render service URL.
+
+### Local Backend Run
+
+```bash
+cd backend
+MONGODB_URI="your-atlas-uri" npm start
+```
+
+The backend exposes:
+
+- `GET /health`
+- `GET /api/leaderboard?month=YYYY-MM`
+- `POST /api/leaderboard/result`
+- `DELETE /api/leaderboard?month=YYYY-MM`
+
 ## 🐛 Troubleshooting
 
 ### Wallet Won't Connect

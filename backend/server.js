@@ -1,18 +1,22 @@
 import express from 'express';
 import cors from 'cors';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { MongoClient } from 'mongodb';
 
 const app = express();
 const PORT = process.env.PORT || 8787;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DATA_DIR = path.join(__dirname, 'data');
-const DATA_FILE = path.join(DATA_DIR, 'leaderboard.json');
+const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_DB = process.env.MONGODB_DB || 'clarityxo';
+const MONGODB_COLLECTION = process.env.MONGODB_COLLECTION || 'leaderboard_months';
 
-app.use(cors());
+const corsOptions = process.env.CORS_ORIGIN
+  ? { origin: process.env.CORS_ORIGIN.split(',').map((value) => value.trim()) }
+  : undefined;
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+let mongoClient;
+let mongoClientPromise;
 
 function getMonthKey(date = new Date()) {
   const year = date.getUTCFullYear();
@@ -20,43 +24,46 @@ function getMonthKey(date = new Date()) {
   return `${year}-${String(month).padStart(2, '0')}`;
 }
 
-function ensureStore() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(DATA_FILE)) {
-    const seed = { months: {} };
-    fs.writeFileSync(DATA_FILE, JSON.stringify(seed, null, 2));
+async function getDatabase() {
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is not set');
   }
-}
 
-function readStore() {
-  ensureStore();
-  const raw = fs.readFileSync(DATA_FILE, 'utf8');
-  return JSON.parse(raw);
-}
-
-function writeStore(store) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2));
-}
-
-function getMonthData(store, monthKey) {
-  if (!store.months[monthKey]) {
-    store.months[monthKey] = { players: {} };
+  if (!mongoClientPromise) {
+    mongoClient = new MongoClient(MONGODB_URI);
+    mongoClientPromise = mongoClient.connect();
   }
-  return store.months[monthKey];
+
+  await mongoClientPromise;
+  return mongoClient.db(MONGODB_DB);
+}
+
+async function getMonthCollection() {
+  const db = await getDatabase();
+  return db.collection(MONGODB_COLLECTION);
+}
+
+async function getMonthData(monthKey) {
+  const collection = await getMonthCollection();
+  const doc = await collection.findOne({ month: monthKey });
+  return doc || { month: monthKey, players: {} };
 }
 
 app.get('/health', (_req, res) => {
-  res.json({ ok: true });
+  res.json({ ok: true, backend: 'mongo' });
 });
 
-app.get('/api/leaderboard', (req, res) => {
-  const store = readStore();
+app.get('/api/leaderboard', async (req, res) => {
   const month = req.query.month || getMonthKey();
-  const monthData = getMonthData(store, month);
-  res.json({ month, players: monthData.players, source: 'backend' });
+  try {
+    const monthData = await getMonthData(month);
+    res.json({ month, players: monthData.players || {}, source: 'mongodb' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.post('/api/leaderboard/result', (req, res) => {
+app.post('/api/leaderboard/result', async (req, res) => {
   const { walletAddr, outcome, month } = req.body || {};
   const validOutcomes = new Set(['win', 'draw', 'loss']);
 
@@ -69,30 +76,58 @@ app.post('/api/leaderboard/result', (req, res) => {
 
   const ptsMap = { win: 3, draw: 1, loss: 0 };
   const monthKey = month || getMonthKey();
-  const store = readStore();
-  const monthData = getMonthData(store, monthKey);
+  const incField = `${outcome}s`;
 
-  if (!monthData.players[walletAddr]) {
-    monthData.players[walletAddr] = { pts: 0, wins: 0, draws: 0, losses: 0 };
+  try {
+    const collection = await getMonthCollection();
+    await collection.updateOne(
+      { month: monthKey },
+      {
+        $setOnInsert: { month: monthKey },
+        $inc: {
+          [`players.${walletAddr}.pts`]: ptsMap[outcome],
+          [`players.${walletAddr}.${incField}`]: 1,
+        },
+      },
+      { upsert: true }
+    );
+
+    const updatedMonth = await collection.findOne({ month: monthKey });
+    const stats = updatedMonth?.players?.[walletAddr] || { pts: 0, wins: 0, draws: 0, losses: 0 };
+    return res.json({ ok: true, earned: ptsMap[outcome], month: monthKey, stats });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
-
-  const p = monthData.players[walletAddr];
-  p.pts += ptsMap[outcome];
-  p[`${outcome}s`] += 1;
-
-  writeStore(store);
-  return res.json({ ok: true, earned: ptsMap[outcome], month: monthKey, stats: p });
 });
 
-app.delete('/api/leaderboard', (req, res) => {
+app.delete('/api/leaderboard', async (req, res) => {
   const { month } = req.query;
   const monthKey = month || getMonthKey();
-  const store = readStore();
-  store.months[monthKey] = { players: {} };
-  writeStore(store);
-  res.json({ ok: true, month: monthKey });
+  try {
+    const collection = await getMonthCollection();
+    await collection.deleteOne({ month: monthKey });
+    res.json({ ok: true, month: monthKey });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`Leaderboard backend listening on :${PORT}`);
-});
+async function start() {
+  try {
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI is required');
+    }
+
+    const db = await getDatabase();
+    await db.collection(MONGODB_COLLECTION).createIndex({ month: 1 }, { unique: true });
+
+    app.listen(PORT, () => {
+      console.log(`Leaderboard backend listening on :${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start backend:', error.message);
+    process.exit(1);
+  }
+}
+
+start();
