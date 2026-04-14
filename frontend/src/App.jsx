@@ -3,7 +3,7 @@ import { uintCV, principalCV } from "@stacks/transactions";
 import { CONFIG } from "./config";
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from "./utils/constants";
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
-import { callReadOnly, parseBoardFromClarityValue, parseUintResult, encodeCVArg } from "./utils/stacks";
+import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
 import './index.css';
 
@@ -93,13 +93,10 @@ export default function App() {
       ]);
 
       if (fullGameRes.result) {
-        // Parse the response: (ok { board: ..., status: ..., moves: ..., ... })
-        const chainBoard = parseBoardFromClarityValue({ result: fullGameRes.result.match(/board:\s*\(list[^)]*\)/)?.[0] || "(list u0 u0 u0 u0 u0 u0 u0 u0 u0)" });
-        const statusMatch = fullGameRes.result.match(/status:\s*u(\d+)/);
-        const movesMatch = fullGameRes.result.match(/moves:\s*u(\d+)/);
-
-        const chainStatus = statusMatch ? parseInt(statusMatch[1], 10) : STATUS_ACTIVE;
-        const chainMoves = movesMatch ? parseInt(movesMatch[1], 10) : 0;
+        const parsedGame = parseGameStateFromClarityValue(fullGameRes);
+        const chainBoard = parsedGame.board;
+        const chainStatus = parsedGame.status || STATUS_ACTIVE;
+        const chainMoves = parsedGame.moves || 0;
 
         setBoard(chainBoard);
         setStatus(chainStatus);

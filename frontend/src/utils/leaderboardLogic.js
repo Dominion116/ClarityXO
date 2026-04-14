@@ -10,6 +10,11 @@ function getMonthKey(date = new Date()) {
   return `${year}-${String(month).padStart(2, '0')}`;
 }
 
+async function getChainMonthKey() {
+  const monthNumber = await getCurrentMonthNumber();
+  return String(monthNumber);
+}
+
 function apiUrl(path) {
   return `${CONFIG.leaderboardApiBaseUrl}${path}`;
 }
@@ -26,7 +31,7 @@ export function getMonthEnd() {
 export async function getCurrentMonthNumber() {
   try {
     const res = await fetch(
-      `https://stacks-node-api.${CONFIG.network}.stacks.co/v2/info`
+      `https://api.hiro.so/v2/info`
     );
     const data = await res.json();
     const burnHeight = data.burn_block_height || 0;
@@ -51,14 +56,13 @@ export function formatCountdown(ms) {
 // Fetch leaderboard stats from the smart contract
 export async function fetchLeaderboardFromContract() {
   try {
-    const month = getMonthKey();
-    const res = await fetch(apiUrl(`/api/leaderboard?month=${encodeURIComponent(month)}`));
+    const res = await fetch(apiUrl('/api/leaderboard'));
     if (!res.ok) throw new Error(`Leaderboard API error: ${res.status}`);
     const payload = await res.json();
-    return { month: payload.month || month, players: payload.players || {}, _source: payload.source || 'backend' };
+    return { month: payload.month || 'latest', players: payload.players || {}, _source: payload.source || 'backend' };
   } catch (e) {
     console.error('Error fetching leaderboard from backend:', e);
-    return { month: getMonthKey(), players: {}, _source: 'backend-error' };
+    return { month: 'latest', players: {}, _source: 'backend-error' };
   }
 }
 
@@ -66,15 +70,18 @@ export function recordResult(addr, outcome) {
   const walletAddr = addr || 'anonymous';
   const earned = PTS[outcome];
 
-  fetch(apiUrl('/api/leaderboard/result'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      walletAddr,
-      outcome,
-      month: getMonthKey(),
-    }),
-  }).catch(err => {
+  void (async () => {
+    const month = await getChainMonthKey();
+    await fetch(apiUrl('/api/leaderboard/result'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        walletAddr,
+        outcome,
+        month,
+      }),
+    });
+  })().catch(err => {
     console.error('Failed to persist leaderboard result:', err);
   });
 
@@ -98,10 +105,12 @@ export function clearLeaderboardData(walletAddr) {
   if (walletAddr !== CONFIG.contractAddress) return false;
   if (!window.confirm("Clear all leaderboard data for this month? This cannot be undone. Contact contract owner.")) return false;
 
-  const month = getMonthKey();
-  fetch(apiUrl(`/api/leaderboard?month=${encodeURIComponent(month)}`), {
-    method: 'DELETE',
-  }).catch(err => {
+  void (async () => {
+    const month = await getChainMonthKey();
+    await fetch(apiUrl(`/api/leaderboard?month=${encodeURIComponent(month)}`), {
+      method: 'DELETE',
+    });
+  })().catch(err => {
     console.error('Failed to clear leaderboard on backend:', err);
   });
 

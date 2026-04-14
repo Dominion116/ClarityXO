@@ -244,8 +244,11 @@ The backend exposes:
 - `GET /api/leaderboard?month=YYYY-MM`
 - `POST /api/leaderboard/result`
 - `DELETE /api/leaderboard?month=YYYY-MM`
+- `POST /api/sync` to pull finished games from the contract and rebuild the leaderboard
 - `GET /api-docs` for Swagger UI
 - `GET /api-docs.json` for the OpenAPI spec
+
+Leaderboard data is now keyed by the contract's `current-month` value, so the backend and frontend both track the same on-chain month bucket.
 
 ## 🐛 Troubleshooting
 

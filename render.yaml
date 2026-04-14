@@ -14,7 +14,15 @@ services:
         value: clarityxo
       - key: MONGODB_COLLECTION
         value: leaderboard_months
+      - key: MONGODB_GAMES_COLLECTION
+        value: game_results
       - key: CORS_ORIGIN
         sync: false
       - key: PUBLIC_API_URL
         value: https://clarityxo.onrender.com
+      - key: STACKS_API_BASE
+        value: https://api.hiro.so
+      - key: GAME_CONTRACT_ADDRESS
+        value: SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y
+      - key: GAME_CONTRACT_NAME
+        value: clarity-xo-game
