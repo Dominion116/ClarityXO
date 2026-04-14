@@ -22,7 +22,7 @@ const swaggerSpec = {
     description: 'Leaderboard and scoring API for ClarityXO, deployed on Render with MongoDB Atlas.',
   },
   servers: [
-    { url: process.env.PUBLIC_API_URL || `http://localhost:${PORT}` },
+    { url: process.env.PUBLIC_API_URL || 'https://clarityxo.onrender.com' },
   ],
   paths: {
     '/health': {

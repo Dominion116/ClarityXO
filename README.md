@@ -105,7 +105,7 @@ ClarityXO/
    ```
 
 3. **Open in Browser**
-   - Navigate to `http://localhost:5173`
+   - Navigate to `https://clarity-xo.vercel.app/`
    - Connect your Stacks wallet
    - Start playing!
 
