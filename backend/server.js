@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { MongoClient } from 'mongodb';
 import 'dotenv/config';
+import swaggerUi from 'swagger-ui-express';
 
 const app = express();
 const PORT = process.env.PORT || 8787;
@@ -13,8 +14,103 @@ const corsOptions = process.env.CORS_ORIGIN
   ? { origin: process.env.CORS_ORIGIN.split(',').map((value) => value.trim()) }
   : undefined;
 
+const swaggerSpec = {
+  openapi: '3.0.3',
+  info: {
+    title: 'ClarityXO Leaderboard API',
+    version: '1.0.0',
+    description: 'Leaderboard and scoring API for ClarityXO, deployed on Render with MongoDB Atlas.',
+  },
+  servers: [
+    { url: process.env.PUBLIC_API_URL || `http://localhost:${PORT}` },
+  ],
+  paths: {
+    '/health': {
+      get: {
+        summary: 'Health check',
+        responses: {
+          200: {
+            description: 'Backend is healthy',
+          },
+        },
+      },
+    },
+    '/api/leaderboard': {
+      get: {
+        summary: 'Get monthly leaderboard',
+        parameters: [
+          {
+            name: 'month',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', example: '2026-04' },
+          },
+        ],
+        responses: {
+          200: {
+            description: 'Leaderboard data',
+          },
+        },
+      },
+      delete: {
+        summary: 'Clear monthly leaderboard',
+        parameters: [
+          {
+            name: 'month',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', example: '2026-04' },
+          },
+        ],
+        responses: {
+          200: {
+            description: 'Leaderboard cleared',
+          },
+        },
+      },
+    },
+    '/api/leaderboard/result': {
+      post: {
+        summary: 'Record a game result',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['walletAddr', 'outcome'],
+                properties: {
+                  walletAddr: { type: 'string', example: 'SP2C2YB2M7WZ8Q4P8A9VQYQMW9C03R9X62H2W8A1K' },
+                  outcome: { type: 'string', enum: ['win', 'draw', 'loss'] },
+                  month: { type: 'string', example: '2026-04' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: 'Result stored',
+          },
+        },
+      },
+    },
+  },
+};
+
 app.use(cors(corsOptions));
 app.use(express.json());
+
+app.get('/api-docs.json', (_req, res) => {
+  res.json(swaggerSpec);
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  explorer: true,
+  swaggerOptions: {
+    persistAuthorization: true,
+  },
+}));
 
 let mongoClient;
 let mongoClientPromise;

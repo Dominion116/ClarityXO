@@ -16,3 +16,5 @@ services:
         value: leaderboard_months
       - key: CORS_ORIGIN
         sync: false
+      - key: PUBLIC_API_URL
+        value: https://clarityxo.onrender.com

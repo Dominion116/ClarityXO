@@ -218,6 +218,7 @@ For the backend service on Render, set:
 - `MONGODB_DB` - optional, defaults to `clarityxo`
 - `MONGODB_COLLECTION` - optional, defaults to `leaderboard_months`
 - `CORS_ORIGIN` - optional frontend URL, or a comma-separated list of allowed origins
+- `PUBLIC_API_URL` - the public backend URL used by Swagger UI, e.g. `https://clarityxo.onrender.com`
 
 ### Deploy to Render
 
@@ -243,6 +244,8 @@ The backend exposes:
 - `GET /api/leaderboard?month=YYYY-MM`
 - `POST /api/leaderboard/result`
 - `DELETE /api/leaderboard?month=YYYY-MM`
+- `GET /api-docs` for Swagger UI
+- `GET /api-docs.json` for the OpenAPI spec
 
 ## 🐛 Troubleshooting
 
