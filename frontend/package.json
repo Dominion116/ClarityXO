@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@stacks/connect": "^7.6.0",
     "@stacks/network": "^6.13.0",
     "@stacks/transactions": "^6.13.0",
     "react": "^18.2.0",

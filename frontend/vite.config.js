@@ -8,7 +8,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['@stacks/connect', '@stacks/network', '@stacks/transactions'],
+          vendor: ['@stacks/network', '@stacks/transactions'],
         },
       },
     },

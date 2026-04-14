@@ -1,6 +1,4 @@
 import React, { useState, useCallback } from "react";
-import { showConnect, openContractCall } from "@stacks/connect";
-import { StacksTestnet, StacksMainnet } from "@stacks/network";
 import { uintCV, principalCV } from "@stacks/transactions";
 import { CONFIG } from "./config";
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from "./utils/constants";
@@ -35,6 +33,36 @@ export default function App() {
     setToast({ show: true, pts, reason });
     setTimeout(() => setToast(prev => ({ ...prev, show: false })), 2400);
   };
+
+  const requestLeather = useCallback(async (method, params) => {
+    const provider = window.LeatherProvider;
+
+    if (!provider) {
+      throw new Error("Leather wallet not found");
+    }
+
+    return provider.request(method, params);
+  }, []);
+
+  const getLeatherStxAddress = useCallback(async () => {
+    const response = await requestLeather("getAddresses", { network: CONFIG.network });
+    const stxAddress = response?.result?.addresses?.find((entry) => entry.symbol === "STX")?.address;
+
+    if (!stxAddress) {
+      throw new Error("Could not find the active STX address in Leather");
+    }
+
+    return stxAddress;
+  }, [requestLeather]);
+
+  const callLeatherContract = useCallback(async (functionName, functionArgs = []) => {
+    return requestLeather("stx_callContract", {
+      contract: `${CONFIG.contractAddress}.${CONFIG.contractName}`,
+      functionName,
+      functionArgs,
+      network: CONFIG.network,
+    });
+  }, [requestLeather]);
 
   const syncChainState = useCallback(async () => {
     try {
@@ -95,48 +123,31 @@ export default function App() {
 
     try {
       setProcessing(true);
-      const network = CONFIG.network === "mainnet" ? new StacksMainnet() : new StacksTestnet();
-
-      await openContractCall({
-        network,
-        contractAddress: CONFIG.contractAddress,
-        contractName: CONFIG.contractName,
-        functionName: "start-game",
-        functionArgs: [],
-        appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%220a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },
-        onFinish: (data) => {
-          setGameStarted(true);
-          log(`Game started. TX: ${data.txId?.slice(0, 16)}…`, "success");
-          setTimeout(syncChainState, 6000);
-        },
-        onCancel: () => log("Game start cancelled.", "error"),
-      });
+      const response = await callLeatherContract("start-game");
+      setGameStarted(true);
+      log(`Game started. TX: ${response?.result?.txid?.slice(0, 16)}…`, "success");
+      setTimeout(syncChainState, 6000);
     } catch (e) {
       log(`Start game error: ${e.message}`, "error");
     } finally {
       setProcessing(false);
     }
-  }, [gameStarted, processing, walletAddr, log, syncChainState]);
+  }, [gameStarted, processing, walletAddr, log, syncChainState, callLeatherContract]);
 
   const connectWallet = useCallback(async () => {
     try {
-      if (!window.StacksProvider && !window.btc) {
+      if (!window.LeatherProvider) {
         log("No Stacks wallet detected. Install Leather (Hiro) wallet.", "error");
         return;
       }
-      showConnect({
-        appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%22%230a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },
-        onFinish: (data) => {
-          const addr = data?.userSession?.loadUserData()?.profile?.stxAddress?.[CONFIG.network];
-          setWalletAddr(addr || "connected");
-          log(`Wallet connected: ${addr?.slice(0, 12)}…`, "success");
-        },
-        onCancel: () => log("Wallet connection cancelled.", "error"),
-      });
+
+      const addr = await getLeatherStxAddress();
+      setWalletAddr(addr);
+      log(`Wallet connected: ${addr.slice(0, 12)}…`, "success");
     } catch (e) {
       log(`Wallet error: ${e.message}`, "error");
     }
-  }, [log]);
+  }, [log, getLeatherStxAddress]);
 
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
@@ -213,27 +224,15 @@ export default function App() {
     // Submit to chain
     try {
       setProcessing(true);
-      const network = CONFIG.network === "mainnet" ? new StacksMainnet() : new StacksTestnet();
-
-      await openContractCall({
-        network,
-        contractAddress: CONFIG.contractAddress,
-        contractName: CONFIG.contractName,
-        functionName: "make-move",
-        functionArgs: [uintCV(row), uintCV(col)],
-        appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%22%230a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },
-        onFinish: (data) => {
-          log(`TX broadcast: ${data.txId?.slice(0, 16)}…`, "success");
-          setTimeout(syncChainState, 6000); // Wait a block
-        },
-        onCancel: () => log("Transaction cancelled.", "error"),
-      });
+      const response = await callLeatherContract("make-move", [encodeCVArg(uintCV(row)), encodeCVArg(uintCV(col))]);
+      log(`TX broadcast: ${response?.result?.txid?.slice(0, 16)}…`, "success");
+      setTimeout(syncChainState, 6000); // Wait a block
     } catch (e) {
       log(`TX error: ${e.message}`, "error");
     } finally {
       setProcessing(false);
     }
-  }, [board, processing, status, gameStarted, walletAddr, log, syncChainState]);
+  }, [board, processing, status, gameStarted, walletAddr, log, syncChainState, callLeatherContract]);
 
   const resetLocal = useCallback(async () => {
     setBoard(Array(9).fill(EMPTY));
@@ -255,27 +254,15 @@ export default function App() {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
     try {
       setProcessing(true);
-      const network = CONFIG.network === "mainnet" ? new StacksMainnet() : new StacksTestnet();
-      
-      await openContractCall({
-        network,
-        contractAddress: CONFIG.contractAddress,
-        contractName: CONFIG.contractName,
-        functionName: "resign-game",
-        functionArgs: [],
-        appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%22%230a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },
-        onFinish: (data) => {
-          log(`Resigned. TX: ${data.txId?.slice(0, 16)}…`, "success");
-          setStatus(STATUS_O_WON);
-        },
-        onCancel: () => log("Resign cancelled.", "error"),
-      });
+      const response = await callLeatherContract("resign-game");
+      log(`Resigned. TX: ${response?.result?.txid?.slice(0, 16)}…`, "success");
+      setStatus(STATUS_O_WON);
     } catch (e) {
       log(`Resign error: ${e.message}`, "error");
     } finally {
       setProcessing(false);
     }
-  }, [walletAddr, log]);
+  }, [walletAddr, log, callLeatherContract]);
 
   return (
     <>

@@ -1,7 +1,6 @@
-import { openContractCall } from '@stacks/connect';
-import { StacksMainnet, StacksTestnet } from '@stacks/network';
 import { uintCV } from '@stacks/transactions';
 import { CONFIG } from '../config';
+import { encodeCVArg } from './stacks';
 
 const PTS = { win: 3, draw: 1, loss: 0 };
 
@@ -128,22 +127,18 @@ export async function claimNFT(walletAddr, addLog, leaderboardData) {
   addLog(`Claiming NFT Trophy for rank #${myRank + 1} (${pts} pts)…`, "info");
 
   try {
-    const network = CONFIG.network === "mainnet" ? new StacksMainnet() : new StacksTestnet();
-    
-    await openContractCall({
-      network,
-      contractAddress: CONFIG.nftContractAddress,
-      contractName: CONFIG.nftContractName,
+    if (!window.LeatherProvider) {
+      throw new Error("Leather wallet not found");
+    }
+
+    const response = await window.LeatherProvider.request("stx_callContract", {
+      contract: `${CONFIG.nftContractAddress}.${CONFIG.nftContractName}`,
       functionName: "claim-trophy",
-      functionArgs: [
-        uintCV(await getCurrentMonthNumber() - 1),
-      ],
-      appDetails: { name: "ClarityXO", icon: "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2232%22 height%3D%2232%22 viewBox%3D%220 0 32 32%22%3E%3Crect width%3D%2232%22 height%3D%2232%22 fill%3D%22%230a0a0a%22%2F%3E%3Cline x1%3D%228%22 y1%3D%228%22 x2%3D%2224%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3Cline x1%3D%2224%22 y1%3D%228%22 x2%3D%228%22 y2%3D%2224%22 stroke%3D%22%23ff4444%22 stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E" },
-      onFinish: (d) => {
-        addLog(`NFT Trophy claimed! TX: ${d.txId?.slice(0,16)}…`, "success");
-      },
-      onCancel: () => addLog("NFT claim cancelled.", "error"),
+      functionArgs: [encodeCVArg(uintCV(await getCurrentMonthNumber() - 1))],
+      network: CONFIG.network,
     });
+
+    addLog(`NFT Trophy claimed! TX: ${response?.result?.txid?.slice(0,16)}…`, "success");
     return true; // indicates success intent
   } catch (e) {
     addLog(`NFT claim error: ${e.message}`, "error");
