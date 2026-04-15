@@ -2,11 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { fetchLeaderboardFromContract, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
 import { CONFIG } from '../config';
 
+const PAGE_SIZE = 10;
+
+function calculateWinRate(wins, games) {
+  if (!games) return 0;
+  return (wins / games) * 100;
+}
+
 export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [data, setData] = useState(null);
   const [players, setPlayers] = useState([]);
   const [countdown, setCountdown] = useState("—");
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const isDeployer = walletAddr === CONFIG.contractAddress;
   const claimReady = countdown === "00:00:00";
 
@@ -42,6 +50,10 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    setPage(1);
+  }, [data?.month, players.length]);
+
   const handleClear = () => {
     if (clearLeaderboardData(walletAddr)) refresh();
   };
@@ -57,6 +69,12 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   };
 
   if (!data) return null;
+
+  const totalPages = Math.max(1, Math.ceil(players.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const visiblePlayers = players.slice(startIndex, endIndex);
 
   const totalGames = players.reduce((s, p) => s + p.games, 0);
   const totalWins = players.reduce((s, p) => s + p.wins, 0);
@@ -170,11 +188,11 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
           </tr>
         </thead>
         <tbody id="lb-tbody">
-          {players.map((p, i) => {
-            const rank = i + 1;
+          {visiblePlayers.map((p, i) => {
+            const rank = startIndex + i + 1;
             const nftZone = rank <= 5;
             const isMe = walletAddr ? p.addr === walletAddr : p.addr === "anonymous";
-            const winRate = p.games > 0 ? Math.round((p.wins / p.games) * 100) : 0;
+            const winRate = calculateWinRate(p.wins, p.games);
 
             const medalClass =
               rank === 1 ? "medal-1" :
@@ -208,9 +226,9 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
                 <td>
                   <div className="winrate-wrap">
                     <div className="wr-bar">
-                      <div className="wr-fill" style={{ width: `${winRate}%` }}></div>
+                      <div className="wr-fill" style={{ width: `${Math.min(100, Math.max(0, winRate))}%` }}></div>
                     </div>
-                    <div className="wr-pct">{winRate}%</div>
+                    <div className="wr-pct">{winRate.toFixed(1)}%</div>
                   </div>
                 </td>
               </tr>
@@ -218,6 +236,31 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
           })}
         </tbody>
       </table>
+
+      {players.length > 0 && (
+        <div className="lb-pagination">
+          <div className="lb-pagination-meta">
+            Showing {startIndex + 1}-{Math.min(players.length, endIndex)} of {players.length}
+          </div>
+          <div className="lb-pagination-controls">
+            <button
+              className="lb-page-btn"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1 || loading}
+            >
+              Prev
+            </button>
+            <span className="lb-page-indicator">Page {currentPage} / {totalPages}</span>
+            <button
+              className="lb-page-btn"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || loading}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {players.length === 0 && (
         <div className="lb-empty" id="lb-empty">
