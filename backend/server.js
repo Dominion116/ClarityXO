@@ -15,9 +15,24 @@ const GAME_CONTRACT_ADDRESS = process.env.GAME_CONTRACT_ADDRESS || 'SP30VGN68PSG
 const GAME_CONTRACT_NAME = process.env.GAME_CONTRACT_NAME || 'clarity-xo-game';
 const STACKS_API_BASE = process.env.STACKS_API_BASE || 'https://api.hiro.so';
 
-const corsOptions = process.env.CORS_ORIGIN
-  ? { origin: process.env.CORS_ORIGIN.split(',').map((value) => value.trim()) }
-  : undefined;
+const normalizeOrigin = (value) => String(value || '').trim().replace(/\/+$/, '');
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((value) => normalizeOrigin(value)).filter(Boolean)
+  : [];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow server-to-server calls and local tools without an Origin header.
+    if (!origin) return callback(null, true);
+
+    const normalized = normalizeOrigin(origin);
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(normalized)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
+};
 
 const swaggerSpec = {
   openapi: '3.0.3',
