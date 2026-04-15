@@ -155,43 +155,10 @@ export default function App() {
   }, [log, getLeatherStxAddress]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    const restoreWallet = async () => {
-      if (!window.LeatherProvider) return;
-
-      try {
-        const addr = await getLeatherStxAddress();
-        if (cancelled) return;
-
-        setWalletAddr((currentAddr) => {
-          if (currentAddr !== addr) {
-            window.localStorage.setItem(WALLET_STORAGE_KEY, addr);
-          }
-
-          return addr;
-        });
-
-        syncChainState(addr);
-      } catch {
-        if (cancelled) return;
-
-        setWalletAddr((currentAddr) => {
-          if (currentAddr) {
-            window.localStorage.removeItem(WALLET_STORAGE_KEY);
-          }
-
-          return null;
-        });
-      }
-    };
-
-    restoreWallet();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [getLeatherStxAddress, syncChainState]);
+    if (!walletAddr) return;
+    // Read-only sync from persisted address; does not invoke wallet permission flows.
+    syncChainState(walletAddr);
+  }, [walletAddr, syncChainState]);
 
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
