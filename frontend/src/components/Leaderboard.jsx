@@ -47,7 +47,25 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       const ms = getMonthEnd() - Date.now();
       setCountdown(formatCountdown(ms));
     }, 1000);
-    return () => clearInterval(interval);
+    const refreshInterval = setInterval(() => {
+      loadLeaderboard();
+    }, 30000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadLeaderboard();
+      }
+    };
+
+    window.addEventListener('focus', loadLeaderboard);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(refreshInterval);
+      window.removeEventListener('focus', loadLeaderboard);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   useEffect(() => {
