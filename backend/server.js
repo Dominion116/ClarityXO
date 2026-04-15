@@ -398,7 +398,17 @@ app.get('/health', (_req, res) => {
 app.get('/api/leaderboard', async (req, res) => {
   try {
     const month = req.query.month || await getLatestMonthKey() || await getCurrentChainMonthKey();
-    const monthData = await getMonthData(month);
+    let monthData = await getMonthData(month);
+
+    if (!monthData.players || Object.keys(monthData.players).length === 0) {
+      try {
+        await syncLeaderboardFromChain();
+        monthData = await getMonthData(month);
+      } catch (syncError) {
+        console.error('Auto-sync on leaderboard read failed:', syncError.message);
+      }
+    }
+
     res.json({ month, players: monthData.players || {}, source: 'mongodb' });
   } catch (error) {
     res.status(500).json({ error: error.message });
