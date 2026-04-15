@@ -359,6 +359,60 @@ svg.mark { overflow: visible; }
 .lb-table tbody tr.nft-eligible { border-left: 2px solid rgba(200,168,75,0.3); }
 .lb-table tbody tr.nft-eligible:hover { background: rgba(200,168,75,0.04); }
 
+.lb-pagination {
+  width: 100%;
+  border: 1px solid var(--border2);
+  border-top: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+}
+
+.lb-pagination-meta {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.lb-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lb-page-btn {
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+
+.lb-page-btn:hover:not(:disabled) {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+.lb-page-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.lb-page-indicator {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .lb-rank-cell { display: flex; align-items: center; gap: 8px; }
 .lb-medal {
   width: 22px; height: 22px; display: flex; align-items: center;
@@ -494,6 +548,8 @@ svg.mark { overflow: visible; }
   .nft-pip { width: 4px; height: 4px; flex-shrink: 0; }
   
   .lb-empty { padding: 32px 12px; font-size: 9px; width: 100%; box-sizing: border-box; }
+  .lb-pagination { flex-direction: column; align-items: flex-start; padding: 8px 10px; }
+  .lb-pagination-meta, .lb-page-indicator, .lb-page-btn { font-size: 8px; }
   .lb-actions { flex-wrap: wrap; width: 100%; box-sizing: border-box; }
   .lb-action-btn { flex: 1; min-width: calc(50% - 0.5px); padding: 10px; font-size: 8px; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
@@ -602,6 +658,7 @@ svg.mark { overflow: visible; }
   .lb-table th:nth-child(n+6), .lb-table td:nth-child(n+6) { display: table-cell; }
   .lb-addr-cell { font-size: 10px; }
   
+  .lb-pagination { padding: 9px 12px; }
   .lb-empty { padding: 56px 24px; font-size: 10px; }
   .lb-actions { flex-wrap: nowrap; }
   .lb-action-btn { flex: 1; min-width: auto; padding: 13px; font-size: 10px; }
