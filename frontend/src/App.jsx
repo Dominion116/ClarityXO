@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { uintCV, principalCV } from "@stacks/transactions";
 import { CONFIG } from "./config";
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from "./utils/constants";
@@ -11,13 +11,18 @@ import Game from "./components/Game";
 import Leaderboard from "./components/Leaderboard";
 
 export default function App() {
+  const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
+
   const [activePage, setActivePage] = useState("game");
 
   const [board, setBoard] = useState(Array(9).fill(EMPTY));
   const [status, setStatus] = useState(STATUS_ACTIVE);
   const [moveCount, setMoveCount] = useState(0);
   const [processing, setProcessing] = useState(false);
-  const [walletAddr, setWalletAddr] = useState(null);
+  const [walletAddr, setWalletAddr] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return window.localStorage.getItem(WALLET_STORAGE_KEY);
+  });
   const [gameId, setGameId] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -64,9 +69,11 @@ export default function App() {
     });
   }, [requestLeather]);
 
-  const syncChainState = useCallback(async () => {
+  const syncChainState = useCallback(async (overrideWalletAddr = null) => {
     try {
-      if (!walletAddr) {
+      const activeWalletAddr = overrideWalletAddr || walletAddr;
+
+      if (!activeWalletAddr) {
         log("Wallet not connected. Cannot sync chain state.", "error");
         return;
       }
@@ -75,7 +82,7 @@ export default function App() {
 
       // Get the active game ID for this player
       const activeGameRes = await callReadOnly("get-active-game", [
-        encodeCVArg(principalCV(walletAddr))
+        encodeCVArg(principalCV(activeWalletAddr))
       ]);
       
       const activeGameId = parseUintResult(activeGameRes);
@@ -140,11 +147,51 @@ export default function App() {
 
       const addr = await getLeatherStxAddress();
       setWalletAddr(addr);
+      window.localStorage.setItem(WALLET_STORAGE_KEY, addr);
       log(`Wallet connected: ${addr.slice(0, 12)}…`, "success");
     } catch (e) {
       log(`Wallet error: ${e.message}`, "error");
     }
   }, [log, getLeatherStxAddress]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const restoreWallet = async () => {
+      if (!window.LeatherProvider) return;
+
+      try {
+        const addr = await getLeatherStxAddress();
+        if (cancelled) return;
+
+        setWalletAddr((currentAddr) => {
+          if (currentAddr !== addr) {
+            window.localStorage.setItem(WALLET_STORAGE_KEY, addr);
+          }
+
+          return addr;
+        });
+
+        syncChainState(addr);
+      } catch {
+        if (cancelled) return;
+
+        setWalletAddr((currentAddr) => {
+          if (currentAddr) {
+            window.localStorage.removeItem(WALLET_STORAGE_KEY);
+          }
+
+          return null;
+        });
+      }
+    };
+
+    restoreWallet();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [getLeatherStxAddress, syncChainState]);
 
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
