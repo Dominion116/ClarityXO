@@ -56,7 +56,7 @@ export function formatCountdown(ms) {
 // Fetch leaderboard stats from the smart contract
 export async function fetchLeaderboardFromContract() {
   try {
-    const res = await fetch(apiUrl('/api/leaderboard'));
+    const res = await fetch(apiUrl('/api/leaderboard'), { cache: 'no-store' });
     if (!res.ok) throw new Error(`Leaderboard API error: ${res.status}`);
     const payload = await res.json();
     return { month: payload.month || 'latest', players: payload.players || {}, _source: payload.source || 'backend' };

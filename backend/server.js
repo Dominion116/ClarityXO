@@ -283,6 +283,24 @@ async function getGamesCollection() {
   return db.collection(MONGODB_GAMES_COLLECTION);
 }
 
+async function getLatestStoredGameId() {
+  const collection = await getGamesCollection();
+  const doc = await collection.findOne({}, { sort: { gameId: -1 } });
+  return Number(doc?.gameId || 0);
+}
+
+async function isLeaderboardStale() {
+  const [latestStoredGameId, nextGameResponse] = await Promise.all([
+    getLatestStoredGameId(),
+    callReadOnly('get-next-game-id'),
+  ]);
+
+  const chainNextGameId = parseClarityUintValue(nextGameResponse?.result);
+  const chainLatestFinishedGameId = Math.max(0, chainNextGameId - 1);
+
+  return chainLatestFinishedGameId > latestStoredGameId;
+}
+
 async function getMonthData(monthKey) {
   const collection = await getMonthCollection();
   const doc = await collection.findOne({ month: monthKey });
@@ -414,8 +432,9 @@ app.get('/api/leaderboard', async (req, res) => {
   try {
     const month = req.query.month || await getLatestMonthKey() || await getCurrentChainMonthKey();
     let monthData = await getMonthData(month);
+    const stale = await isLeaderboardStale();
 
-    if (!monthData.players || Object.keys(monthData.players).length === 0) {
+    if (stale || !monthData.players || Object.keys(monthData.players).length === 0) {
       try {
         await syncLeaderboardFromChain();
         monthData = await getMonthData(month);
