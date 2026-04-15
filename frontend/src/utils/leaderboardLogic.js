@@ -89,14 +89,19 @@ export function recordResult(addr, outcome) {
 }
 
 export function getPlayerList(data) {
+  const toNumber = (value) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
+  };
+
   return Object.entries(data.players)
     .map(([addr, s]) => ({
       addr,
-      pts: s.pts,
-      wins: s.wins,
-      draws: s.draws,
-      losses: s.losses,
-      games: s.wins + s.draws + s.losses,
+      pts: toNumber(s?.pts),
+      wins: toNumber(s?.wins),
+      draws: toNumber(s?.draws),
+      losses: toNumber(s?.losses),
+      games: toNumber(s?.wins) + toNumber(s?.draws) + toNumber(s?.losses),
     }))
     .sort((a, b) => b.pts - a.pts || b.wins - a.wins || a.losses - b.losses);
 }
