@@ -49,7 +49,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
     }, 1000);
     const refreshInterval = setInterval(() => {
       loadLeaderboard();
-    }, 30000);
+    }, 60000);
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {

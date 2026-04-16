@@ -289,7 +289,24 @@ async function getLatestStoredGameId() {
   return Number(doc?.gameId || 0);
 }
 
+// Cache for stale check (15 second TTL to reduce blockchain API calls)
+let stalenessCache = { result: null, timestamp: 0, ttlMs: 15000 };
+let syncInProgress = false;
+let lastSyncTime = 0;
+
 async function isLeaderboardStale() {
+  const now = Date.now();
+  
+  // If a sync completed recently (within 30s), assume it's fresh
+  if (lastSyncTime && now - lastSyncTime < 30000) {
+    return false;
+  }
+
+  // Return cached result if still valid
+  if (stalenessCache.result !== null && now - stalenessCache.timestamp < stalenessCache.ttlMs) {
+    return stalenessCache.result;
+  }
+
   const [latestStoredGameId, nextGameResponse] = await Promise.all([
     getLatestStoredGameId(),
     callReadOnly('get-next-game-id'),
@@ -297,8 +314,12 @@ async function isLeaderboardStale() {
 
   const chainNextGameId = parseClarityUintValue(nextGameResponse?.result);
   const chainLatestFinishedGameId = Math.max(0, chainNextGameId - 1);
+  const stale = chainLatestFinishedGameId > latestStoredGameId;
 
-  return chainLatestFinishedGameId > latestStoredGameId;
+  // Update cache
+  stalenessCache = { result: stale, timestamp: now, ttlMs: 15000 };
+
+  return stale;
 }
 
 async function getMonthData(monthKey) {
@@ -424,6 +445,28 @@ async function syncLeaderboardFromChain() {
   };
 }
 
+// Debounced sync wrapper to prevent concurrent syncs
+async function syncLeaderboardFromChainDebounced() {
+  // If a sync is already in progress, wait for it to finish
+  if (syncInProgress) {
+    // Wait up to 30 seconds for the in-progress sync to complete
+    const startTime = Date.now();
+    while (syncInProgress && Date.now() - startTime < 30000) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return { syncedGames: 0, leaderboardMonths: 0, debounced: true };
+  }
+
+  syncInProgress = true;
+  try {
+    const result = await syncLeaderboardFromChain();
+    lastSyncTime = Date.now();
+    return result;
+  } finally {
+    syncInProgress = false;
+  }
+}
+
 app.get('/health', (_req, res) => {
   res.json({ ok: true, backend: 'mongo' });
 });
@@ -436,7 +479,7 @@ app.get('/api/leaderboard', async (req, res) => {
 
     if (stale || !monthData.players || Object.keys(monthData.players).length === 0) {
       try {
-        await syncLeaderboardFromChain();
+        await syncLeaderboardFromChainDebounced();
         monthData = await getMonthData(month);
       } catch (syncError) {
         console.error('Auto-sync on leaderboard read failed:', syncError.message);
