@@ -66,36 +66,33 @@ export async function fetchLeaderboardFromContract() {
   }
 }
 
-export function recordResult(addr, outcome) {
+export async function recordResult(addr, outcome) {
   const walletAddr = addr || 'anonymous';
   const earned = PTS[outcome];
 
-  // Fire off async POST and dispatch event when complete
-  (async () => {
-    try {
-      const month = await getChainMonthKey();
-      const response = await fetch(apiUrl('/api/leaderboard/result'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          walletAddr,
-          outcome,
-          month,
-        }),
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to record result:', response.status, response.statusText);
-      } else {
-        // Dispatch event to trigger leaderboard refresh
-        window.dispatchEvent(new CustomEvent('gameResultRecorded', { 
-          detail: { walletAddr, outcome, earned } 
-        }));
-      }
-    } catch (err) {
-      console.error('Failed to persist leaderboard result:', err);
+  try {
+    const month = await getChainMonthKey();
+    const response = await fetch(apiUrl('/api/leaderboard/result'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        walletAddr,
+        outcome,
+        month,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to record result:', response.status, response.statusText);
+      return earned;
     }
-  })();
+
+    window.dispatchEvent(new CustomEvent('gameResultRecorded', {
+      detail: { walletAddr, outcome, earned }
+    }));
+  } catch (err) {
+    console.error('Failed to persist leaderboard result:', err);
+  }
 
   return earned;
 }

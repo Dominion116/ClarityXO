@@ -521,6 +521,10 @@ app.post('/api/leaderboard/result', async (req, res) => {
       { upsert: true }
     );
 
+    // Avoid immediate chain re-sync from overwriting freshly written result.
+    lastSyncTime = Date.now();
+    stalenessCache = { result: false, timestamp: lastSyncTime, ttlMs: 15000 };
+
     const updatedMonth = await collection.findOne({ month: monthKey });
     const stats = updatedMonth?.players?.[walletAddr] || { pts: 0, wins: 0, draws: 0, losses: 0 };
     return res.json({ ok: true, earned: ptsMap[outcome], month: monthKey, stats });
