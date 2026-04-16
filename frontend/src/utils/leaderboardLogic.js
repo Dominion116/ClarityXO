@@ -109,8 +109,8 @@ export function getPlayerList(data) {
       pts: toNumber(s?.pts),
       wins: toNumber(s?.wins),
       draws: toNumber(s?.draws),
-      losses: toNumber(s?.losses),
-      games: toNumber(s?.wins) + toNumber(s?.draws) + toNumber(s?.losses),
+      losses: toNumber(s?.losses ?? s?.losss),
+      games: toNumber(s?.wins) + toNumber(s?.draws) + toNumber(s?.losses ?? s?.losss),
     }))
     .sort((a, b) => b.pts - a.pts || b.wins - a.wins || a.losses - b.losses);
 }

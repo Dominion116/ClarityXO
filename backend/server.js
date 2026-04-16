@@ -504,8 +504,9 @@ app.post('/api/leaderboard/result', async (req, res) => {
   }
 
   const ptsMap = { win: 3, draw: 1, loss: 0 };
+  const outcomeFieldMap = { win: 'wins', draw: 'draws', loss: 'losses' };
   const monthKey = month || await getLatestMonthKey() || await getCurrentChainMonthKey();
-  const incField = `${outcome}s`;
+  const incField = outcomeFieldMap[outcome];
 
   try {
     const collection = await getMonthCollection();
