@@ -51,6 +51,11 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       loadLeaderboard();
     }, 60000);
 
+    // Refresh immediately when a game result is recorded
+    const handleGameResultRecorded = () => {
+      loadLeaderboard();
+    };
+
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         loadLeaderboard();
@@ -59,12 +64,14 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
 
     window.addEventListener('focus', loadLeaderboard);
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('gameResultRecorded', handleGameResultRecorded);
 
     return () => {
       clearInterval(interval);
       clearInterval(refreshInterval);
       window.removeEventListener('focus', loadLeaderboard);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('gameResultRecorded', handleGameResultRecorded);
     };
   }, []);
 
