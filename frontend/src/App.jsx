@@ -195,6 +195,8 @@ export default function App() {
     setMoveCount(prev => prev + (aiIdx !== -1 ? 2 : 1));
     setNewCells(newSet);
     
+    let outcomeToRecord = null;
+
     // Announce result
     if (statusAfterX !== STATUS_ACTIVE) {
       setStatus(statusAfterX);
@@ -202,15 +204,18 @@ export default function App() {
       
       let earned = 0;
       if (statusAfterX === STATUS_X_WON) {
-        earned = recordResult(walletAddr, "win");
+        outcomeToRecord = "win";
+        earned = 3;
         log(`You win! +${earned} pts earned.`, "success");
         showToast(earned, "Win");
       } else if (statusAfterX === STATUS_O_WON) {
-        earned = recordResult(walletAddr, "loss");
+        outcomeToRecord = "loss";
+        earned = 0;
         log(`Computer wins. +${earned} pts.`, "error");
         showToast(earned, "Loss");
       } else if (statusAfterX === STATUS_DRAW) {
-        earned = recordResult(walletAddr, "draw");
+        outcomeToRecord = "draw";
+        earned = 1;
         log(`It's a draw. +${earned} pt.`, "info");
         showToast(earned, "Draw");
       }
@@ -237,6 +242,9 @@ export default function App() {
       setProcessing(true);
       const response = await callLeatherContract("make-move", [encodeCVArg(uintCV(row)), encodeCVArg(uintCV(col))]);
       log(`TX broadcast: ${response?.result?.txid?.slice(0, 16)}…`, "success");
+      if (outcomeToRecord) {
+        await recordResult(walletAddr, outcomeToRecord);
+      }
       setTimeout(syncChainState, 6000); // Wait a block
     } catch (e) {
       log(`TX error: ${e.message}`, "error");
