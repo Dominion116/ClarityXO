@@ -289,39 +289,6 @@ async function getLatestStoredGameId() {
   return Number(doc?.gameId || 0);
 }
 
-// Cache for stale check (15 second TTL to reduce blockchain API calls)
-let stalenessCache = { result: null, timestamp: 0, ttlMs: 15000 };
-let syncInProgress = false;
-let lastSyncTime = 0;
-
-async function isLeaderboardStale() {
-  const now = Date.now();
-  
-  // If a sync completed recently (within 30s), assume it's fresh
-  if (lastSyncTime && now - lastSyncTime < 30000) {
-    return false;
-  }
-
-  // Return cached result if still valid
-  if (stalenessCache.result !== null && now - stalenessCache.timestamp < stalenessCache.ttlMs) {
-    return stalenessCache.result;
-  }
-
-  const [latestStoredGameId, nextGameResponse] = await Promise.all([
-    getLatestStoredGameId(),
-    callReadOnly('get-next-game-id'),
-  ]);
-
-  const chainNextGameId = parseClarityUintValue(nextGameResponse?.result);
-  const chainLatestFinishedGameId = Math.max(0, chainNextGameId - 1);
-  const stale = chainLatestFinishedGameId > latestStoredGameId;
-
-  // Update cache
-  stalenessCache = { result: stale, timestamp: now, ttlMs: 15000 };
-
-  return stale;
-}
-
 async function getMonthData(monthKey) {
   const collection = await getMonthCollection();
   const doc = await collection.findOne({ month: monthKey });
@@ -334,6 +301,89 @@ async function getLatestMonthKey() {
   return doc?.month || null;
 }
 
+/**
+ * Rebuild leaderboard aggregates from game_results for the given months.
+ * Uses a merge strategy: for each player, takes the max of chain-calculated
+ * values vs existing DB values so that results recorded via POST are never lost.
+ */
+async function rebuildLeaderboardForMonths(monthKeys) {
+  if (!monthKeys || monthKeys.length === 0) return;
+
+  const gamesCollection = await getGamesCollection();
+  const leaderboardCollection = await getMonthCollection();
+
+  for (const monthKey of monthKeys) {
+    const games = await gamesCollection.find({
+      month: Number(monthKey) || monthKey,
+      status: { $in: [1, 2, 3] },
+    }).toArray();
+
+    // Build player stats from chain game_results
+    const chainPlayerMap = {};
+    for (const game of games) {
+      const player = game.player;
+      if (!player) continue;
+
+      if (!chainPlayerMap[player]) {
+        chainPlayerMap[player] = { pts: 0, wins: 0, draws: 0, losses: 0 };
+      }
+      const entry = chainPlayerMap[player];
+      entry.pts += game.pts || 0;
+      entry.wins += game.outcome === 'win' ? 1 : 0;
+      entry.draws += game.outcome === 'draw' ? 1 : 0;
+      entry.losses += game.outcome === 'loss' ? 1 : 0;
+    }
+
+    // Read existing leaderboard to merge (keep $inc values that haven't been
+    // synced from chain yet)
+    const existing = await leaderboardCollection.findOne({ month: String(monthKey) });
+    const existingPlayers = existing?.players || {};
+
+    // Merge: for each player, take the max of chain vs existing
+    const mergedPlayers = { ...existingPlayers };
+    for (const [player, chainStats] of Object.entries(chainPlayerMap)) {
+      const dbStats = existingPlayers[player] || { pts: 0, wins: 0, draws: 0, losses: 0 };
+      mergedPlayers[player] = {
+        pts: Math.max(chainStats.pts, dbStats.pts || 0),
+        wins: Math.max(chainStats.wins, dbStats.wins || 0),
+        draws: Math.max(chainStats.draws, dbStats.draws || 0),
+        losses: Math.max(chainStats.losses, dbStats.losses || 0),
+      };
+    }
+
+    const totalGames = Object.values(mergedPlayers).reduce(
+      (s, p) => s + (p.wins || 0) + (p.draws || 0) + (p.losses || 0), 0
+    );
+    const totalPts = Object.values(mergedPlayers).reduce((s, p) => s + (p.pts || 0), 0);
+
+    await leaderboardCollection.updateOne(
+      { month: String(monthKey) },
+      {
+        $set: {
+          month: String(monthKey),
+          players: mergedPlayers,
+          totals: { games: totalGames, totalPts },
+          source: 'chain-sync',
+          updatedAt: new Date(),
+        },
+        $setOnInsert: { createdAt: new Date() },
+      },
+      { upsert: true }
+    );
+  }
+}
+
+
+// Track sync state
+let syncInProgress = false;
+let lastSyncTime = 0;
+let backgroundSyncInterval = null;
+
+/**
+ * Incremental sync: only fetches new games from the chain (games after the
+ * latest stored gameId). Rebuilds leaderboard aggregates via upsert so data
+ * is never temporarily empty.
+ */
 async function syncLeaderboardFromChain() {
   const nextGameResponse = await callReadOnly('get-next-game-id');
   const nextGameId = parseClarityUintValue(nextGameResponse?.result);
@@ -342,9 +392,19 @@ async function syncLeaderboardFromChain() {
     return { syncedGames: 0, leaderboardMonths: 0 };
   }
 
-  const finishedGames = [];
+  // Only fetch games we don't already have (incremental sync)
+  const latestStoredId = await getLatestStoredGameId();
+  const startId = latestStoredId + 1;
 
-  for (let gameId = 1; gameId < nextGameId; gameId += 1) {
+  if (startId >= nextGameId) {
+    // Already up to date
+    return { syncedGames: 0, leaderboardMonths: 0 };
+  }
+
+  const newGames = [];
+  const affectedMonths = new Set();
+
+  for (let gameId = startId; gameId < nextGameId; gameId += 1) {
     try {
       const gameResponse = await callReadOnly('get-full-game-state', [encodeUintArg(gameId)]);
       const state = parseGameState(gameResponse?.result);
@@ -356,7 +416,7 @@ async function syncLeaderboardFromChain() {
       const outcome = state.status === 1 ? 'win' : state.status === 2 ? 'loss' : 'draw';
       const pts = outcome === 'win' ? 3 : outcome === 'draw' ? 1 : 0;
 
-      finishedGames.push({
+      newGames.push({
         gameId,
         player: state.player,
         month: state.month,
@@ -367,14 +427,17 @@ async function syncLeaderboardFromChain() {
         pts,
         updatedAt: new Date(),
       });
+
+      affectedMonths.add(String(state.month));
     } catch (error) {
       console.error(`Failed to fetch game ${gameId}:`, error.message);
     }
   }
 
+  // Store new games
   const gamesCollection = await getGamesCollection();
-  if (finishedGames.length > 0) {
-    await Promise.all(finishedGames.map((game) =>
+  if (newGames.length > 0) {
+    await Promise.all(newGames.map((game) =>
       gamesCollection.updateOne(
         { gameId: game.gameId },
         { $set: game, $setOnInsert: { createdAt: new Date() } },
@@ -383,77 +446,20 @@ async function syncLeaderboardFromChain() {
     ));
   }
 
-  const storedGames = await gamesCollection.find({ status: { $in: [1, 2, 3] } }).toArray();
-  const monthMap = new Map();
-
-  for (const game of storedGames) {
-    const monthKey = String(game.month ?? 0);
-    const playerKey = game.player;
-    const aggregateKey = `${monthKey}:${playerKey}`;
-
-    if (!monthMap.has(aggregateKey)) {
-      monthMap.set(aggregateKey, {
-        month: monthKey,
-        player: playerKey,
-        pts: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-      });
-    }
-
-    const entry = monthMap.get(aggregateKey);
-    entry.pts += game.pts || 0;
-    entry.wins += game.outcome === 'win' ? 1 : 0;
-    entry.draws += game.outcome === 'draw' ? 1 : 0;
-    entry.losses += game.outcome === 'loss' ? 1 : 0;
-  }
-
-  const leaderboardCollection = await getMonthCollection();
-  await leaderboardCollection.deleteMany({});
-
-  const monthBuckets = new Map();
-  for (const entry of monthMap.values()) {
-    if (!monthBuckets.has(entry.month)) {
-      monthBuckets.set(entry.month, { month: entry.month, players: {}, totals: { games: 0, totalPts: 0 } });
-    }
-
-    const monthEntry = monthBuckets.get(entry.month);
-    monthEntry.players[entry.player] = {
-      pts: entry.pts,
-      wins: entry.wins,
-      draws: entry.draws,
-      losses: entry.losses,
-    };
-    monthEntry.totals.games += entry.wins + entry.draws + entry.losses;
-    monthEntry.totals.totalPts += entry.pts;
-  }
-
-  const leaderboardDocs = Array.from(monthBuckets.values()).map((doc) => ({
-    ...doc,
-    source: 'chain-sync',
-    updatedAt: new Date(),
-  }));
-
-  if (leaderboardDocs.length > 0) {
-    await leaderboardCollection.insertMany(leaderboardDocs);
+  // Rebuild only affected months (via upsert — never deletes existing data)
+  if (affectedMonths.size > 0) {
+    await rebuildLeaderboardForMonths(Array.from(affectedMonths));
   }
 
   return {
-    syncedGames: finishedGames.length,
-    leaderboardMonths: leaderboardDocs.length,
+    syncedGames: newGames.length,
+    leaderboardMonths: affectedMonths.size,
   };
 }
 
 // Debounced sync wrapper to prevent concurrent syncs
 async function syncLeaderboardFromChainDebounced() {
-  // If a sync is already in progress, wait for it to finish
   if (syncInProgress) {
-    // Wait up to 30 seconds for the in-progress sync to complete
-    const startTime = Date.now();
-    while (syncInProgress && Date.now() - startTime < 30000) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
     return { syncedGames: 0, leaderboardMonths: 0, debounced: true };
   }
 
@@ -467,25 +473,40 @@ async function syncLeaderboardFromChainDebounced() {
   }
 }
 
+/**
+ * Start a background sync loop that runs every 60 seconds.
+ * This keeps the DB up to date without blocking leaderboard reads.
+ */
+function startBackgroundSync() {
+  if (backgroundSyncInterval) return;
+
+  backgroundSyncInterval = setInterval(() => {
+    syncLeaderboardFromChainDebounced().catch((error) => {
+      console.error('Background sync failed:', error.message);
+    });
+  }, 60_000);
+}
+
+// ───────────── ROUTES ─────────────
+
 app.get('/health', (_req, res) => {
   res.json({ ok: true, backend: 'mongo' });
 });
 
+/**
+ * GET /api/leaderboard
+ * Pure DB read — never triggers chain sync. Fast and reliable.
+ */
 app.get('/api/leaderboard', async (req, res) => {
   try {
-    const month = req.query.month || await getLatestMonthKey() || await getCurrentChainMonthKey();
-    let monthData = await getMonthData(month);
-    const stale = await isLeaderboardStale();
+    const month = req.query.month || await getLatestMonthKey();
 
-    if (stale || !monthData.players || Object.keys(monthData.players).length === 0) {
-      try {
-        await syncLeaderboardFromChainDebounced();
-        monthData = await getMonthData(month);
-      } catch (syncError) {
-        console.error('Auto-sync on leaderboard read failed:', syncError.message);
-      }
+    if (!month) {
+      // No data in DB at all yet
+      return res.json({ month: 'latest', players: {}, source: 'mongodb' });
     }
 
+    const monthData = await getMonthData(month);
     res.json({ month, players: monthData.players || {}, source: 'mongodb' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -522,10 +543,6 @@ app.post('/api/leaderboard/result', async (req, res) => {
       { upsert: true }
     );
 
-    // Avoid immediate chain re-sync from overwriting freshly written result.
-    lastSyncTime = Date.now();
-    stalenessCache = { result: false, timestamp: lastSyncTime, ttlMs: 15000 };
-
     const updatedMonth = await collection.findOne({ month: monthKey });
     const stats = updatedMonth?.players?.[walletAddr] || { pts: 0, wins: 0, draws: 0, losses: 0 };
     return res.json({ ok: true, earned: ptsMap[outcome], month: monthKey, stats });
@@ -548,7 +565,7 @@ app.delete('/api/leaderboard', async (req, res) => {
 
 app.post('/api/sync', async (_req, res) => {
   try {
-    const result = await syncLeaderboardFromChain();
+    const result = await syncLeaderboardFromChainDebounced();
     res.json({ ok: true, ...result });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -569,9 +586,13 @@ async function start() {
       console.log(`Leaderboard backend listening on :${PORT}`);
     });
 
-    syncLeaderboardFromChain().catch((error) => {
+    // Initial sync on startup (non-blocking)
+    syncLeaderboardFromChainDebounced().catch((error) => {
       console.error('Initial blockchain sync failed:', error.message);
     });
+
+    // Background sync every 60s to keep DB fresh
+    startBackgroundSync();
   } catch (error) {
     console.error('Failed to start backend:', error.message);
     process.exit(1);
