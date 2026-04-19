@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchLeaderboardFromContract, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
 import { CONFIG } from '../config';
 
@@ -13,16 +13,21 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [data, setData] = useState(null);
   const [players, setPlayers] = useState([]);
   const [countdown, setCountdown] = useState("—");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const isDeployer = walletAddr === CONFIG.contractAddress;
   const claimReady = countdown === "00:00:00";
 
-  const loadLeaderboard = async () => {
+  // Prevent overlapping fetch calls
+  const fetchingRef = useRef(false);
+
+  const loadLeaderboard = useCallback(async () => {
+    // Skip if already fetching
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
+
     try {
       setLoading(true);
-      
-      // Fetch  from contract
       const contractData = await fetchLeaderboardFromContract();
       setData(contractData);
       setPlayers(getPlayerList(contractData));
@@ -32,48 +37,43 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       setPlayers([]);
     } finally {
       setLoading(false);
+      fetchingRef.current = false;
     }
-  };
+  }, []);
 
   const refresh = async () => {
-    if (!isDeployer) return;
     await loadLeaderboard();
   };
 
   useEffect(() => {
+    // Load once on mount
     loadLeaderboard();
+
+    // Countdown timer
     setCountdown(formatCountdown(getMonthEnd() - Date.now()));
-    const interval = setInterval(() => {
+    const countdownInterval = setInterval(() => {
       const ms = getMonthEnd() - Date.now();
       setCountdown(formatCountdown(ms));
     }, 1000);
+
+    // Auto-refresh every 60s
     const refreshInterval = setInterval(() => {
       loadLeaderboard();
     }, 60000);
 
-    // Refresh immediately when a game result is recorded
+    // Refresh when a game result is recorded (custom event from game page)
     const handleGameResultRecorded = () => {
-      loadLeaderboard();
+      // Small delay so the backend POST has time to commit
+      setTimeout(() => loadLeaderboard(), 500);
     };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        loadLeaderboard();
-      }
-    };
-
-    window.addEventListener('focus', loadLeaderboard);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('gameResultRecorded', handleGameResultRecorded);
 
     return () => {
-      clearInterval(interval);
+      clearInterval(countdownInterval);
       clearInterval(refreshInterval);
-      window.removeEventListener('focus', loadLeaderboard);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('gameResultRecorded', handleGameResultRecorded);
     };
-  }, []);
+  }, [loadLeaderboard]);
 
   useEffect(() => {
     setPage(1);
@@ -92,6 +92,21 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       navigate('game');
     }
   };
+
+  // Show loading skeleton on first load only
+  if (!data && loading) {
+    return (
+      <div className="page active" id="page-leaderboard">
+        <div className="lb-header">
+          <div className="lb-header-left">
+            <div className="lb-title">Leaderboard</div>
+            <div className="lb-week">Loading…</div>
+          </div>
+        </div>
+        <div className="lb-empty">Loading leaderboard data…</div>
+      </div>
+    );
+  }
 
   if (!data) return null;
 
@@ -295,7 +310,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
 
       {/* Actions */}
       <div className="lb-actions">
-        {isDeployer && <button className="lb-action-btn" onClick={refresh}>↻ Refresh</button>}
+        <button className="lb-action-btn" onClick={refresh}>↻ Refresh</button>
         <button className="lb-action-btn" onClick={handleClaim} disabled={!claimReady}>◈ Claim NFT (Top 5)</button>
         {isDeployer && <button className="lb-action-btn danger" onClick={handleClear}>Clear Data</button>}
       </div>
