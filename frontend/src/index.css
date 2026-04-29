@@ -905,3 +905,13 @@ svg.mark { overflow: visible; }
   display: grid; grid-template-columns: repeat(3,1fr);
   border: 1px solid var(--border2); border-bottom: none;
 }
+
+.lp-feature {
+  padding: 32px 28px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border2);
+}
+.lp-feature:nth-child(3n) { border-right: none; }
+.lp-feature-icon  { font-size: 11px; letter-spacing: .35em; text-transform: uppercase; color: var(--red); margin-bottom: 20px; }
+.lp-feature-title { font-size: 13px; letter-spacing: .08em; color: var(--text); margin-bottom: 12px; font-weight: 400; }
+.lp-feature-desc  { font-size: 10px; letter-spacing: .06em; line-height: 2; color: var(--muted); }
