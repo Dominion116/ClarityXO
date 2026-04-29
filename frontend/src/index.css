@@ -711,3 +711,15 @@ svg.mark { overflow: visible; }
   border-bottom: 1px solid var(--border);
   overflow: hidden;
 }
+
+.lp-ticker-track {
+  display: flex; align-items: center;
+  white-space: nowrap;
+  animation: lpTicker 30s linear infinite;
+}
+.lp-ticker-item {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 24px; border-right: 1px solid var(--border);
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+  flex-shrink: 0;
+}
