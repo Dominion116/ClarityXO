@@ -932,3 +932,13 @@ svg.mark { overflow: visible; }
 .lp-nft-tag         { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
 .lp-nft-main-title  { font-size: 28px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 16px; }
 .lp-nft-main-desc   { font-size: 10px; letter-spacing: .08em; line-height: 2; color: var(--muted); max-width: 480px; margin-bottom: 32px; }
+.lp-nft-tiers       { display: flex; border: 1px solid var(--border2); }
+.lp-nft-tier        { flex: 1; padding: 16px 20px; border-right: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+.lp-nft-tier:last-child { border-right: none; }
+.lp-tier-medal      { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; }
+.t1  { color: var(--gold);     border: 1px solid var(--gold); }
+.t2  { color: var(--silver);   border: 1px solid var(--silver); }
+.t3  { color: var(--bronze);   border: 1px solid var(--bronze); }
+.t45 { color: var(--gold-dim); border: 1px solid var(--gold-dim); }
+.lp-tier-info       { font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); line-height: 1.7; }
+.lp-tier-info strong { color: var(--text); font-weight: 400; display: block; }
