@@ -1005,3 +1005,12 @@ svg.mark { overflow: visible; }
 .code-kw      { color: var(--red); }
 .code-num     { color: var(--text); }
 .code-comment { color: var(--dim); }
+.lp-network-indicators { display: flex; margin-top: 24px; }
+.lp-net-indicator {
+  flex: 1; padding: 10px 14px; border: 1px solid var(--border); margin-right: -1px;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--muted); display: flex; align-items: center; gap: 8px;
+}
+.lp-net-dot       { width: 5px; height: 5px; }
+.lp-net-dot.live  { background: var(--green); animation: pulse 1.8s ease-in-out infinite; }
+.lp-net-dot.off   { background: var(--dim); }
