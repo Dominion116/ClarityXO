@@ -800,3 +800,11 @@ svg.mark { overflow: visible; }
 .lp-stat-label {
   font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--muted);
 }
+
+.lp-board-wrap {
+  display: flex; flex-direction: column; align-items: flex-end;
+}
+.lp-board-label {
+  font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--ghost); margin-bottom: 12px;
+}
