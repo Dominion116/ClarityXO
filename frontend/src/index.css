@@ -832,3 +832,5 @@ svg.mark { overflow: visible; }
 .lp-demo-cell:nth-child(3n)  { border-right: none; }
 .lp-demo-cell:nth-child(n+7) { border-bottom: none; }
 .lp-demo-cell.win-cell { background: var(--surface); }
+
+.lp-mark { overflow: visible; }
