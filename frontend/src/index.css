@@ -979,3 +979,10 @@ svg.mark { overflow: visible; }
 .lp-lb-table tr:last-child td { border-bottom: none; }
 .lp-lb-table tbody tr { transition: background .1s; }
 .lp-lb-table tbody tr.nft-row { border-left: 2px solid rgba(200,168,75,0.4); }
+.lp-lb-medal-sm { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; font-size: 9px; }
+.m1    { color: var(--gold);     border: 1px solid var(--gold); }
+.m2    { color: var(--silver);   border: 1px solid var(--silver); }
+.m3    { color: var(--bronze);   border: 1px solid var(--bronze); }
+.mn    { color: var(--dim);      border: 1px solid var(--border); }
+.mgold { color: var(--gold-dim); border: 1px solid var(--gold-dim); }
+.lp-addr-short { font-size: 10px; letter-spacing: .06em; }
