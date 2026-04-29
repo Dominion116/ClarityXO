@@ -964,3 +964,10 @@ svg.mark { overflow: visible; }
 /* ── Leaderboard Preview ── */
 .lp-lb-preview { padding-bottom: 80px; }
 .lp-lb-table   { width: 100%; border: 1px solid var(--border2); border-collapse: collapse; }
+.lp-lb-table th {
+  padding: 10px 18px; font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--muted); text-align: left; font-weight: 400;
+  border-right: 1px solid var(--border); background: var(--surface);
+  border-bottom: 1px solid var(--border2);
+}
+.lp-lb-table th:last-child { border-right: none; }
