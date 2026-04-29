@@ -750,3 +750,10 @@ svg.mark { overflow: visible; }
   content: ''; display: inline-block;
   width: 24px; height: 1px; background: var(--red);
 }
+
+.lp-hero-h1 {
+  font-size: clamp(38px, 5vw, 64px);
+  font-weight: 300; letter-spacing: -.02em; line-height: 1.05;
+  margin-bottom: 28px;
+}
+.lp-hero-h1 span { color: var(--red); }
