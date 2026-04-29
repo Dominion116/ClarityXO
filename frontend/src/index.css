@@ -471,9 +471,9 @@ svg.mark { overflow: visible; }
   flex-shrink: 0; opacity: 0.6;
 }
 
-.lb-addr-cell { display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: .06em; }
-.lb-you  { font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); border: 1px solid var(--red); padding: 1px 5px; }
-.lb-anon { color: var(--muted); }
+.lb-addr-cell { display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: .06em; overflow: hidden; }
+.lb-you  { font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); border: 1px solid var(--red); padding: 1px 5px; flex-shrink: 0; }
+.lb-anon { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .pts-col  { color: var(--gold); font-size: 13px; font-weight: 500; }
 .win-col  { color: var(--green); }
@@ -590,8 +590,8 @@ svg.mark { overflow: visible; }
     gap: 32px;
     padding: 40px 10px 0;
     min-height: unset;
-    width: 100vw;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
   }
@@ -623,8 +623,8 @@ svg.mark { overflow: visible; }
     flex-direction: column;
     align-items: stretch;
     padding: 40px 10px;
-    width: 100vw;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
   }
@@ -654,7 +654,7 @@ svg.mark { overflow: visible; }
   .badge { font-size: 8px; padding: 3px 8px; }
   
   .page { width: 100vw; max-width: 100%; padding: 0; box-sizing: border-box; }
-  #page-game { padding: 12px; max-width: 100vw; width: 100vw; box-sizing: border-box; }
+  #page-game { padding: 12px; max-width: 100%; width: 100%; box-sizing: border-box; }
   .eyebrow { font-size: 9px; margin-bottom: 12px; }
   .wallet-bar { padding: 8px 10px; font-size: 9px; flex-wrap: wrap; width: 100%; max-width: 100%; box-sizing: border-box; }
   .wallet-bar-btns { width: 100%; gap: 4px; margin-top: 4px; }
@@ -663,7 +663,7 @@ svg.mark { overflow: visible; }
   .status-bar { padding: 10px 10px; font-size: 9px; width: 100%; max-width: 100%; box-sizing: border-box; }
   .move-count { font-size: 8px; }
   
-  .board { max-width: calc(100vw - 24px); margin: 0 auto; }
+  .board { max-width: 100%; margin: 0 auto; }
   svg.mark { width: 100%; height: 100%; }
   .x-line1, .x-line2 { stroke-width: 2; }
   
@@ -681,7 +681,7 @@ svg.mark { overflow: visible; }
   .log-line { padding: 5px 10px; font-size: 9px; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; }
   
   footer { width: 100%; max-width: 100%; box-sizing: border-box; }
-  #page-leaderboard { padding: 12px; max-width: 100vw; width: 100vw; box-sizing: border-box; }
+  #page-leaderboard { padding: 12px; max-width: 100%; width: 100%; box-sizing: border-box; }
   .nft-banner { padding: 0; width: 100%; max-width: 100%; box-sizing: border-box; }
   .nft-banner-inner { padding: 12px 12px; flex-direction: column; gap: 8px; width: 100%; box-sizing: border-box; }
   .nft-icon { width: 28px; height: 28px; font-size: 12px; flex-shrink: 0; }
@@ -934,10 +934,10 @@ svg.mark { overflow: visible; }
 }
 .lp-hero-h1 span { color: var(--red); }
 
-.lp-hero-sub {
-  font-size: 12px; letter-spacing: .08em; line-height: 2;
-  color: var(--muted); max-width: 400px; margin-bottom: 40px;
-}
+  .lp-hero-sub {
+    font-size: 12px; letter-spacing: .08em; line-height: 2;
+    color: var(--muted); max-width: 100%; margin-bottom: 40px;
+  }
 
 .lp-hero-ctas { display: flex; }
 .lp-cta-primary {
@@ -1107,7 +1107,7 @@ svg.mark { overflow: visible; }
 .lp-nft-main-content { padding: 48px; }
 .lp-nft-tag         { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
 .lp-nft-main-title  { font-size: 28px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 16px; }
-.lp-nft-main-desc   { font-size: 10px; letter-spacing: .08em; line-height: 2; color: var(--muted); max-width: 480px; margin-bottom: 32px; }
+  .lp-nft-main-desc   { font-size: 10px; letter-spacing: .08em; line-height: 2; color: var(--muted); max-width: 100%; margin-bottom: 32px; }
 .lp-nft-tiers       { display: flex; border: 1px solid var(--border2); }
 .lp-nft-tier        { flex: 1; padding: 16px 20px; border-right: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
 .lp-nft-tier:last-child { border-right: none; }
