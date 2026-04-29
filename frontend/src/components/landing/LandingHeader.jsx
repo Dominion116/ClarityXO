@@ -19,6 +19,18 @@ export default function LandingHeader({ onLaunch }) {
       <div className="header-right">
         <div className="badge">mainnet</div>
         <button className="launch-btn" onClick={onLaunch}>Launch App</button>
+        <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? '✕' : '☰'}
+        </button>
+      </div>
+
+      <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+        <nav className="mobile-nav">
+          <a className="nav-item lp-nav mobile" onClick={() => scrollTo("how-it-works")}>Protocol</a>
+          <a className="nav-item lp-nav mobile" onClick={() => scrollTo("features")}>Features</a>
+          <a className="nav-item lp-nav mobile" onClick={() => scrollTo("nft")}>Rewards</a>
+          <a className="nav-item lp-nav mobile" onClick={() => scrollTo("leaderboard")}>Rankings</a>
+        </nav>
       </div>
     </header>
   );

@@ -251,6 +251,16 @@ export default function App() {
             </div>
             <div className="header-right">
               <div className="badge">{CONFIG.network}</div>
+              <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                {mobileMenuOpen ? '✕' : '☰'}
+              </button>
+            </div>
+            
+            <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+              <nav className="mobile-nav">
+                <div className={`nav-item mobile ${activePage === 'game' ? 'active' : ''}`} onClick={() => { setActivePage('game'); setMobileMenuOpen(false); }}>Game</div>
+                <div className={`nav-item mobile ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => { setActivePage('leaderboard'); setMobileMenuOpen(false); }}>Leaderboard</div>
+              </nav>
             </div>
           </header>
 
