@@ -796,3 +796,7 @@ svg.mark { overflow: visible; }
 .lp-stat-val.red   { color: var(--red); }
 .lp-stat-val.green { color: var(--green); }
 .lp-stat-val.gold  { color: var(--gold); }
+
+.lp-stat-label {
+  font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--muted);
+}
