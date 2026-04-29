@@ -779,3 +779,8 @@ svg.mark { overflow: visible; }
 }
 .lp-cta-secondary:hover { color: var(--text); border-color: var(--text); }
 .lp-cta-lg { padding: 16px 48px; font-size: 11px; }
+
+.lp-hero-stats {
+  margin-top: 48px; display: flex;
+  border: 1px solid var(--border);
+}
