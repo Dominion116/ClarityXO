@@ -915,3 +915,15 @@ svg.mark { overflow: visible; }
 .lp-feature-icon  { font-size: 11px; letter-spacing: .35em; text-transform: uppercase; color: var(--red); margin-bottom: 20px; }
 .lp-feature-title { font-size: 13px; letter-spacing: .08em; color: var(--text); margin-bottom: 12px; font-weight: 400; }
 .lp-feature-desc  { font-size: 10px; letter-spacing: .06em; line-height: 2; color: var(--muted); }
+
+.lp-nft-section { padding-bottom: 0; }
+.lp-nft-main {
+  border: 1px solid var(--gold-dim);
+  background: linear-gradient(135deg, rgba(200,168,75,0.06) 0%, rgba(200,168,75,0.02) 100%);
+  display: grid; grid-template-columns: 1fr auto;
+  position: relative; overflow: hidden;
+}
+.lp-nft-main::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
