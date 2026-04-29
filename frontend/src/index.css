@@ -509,6 +509,25 @@ svg.mark { overflow: visible; }
 @keyframes drawCircle { from { stroke-dashoffset: 87.96; } to { stroke-dashoffset: 0; } }
 @keyframes pulse      { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
+.skeleton-box {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--border2) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s infinite ease-in-out;
+  border-radius: 2px;
+  opacity: 0.7;
+}
+.skeleton-text {
+  height: 12px;
+  width: 100%;
+  border-radius: 2px;
+}
+.skeleton-text.short { width: 40%; }
+.skeleton-text.medium { width: 70%; }
+@keyframes skeletonLoading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* ── RESPONSIVE ───────────────────────────────────── */
 
 /* Mobile: < 480px (small phones) */

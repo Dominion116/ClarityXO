@@ -95,15 +95,89 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
 
   // Show loading skeleton on first load only
   if (!data && loading) {
+    const SkeletonSlots = Array(5).fill(0).map((_, i) => (
+      <div key={i} className="nft-slot skeleton-box" style={{ border: 'none' }}></div>
+    ));
+
+    const SkeletonRows = Array(10).fill(0).map((_, i) => (
+      <tr key={i}>
+        <td><div className="skeleton-box skeleton-text short"></div></td>
+        <td><div className="skeleton-box skeleton-text medium"></div></td>
+        <td><div className="skeleton-box skeleton-text"></div></td>
+        <td><div className="skeleton-box skeleton-text"></div></td>
+        <td><div className="skeleton-box skeleton-text"></div></td>
+        <td><div className="skeleton-box skeleton-text"></div></td>
+        <td><div className="skeleton-box skeleton-text"></div></td>
+        <td><div className="skeleton-box skeleton-text"></div></td>
+      </tr>
+    ));
+
     return (
       <div className="page active" id="page-leaderboard">
+        {/* Skeleton NFT Banner */}
+        <div className="nft-banner">
+          <div className="nft-banner-inner">
+            <div className="nft-banner-left">
+              <div className="nft-icon skeleton-box" style={{ border: 'none', background: 'var(--border)' }}></div>
+              <div style={{ flex: 1, width: '100%' }}>
+                <div className="skeleton-box skeleton-text short" style={{ marginBottom: '12px', height: '10px' }}></div>
+                <div className="skeleton-box skeleton-text" style={{ marginBottom: '6px' }}></div>
+                <div className="skeleton-box skeleton-text medium"></div>
+              </div>
+            </div>
+          </div>
+          <div className="nft-qualifiers">
+            <div className="nft-q-label skeleton-box skeleton-text short" style={{ width: '60px' }}></div>
+            {SkeletonSlots}
+          </div>
+        </div>
+
+        {/* Skeleton Header */}
         <div className="lb-header">
           <div className="lb-header-left">
             <div className="lb-title">Leaderboard</div>
-            <div className="lb-week">Loading…</div>
+            <div className="skeleton-box skeleton-text short" style={{ marginTop: '8px' }}></div>
           </div>
         </div>
-        <div className="lb-empty">Loading leaderboard data…</div>
+
+        {/* Skeleton Legend */}
+        <div className="pts-legend">
+          {Array(3).fill(0).map((_, i) => (
+            <div key={i} className="pts-item">
+               <div className="skeleton-box" style={{ width: '32px', height: '24px', borderRadius: '4px' }}></div>
+               <div style={{ flex: 1 }}><div className="skeleton-box skeleton-text short" style={{ marginBottom: '6px' }}></div><div className="skeleton-box skeleton-text"></div></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton Stats */}
+        <div className="lb-stats">
+          {Array(4).fill(0).map((_, i) => (
+            <div key={i} className="lb-stat">
+              <div className="skeleton-box skeleton-text short" style={{ marginBottom: '12px' }}></div>
+              <div className="skeleton-box skeleton-text" style={{ height: '24px', width: '50%' }}></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton Table */}
+        <table className="lb-table">
+          <thead>
+            <tr>
+              <th style={{ width: 58 }}>Rank</th>
+              <th>Player</th>
+              <th style={{ width: 72 }}>Points</th>
+              <th style={{ width: 64 }}>Wins</th>
+              <th style={{ width: 64 }}>Draws</th>
+              <th style={{ width: 64 }}>Losses</th>
+              <th style={{ width: 64 }}>Games</th>
+              <th style={{ width: 110 }}>Win Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {SkeletonRows}
+          </tbody>
+        </table>
       </div>
     );
   }
