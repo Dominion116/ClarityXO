@@ -993,3 +993,6 @@ svg.mark { overflow: visible; }
 .lp-contract-grid   { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border2); }
 .lp-contract-left   { padding: 40px; border-right: 1px solid var(--border2); }
 .lp-contract-right  { padding: 40px; }
+.lp-contract-label  { font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+.lp-contract-addr   { font-size: 11px; letter-spacing: .08em; color: var(--text); word-break: break-all; line-height: 1.8; margin-bottom: 24px; }
+.lp-contract-addr span { color: var(--red); }
