@@ -68,7 +68,7 @@ header {
 }
 .logo span { color: var(--red); }
 
-.desktop-nav { display: none; }
+.desktop-nav { display: flex; }
 .nav-item {
   display: flex; align-items: center; padding: 0 22px;
   font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
@@ -532,6 +532,20 @@ svg.mark { overflow: visible; }
 
 /* Mobile: < 480px (small phones) */
 @media (max-width: 479px) {
+  .desktop-nav { display: none !important; }
+  .close-mobile-menu {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 32px;
+    z-index: 10001;
+    cursor: pointer;
+    padding: 8px;
+    line-height: 1;
+  }
   /* Make mobile menu overlay full screen and visible when open */
   .mobile-menu {
     display: flex;
@@ -561,18 +575,25 @@ svg.mark { overflow: visible; }
     gap: 0;
   }
   .mobile-nav .nav-item {
-    font-size: 18px;
-    padding: 20px 0;
+    font-size: 20px;
+    padding: 24px 0 24px 0;
     border-bottom: 1px solid var(--border2);
     text-align: center;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   /* Responsive landing sections */
   .lp-hero {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 32px;
     padding: 40px 10px 0;
     min-height: unset;
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
   .lp-hero-content {
     align-items: flex-start;
@@ -598,7 +619,14 @@ svg.mark { overflow: visible; }
   .lp-nft-section,
   .lp-lb-preview,
   .lp-contract-section {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     padding: 40px 10px;
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
   .lp-section-title {
     font-size: 10px;

@@ -25,11 +25,12 @@ export default function LandingHeader({ onLaunch }) {
       </div>
 
       <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+        <button className="close-mobile-menu" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">✕</button>
         <nav className="mobile-nav">
-          <a className="nav-item lp-nav mobile" onClick={() => scrollTo("how-it-works")}>Protocol</a>
-          <a className="nav-item lp-nav mobile" onClick={() => scrollTo("features")}>Features</a>
-          <a className="nav-item lp-nav mobile" onClick={() => scrollTo("nft")}>Rewards</a>
-          <a className="nav-item lp-nav mobile" onClick={() => scrollTo("leaderboard")}>Rankings</a>
+          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("how-it-works"); }}>Protocol</a>
+          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("features"); }}>Features</a>
+          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("nft"); }}>Rewards</a>
+          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("leaderboard"); }}>Rankings</a>
         </nav>
       </div>
     </header>
