@@ -762,3 +762,20 @@ svg.mark { overflow: visible; }
   font-size: 12px; letter-spacing: .08em; line-height: 2;
   color: var(--muted); max-width: 400px; margin-bottom: 40px;
 }
+
+.lp-hero-ctas { display: flex; }
+.lp-cta-primary {
+  padding: 14px 32px; font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
+  background: var(--red); color: #fff; border: none; cursor: pointer;
+  font-family: var(--mono); transition: background .15s; text-decoration: none; display: inline-flex; align-items: center;
+}
+.lp-cta-primary:hover { background: #cc3333; }
+.lp-cta-secondary {
+  padding: 14px 28px; font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border2); border-left: none;
+  cursor: pointer; font-family: var(--mono); transition: color .15s, border-color .15s;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+.lp-cta-secondary:hover { color: var(--text); border-color: var(--text); }
+.lp-cta-lg { padding: 16px 48px; font-size: 11px; }
