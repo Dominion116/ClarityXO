@@ -757,3 +757,8 @@ svg.mark { overflow: visible; }
   margin-bottom: 28px;
 }
 .lp-hero-h1 span { color: var(--red); }
+
+.lp-hero-sub {
+  font-size: 12px; letter-spacing: .08em; line-height: 2;
+  color: var(--muted); max-width: 400px; margin-bottom: 40px;
+}
