@@ -886,3 +886,8 @@ svg.mark { overflow: visible; }
 .lp-section-title::after {
   content: ''; flex: 1; height: 1px; background: var(--border);
 }
+
+.lp-steps-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border: 1px solid var(--border2);
+}
