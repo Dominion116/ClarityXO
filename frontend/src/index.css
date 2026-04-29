@@ -675,3 +675,13 @@ svg.mark { overflow: visible; }
   align-items: stretch;
   position: relative;
 }
+
+/* Scanlines */
+.lp-scanlines {
+  position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 2px,
+    rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px
+  );
+}
