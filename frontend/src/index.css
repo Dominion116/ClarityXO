@@ -927,3 +927,8 @@ svg.mark { overflow: visible; }
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
+
+.lp-nft-main-content { padding: 48px; }
+.lp-nft-tag         { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+.lp-nft-main-title  { font-size: 28px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 16px; }
+.lp-nft-main-desc   { font-size: 10px; letter-spacing: .08em; line-height: 2; color: var(--muted); max-width: 480px; margin-bottom: 32px; }
