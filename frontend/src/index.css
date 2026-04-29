@@ -784,3 +784,8 @@ svg.mark { overflow: visible; }
   margin-top: 48px; display: flex;
   border: 1px solid var(--border);
 }
+
+.lp-hero-stat {
+  flex: 1; padding: 16px 20px; border-right: 1px solid var(--border);
+}
+.lp-hero-stat:last-child { border-right: none; }
