@@ -900,3 +900,8 @@ svg.mark { overflow: visible; }
 .lp-step-num   { font-size: 48px; font-weight: 300; letter-spacing: -.04em; color: var(--ghost); margin-bottom: 20px; line-height: 1; }
 .lp-step-title { font-size: 11px; letter-spacing: .25em; text-transform: uppercase; color: var(--text); margin-bottom: 12px; }
 .lp-step-desc  { font-size: 10px; letter-spacing: .06em; line-height: 2; color: var(--muted); }
+
+.lp-features-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  border: 1px solid var(--border2); border-bottom: none;
+}
