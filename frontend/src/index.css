@@ -723,3 +723,12 @@ svg.mark { overflow: visible; }
   font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
   flex-shrink: 0;
 }
+
+.lp-ticker-dot { width: 4px; height: 4px; flex-shrink: 0; display: inline-block; }
+.lp-ticker-dot.g    { background: var(--green); }
+.lp-ticker-dot.r    { background: var(--red); }
+.lp-ticker-dot.gold { background: var(--gold); }
+@keyframes lpTicker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
