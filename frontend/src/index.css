@@ -858,3 +858,15 @@ svg.mark { overflow: visible; }
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.lp-section-divider {
+  width: 100%; border-top: 1px solid var(--border2);
+  display: flex; align-items: center; padding: 0 40px;
+}
+.lp-divider-label {
+  font-size: 9px; letter-spacing: .35em; text-transform: uppercase;
+  color: var(--ghost); padding: 12px 20px 12px 0; border-right: 1px solid var(--border2);
+  white-space: nowrap;
+}
+.lp-divider-line { flex: 1; height: 1px; background: var(--border); margin-left: 20px; }
+.lp-divider-num  { font-size: 9px; letter-spacing: .25em; color: var(--ghost); padding-left: 20px; }
