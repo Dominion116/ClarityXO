@@ -9,7 +9,7 @@ export default function LandingHeader({ onLaunch }) {
     <header className="lp-header">
       <div className="header-left">
         <div className="logo">Clarity<span>XO</span></div>
-        <nav>
+        <nav className="desktop-nav">
           <a className="nav-item lp-nav" onClick={() => scrollTo("how-it-works")}>Protocol</a>
           <a className="nav-item lp-nav" onClick={() => scrollTo("features")}>Features</a>
           <a className="nav-item lp-nav" onClick={() => scrollTo("nft")}>Rewards</a>

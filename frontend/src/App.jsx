@@ -244,7 +244,7 @@ export default function App() {
           <header>
             <div className="header-left">
               <div className="logo" onClick={() => setActivePage('landing')}>Clarity<span>XO</span></div>
-              <nav>
+              <nav className="desktop-nav">
                 <div className={`nav-item ${activePage === 'game' ? 'active' : ''}`} onClick={() => setActivePage('game')}>Game</div>
                 <div className={`nav-item ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => setActivePage('leaderboard')}>Leaderboard</div>
               </nav>
