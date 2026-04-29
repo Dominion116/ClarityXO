@@ -986,3 +986,6 @@ svg.mark { overflow: visible; }
 .mn    { color: var(--dim);      border: 1px solid var(--border); }
 .mgold { color: var(--gold-dim); border: 1px solid var(--gold-dim); }
 .lp-addr-short { font-size: 10px; letter-spacing: .06em; }
+.lp-wr-bar  { width: 60px; height: 3px; background: var(--border); margin-bottom: 4px; position: relative; display: inline-block; vertical-align: middle; }
+.lp-wr-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--green); }
+.lp-wr-pct  { font-size: 10px; color: var(--muted); }
