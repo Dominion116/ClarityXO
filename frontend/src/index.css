@@ -789,3 +789,10 @@ svg.mark { overflow: visible; }
   flex: 1; padding: 16px 20px; border-right: 1px solid var(--border);
 }
 .lp-hero-stat:last-child { border-right: none; }
+
+.lp-stat-val {
+  font-size: 22px; font-weight: 300; letter-spacing: -.02em; margin-bottom: 4px;
+}
+.lp-stat-val.red   { color: var(--red); }
+.lp-stat-val.green { color: var(--green); }
+.lp-stat-val.gold  { color: var(--gold); }
