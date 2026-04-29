@@ -823,3 +823,12 @@ svg.mark { overflow: visible; }
 }
 .lp-board-corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
 .lp-board-corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+.lp-demo-cell {
+  display: flex; align-items: center; justify-content: center;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.lp-demo-cell:nth-child(3n)  { border-right: none; }
+.lp-demo-cell:nth-child(n+7) { border-bottom: none; }
+.lp-demo-cell.win-cell { background: var(--surface); }
