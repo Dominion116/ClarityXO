@@ -704,3 +704,10 @@ svg.mark { overflow: visible; }
   transition: background .15s;
 }
 .launch-btn:hover { background: #cc3333; }
+
+.lp-ticker {
+  width: 100%;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
