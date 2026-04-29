@@ -16,6 +16,7 @@ export default function App() {
 
   // "landing" | "game" | "leaderboard"
   const [activePage, setActivePage] = useState("landing");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [board, setBoard] = useState(Array(9).fill(EMPTY));
   const [status, setStatus] = useState(STATUS_ACTIVE);

@@ -1,4 +1,7 @@
+import React, { useState } from "react";
+
 export default function LandingHeader({ onLaunch }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
