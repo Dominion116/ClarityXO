@@ -834,3 +834,15 @@ svg.mark { overflow: visible; }
 .lp-demo-cell.win-cell { background: var(--surface); }
 
 .lp-mark { overflow: visible; }
+
+.lp-board-meta {
+  width: 320px; border: 1px solid var(--border); border-top: none; display: flex;
+}
+.lp-board-meta-item {
+  flex: 1; padding: 8px 14px;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--muted); border-right: 1px solid var(--border);
+}
+.lp-board-meta-item:last-child { border-right: none; }
+.mark-x { color: var(--red); }
+.mark-o { color: var(--text); }
