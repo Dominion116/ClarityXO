@@ -532,6 +532,90 @@ svg.mark { overflow: visible; }
 
 /* Mobile: < 480px (small phones) */
 @media (max-width: 479px) {
+  /* Make mobile menu overlay full screen and visible when open */
+  .mobile-menu {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+    background: var(--bg);
+    z-index: 9999;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    padding-top: 60px;
+  }
+  .mobile-menu.open {
+    transform: translateX(0);
+    display: flex;
+  }
+  .mobile-nav {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .mobile-nav .nav-item {
+    font-size: 18px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border2);
+    text-align: center;
+  }
+
+  /* Responsive landing sections */
+  .lp-hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 40px 10px 0;
+    min-height: unset;
+  }
+  .lp-hero-content {
+    align-items: flex-start;
+    padding: 0;
+  }
+  .lp-hero-h1 {
+    font-size: 28px;
+    margin-bottom: 18px;
+  }
+  .lp-hero-stats {
+    flex-direction: column;
+    margin-top: 24px;
+  }
+  .lp-hero-stat {
+    padding: 12px 10px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .lp-hero-stat:last-child { border-bottom: none; }
+  .lp-demo-board, .lp-board-meta { width: 100%; max-width: 100vw; }
+
+  .lp-section,
+  .lp-nft-section,
+  .lp-lb-preview,
+  .lp-contract-section {
+    padding: 40px 10px;
+  }
+  .lp-section-title {
+    font-size: 10px;
+    margin-bottom: 24px;
+    gap: 8px;
+  }
+  .lp-section-divider { padding: 0 10px; }
+  .lp-features-grid { grid-template-columns: 1fr; }
+  .lp-feature { padding: 20px 10px; }
+  .lp-steps-grid { grid-template-columns: 1fr; }
+  .lp-step { padding: 20px 10px; }
+  .lp-nft-main { grid-template-columns: 1fr; }
+  .lp-nft-main-content, .lp-nft-visual { padding: 20px 10px; }
+  .lp-nft-card { width: 100px; }
+  .lp-final-cta { padding: 40px 10px; }
+  .lp-footer { padding: 0 10px; }
+}
   html, body, #root { width: 100vw; max-width: 100%; overflow-x: hidden; }
   
   header { padding: 0 12px; overflow-x: hidden; }
