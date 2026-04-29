@@ -996,3 +996,12 @@ svg.mark { overflow: visible; }
 .lp-contract-label  { font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
 .lp-contract-addr   { font-size: 11px; letter-spacing: .08em; color: var(--text); word-break: break-all; line-height: 1.8; margin-bottom: 24px; }
 .lp-contract-addr span { color: var(--red); }
+.lp-code-block {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 20px; font-size: 10px; letter-spacing: .06em; line-height: 2;
+  color: var(--muted); white-space: pre-wrap; font-family: var(--mono);
+}
+.code-fn      { color: var(--green); }
+.code-kw      { color: var(--red); }
+.code-num     { color: var(--text); }
+.code-comment { color: var(--dim); }
