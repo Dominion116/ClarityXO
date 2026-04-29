@@ -740,3 +740,13 @@ svg.mark { overflow: visible; }
   gap: 60px; align-items: center;
   min-height: calc(100vh - 61px);
 }
+
+.lp-hero-eyebrow {
+  font-size: 10px; letter-spacing: .45em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.lp-hero-eyebrow::before {
+  content: ''; display: inline-block;
+  width: 24px; height: 1px; background: var(--red);
+}
