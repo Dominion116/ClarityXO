@@ -685,3 +685,13 @@ svg.mark { overflow: visible; }
     rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px
   );
 }
+
+.lp-header {
+  width: 100%;
+  border-bottom: 1px solid var(--border2);
+  padding: 0 40px;
+  display: flex; align-items: stretch; justify-content: space-between;
+  position: sticky; top: 0;
+  background: var(--bg); z-index: 100;
+  box-sizing: border-box;
+}
