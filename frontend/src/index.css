@@ -665,3 +665,13 @@ svg.mark { overflow: visible; }
   
   .footer { margin: 24px 0 16px; font-size: 9px; }
 }
+/* Root wrapper — overrides body flex so landing is full-width */
+.lp-root {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
