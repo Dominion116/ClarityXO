@@ -808,3 +808,11 @@ svg.mark { overflow: visible; }
   font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
   color: var(--ghost); margin-bottom: 12px;
 }
+
+.lp-demo-board {
+  width: 320px; height: 320px;
+  border: 1px solid var(--border2);
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  position: relative;
+}
