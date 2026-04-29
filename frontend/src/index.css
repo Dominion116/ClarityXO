@@ -971,3 +971,11 @@ svg.mark { overflow: visible; }
   border-bottom: 1px solid var(--border2);
 }
 .lp-lb-table th:last-child { border-right: none; }
+.lp-lb-table td {
+  padding: 12px 18px; font-size: 11px; letter-spacing: .04em;
+  border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.lp-lb-table td:last-child { border-right: none; }
+.lp-lb-table tr:last-child td { border-bottom: none; }
+.lp-lb-table tbody tr { transition: background .1s; }
+.lp-lb-table tbody tr.nft-row { border-left: 2px solid rgba(200,168,75,0.4); }
