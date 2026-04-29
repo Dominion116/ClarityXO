@@ -695,3 +695,12 @@ svg.mark { overflow: visible; }
   background: var(--bg); z-index: 100;
   box-sizing: border-box;
 }
+
+.lp-nav { text-decoration: none; cursor: pointer; }
+.launch-btn {
+  font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+  background: var(--red); color: #fff; border: none;
+  padding: 8px 20px; cursor: pointer; font-family: var(--mono);
+  transition: background .15s;
+}
+.launch-btn:hover { background: #cc3333; }
