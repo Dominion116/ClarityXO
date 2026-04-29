@@ -718,6 +718,9 @@ svg.mark { overflow: visible; }
   .lb-table { font-size: 11px; }
   .lb-table th:nth-child(n+6), .lb-table td:nth-child(n+6) { display: table-cell; }
   .lb-addr-cell { font-size: 10px; }
+
+  /* Hide hamburger on desktop */
+  .hamburger-btn { display: none; }
   
   .lb-pagination { padding: 9px 12px; }
   .lb-empty { padding: 56px 24px; font-size: 10px; }
