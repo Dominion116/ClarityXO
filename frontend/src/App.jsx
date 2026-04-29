@@ -7,13 +7,15 @@ import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCV
 import { recordResult } from "./utils/leaderboardLogic";
 import './index.css';
 
+import Landing from "./components/Landing";
 import Game from "./components/Game";
 import Leaderboard from "./components/Leaderboard";
 
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
 
-  const [activePage, setActivePage] = useState("game");
+  // "landing" | "game" | "leaderboard"
+  const [activePage, setActivePage] = useState("landing");
 
   const [board, setBoard] = useState(Array(9).fill(EMPTY));
   const [status, setStatus] = useState(STATUS_ACTIVE);
@@ -41,22 +43,14 @@ export default function App() {
 
   const requestLeather = useCallback(async (method, params) => {
     const provider = window.LeatherProvider;
-
-    if (!provider) {
-      throw new Error("Leather wallet not found");
-    }
-
+    if (!provider) throw new Error("Leather wallet not found");
     return provider.request(method, params);
   }, []);
 
   const getLeatherStxAddress = useCallback(async () => {
     const response = await requestLeather("getAddresses", { network: CONFIG.network });
     const stxAddress = response?.result?.addresses?.find((entry) => entry.symbol === "STX")?.address;
-
-    if (!stxAddress) {
-      throw new Error("Could not find the active STX address in Leather");
-    }
-
+    if (!stxAddress) throw new Error("Could not find the active STX address in Leather");
     return stxAddress;
   }, [requestLeather]);
 
@@ -72,45 +66,28 @@ export default function App() {
   const syncChainState = useCallback(async (overrideWalletAddr = null) => {
     try {
       const activeWalletAddr = overrideWalletAddr || walletAddr;
-
       if (!activeWalletAddr) {
         log("Wallet not connected. Cannot sync chain state.", "error");
         return;
       }
-
-      // Sync chain state
-
-      // Get the active game ID for this player
-      const activeGameRes = await callReadOnly("get-active-game", [
-        encodeCVArg(principalCV(activeWalletAddr))
-      ]);
-      
+      const activeGameRes = await callReadOnly("get-active-game", [encodeCVArg(principalCV(activeWalletAddr))]);
       const activeGameId = parseUintResult(activeGameRes);
       if (activeGameId === 0) {
         log("No active game found.", "info");
         setGameId(null);
         return;
       }
-
       setGameId(activeGameId);
-
-      // Get full game state
-      const fullGameRes = await callReadOnly("get-full-game-state", [
-        encodeCVArg(uintCV(activeGameId))
-      ]);
-
+      const fullGameRes = await callReadOnly("get-full-game-state", [encodeCVArg(uintCV(activeGameId))]);
       if (fullGameRes.result) {
         const parsedGame = parseGameStateFromClarityValue(fullGameRes);
         const chainBoard = parsedGame.board;
         const chainStatus = parsedGame.status || STATUS_ACTIVE;
         const chainMoves = parsedGame.moves || 0;
-
         setBoard(chainBoard);
         setStatus(chainStatus);
         setMoveCount(chainMoves);
-        if (chainStatus !== STATUS_ACTIVE) {
-          setWinLine(getWinningLine(chainBoard));
-        }
+        if (chainStatus !== STATUS_ACTIVE) setWinLine(getWinningLine(chainBoard));
         log("Chain state synced.", "success");
       }
     } catch (e) {
@@ -124,7 +101,6 @@ export default function App() {
       log("Connect wallet to start a game.", "error");
       return;
     }
-
     try {
       setProcessing(true);
       const response = await callLeatherContract("start-game");
@@ -144,7 +120,6 @@ export default function App() {
         log("No Stacks wallet detected. Install Leather (Hiro) wallet.", "error");
         return;
       }
-
       const addr = await getLeatherStxAddress();
       setWalletAddr(addr);
       window.localStorage.setItem(WALLET_STORAGE_KEY, addr);
@@ -156,30 +131,22 @@ export default function App() {
 
   useEffect(() => {
     if (!walletAddr) return;
-    // Read-only sync from persisted address; does not invoke wallet permission flows.
     syncChainState(walletAddr);
   }, [walletAddr, syncChainState]);
 
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
     if (board[idx] !== EMPTY) return;
-
     const row = Math.floor(idx / 3);
     const col = idx % 3;
-
-    // Optimistic update
     const nextBoard = [...board];
     nextBoard[idx] = PLAYER_X;
-
     let aiIdx = -1;
     let statusAfterX = STATUS_ACTIVE;
     const winnerAfterX = checkWinner(nextBoard);
-    
     if (winnerAfterX === PLAYER_X) statusAfterX = STATUS_X_WON;
     else if (nextBoard.filter(c => c === EMPTY).length === 0) statusAfterX = STATUS_DRAW;
-
     const newSet = new Set([idx]);
-
     if (statusAfterX === STATUS_ACTIVE) {
       aiIdx = chooseAiMove(nextBoard);
       if (aiIdx !== -1) {
@@ -190,18 +157,13 @@ export default function App() {
         else if (nextBoard.filter(c => c === EMPTY).length === 0) statusAfterX = STATUS_DRAW;
       }
     }
-
     setBoard(nextBoard);
     setMoveCount(prev => prev + (aiIdx !== -1 ? 2 : 1));
     setNewCells(newSet);
-    
     let outcomeToRecord = null;
-
-    // Announce result
     if (statusAfterX !== STATUS_ACTIVE) {
       setStatus(statusAfterX);
       setWinLine(getWinningLine(nextBoard));
-      
       let earned = 0;
       if (statusAfterX === STATUS_X_WON) {
         outcomeToRecord = "win";
@@ -223,29 +185,21 @@ export default function App() {
        const pos = (i) => `[${Math.floor(i/3)},${i%3}]`;
        log(`You played ${pos(idx)}. Computer replied ${aiIdx !== -1 ? pos(aiIdx) : "—"}.`, "info");
     }
-
     setTimeout(() => setNewCells(new Set()), 400);
-
     if (!walletAddr) {
       log("Move simulated locally. Connect wallet to play on-chain.", "info");
       return;
     }
-
-    // Check if game is started on-chain first
     if (!gameStarted) {
       log("Game not started on-chain yet. Please click 'Start Game' first.", "error");
       return;
     }
-
-    // Submit to chain
     try {
       setProcessing(true);
       const response = await callLeatherContract("make-move", [encodeCVArg(uintCV(row)), encodeCVArg(uintCV(col))]);
       log(`TX broadcast: ${response?.result?.txid?.slice(0, 16)}…`, "success");
-      if (outcomeToRecord) {
-        await recordResult(walletAddr, outcomeToRecord);
-      }
-      setTimeout(syncChainState, 6000); // Wait a block
+      if (outcomeToRecord) await recordResult(walletAddr, outcomeToRecord);
+      setTimeout(syncChainState, 6000);
     } catch (e) {
       log(`TX error: ${e.message}`, "error");
     } finally {
@@ -262,11 +216,7 @@ export default function App() {
     setGameStarted(false);
     setGameId(null);
     log("Board reset locally. Starting new game on-chain...", "info");
-    
-    // Auto-start game on new game
-    if (walletAddr) {
-      setTimeout(() => startGame(), 500);
-    }
+    if (walletAddr) setTimeout(() => startGame(), 500);
   }, [log, walletAddr, startGame]);
 
   const resign = useCallback(async () => {
@@ -285,48 +235,55 @@ export default function App() {
 
   return (
     <>
-      <header>
-        <div className="header-left">
-          <div className="logo" onClick={() => setActivePage('game')}>Clarity<span>XO</span></div>
-          <nav>
-            <div className={`nav-item ${activePage === 'game' ? 'active' : ''}`} onClick={() => setActivePage('game')}>Game</div>
-            <div className={`nav-item ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => setActivePage('leaderboard')}>Leaderboard</div>
-          </nav>
-        </div>
-        <div className="header-right">
-          <div className="badge">{CONFIG.network}</div>
-        </div>
-      </header>
-
-      <div id="points-toast" className={toast.show ? 'show' : ''}>
-        +<span className="pts">{toast.pts}</span> pts — <span>{toast.reason}</span>
-      </div>
-
-      {activePage === 'game' && (
-        <Game
-          board={board}
-          status={status}
-          moveCount={moveCount}
-          processing={processing}
-          walletAddr={walletAddr}
-          logs={logs}
-          newCells={newCells}
-          winLine={winLine}
-          syncChainState={syncChainState}
-          connectWallet={connectWallet}
-          startGame={startGame}
-          makeMove={makeMove}
-          resetLocal={resetLocal}
-          resign={resign}
-        />
+      {activePage === 'landing' && (
+        <Landing onLaunch={() => setActivePage('game')} />
       )}
+      {activePage !== 'landing' && (
+        <>
+          <header>
+            <div className="header-left">
+              <div className="logo" onClick={() => setActivePage('landing')}>Clarity<span>XO</span></div>
+              <nav>
+                <div className={`nav-item ${activePage === 'game' ? 'active' : ''}`} onClick={() => setActivePage('game')}>Game</div>
+                <div className={`nav-item ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => setActivePage('leaderboard')}>Leaderboard</div>
+              </nav>
+            </div>
+            <div className="header-right">
+              <div className="badge">{CONFIG.network}</div>
+            </div>
+          </header>
 
-      {activePage === 'leaderboard' && (
-        <Leaderboard
-          walletAddr={walletAddr}
-          addLog={log}
-          navigate={setActivePage}
-        />
+          <div id="points-toast" className={toast.show ? 'show' : ''}>
+            +<span className="pts">{toast.pts}</span> pts — <span>{toast.reason}</span>
+          </div>
+
+          {activePage === 'game' && (
+            <Game
+              board={board}
+              status={status}
+              moveCount={moveCount}
+              processing={processing}
+              walletAddr={walletAddr}
+              logs={logs}
+              newCells={newCells}
+              winLine={winLine}
+              syncChainState={syncChainState}
+              connectWallet={connectWallet}
+              startGame={startGame}
+              makeMove={makeMove}
+              resetLocal={resetLocal}
+              resign={resign}
+            />
+          )}
+
+          {activePage === 'leaderboard' && (
+            <Leaderboard
+              walletAddr={walletAddr}
+              addLog={log}
+              navigate={setActivePage}
+            />
+          )}
+        </>
       )}
     </>
   );
