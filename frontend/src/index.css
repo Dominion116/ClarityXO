@@ -989,3 +989,7 @@ svg.mark { overflow: visible; }
 .lp-wr-bar  { width: 60px; height: 3px; background: var(--border); margin-bottom: 4px; position: relative; display: inline-block; vertical-align: middle; }
 .lp-wr-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--green); }
 .lp-wr-pct  { font-size: 10px; color: var(--muted); }
+/* ── Contract Section ── */
+.lp-contract-grid   { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border2); }
+.lp-contract-left   { padding: 40px; border-right: 1px solid var(--border2); }
+.lp-contract-right  { padding: 40px; }
