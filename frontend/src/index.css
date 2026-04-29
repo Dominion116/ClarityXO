@@ -870,3 +870,19 @@ svg.mark { overflow: visible; }
 }
 .lp-divider-line { flex: 1; height: 1px; background: var(--border); margin-left: 20px; }
 .lp-divider-num  { font-size: 9px; letter-spacing: .25em; color: var(--ghost); padding-left: 20px; }
+
+.lp-section,
+.lp-nft-section,
+.lp-lb-preview,
+.lp-contract-section {
+  width: 100%; max-width: 1100px; margin: 0 auto; padding: 80px 40px;
+  box-sizing: border-box;
+}
+.lp-section-title {
+  font-size: 11px; letter-spacing: .4em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 48px;
+  display: flex; align-items: center; gap: 16px;
+}
+.lp-section-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
