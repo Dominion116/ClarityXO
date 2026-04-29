@@ -68,13 +68,14 @@ header {
 }
 .logo span { color: var(--red); }
 
-nav { display: flex; align-items: stretch; border-left: 1px solid var(--border2); }
+.desktop-nav { display: none; }
 .nav-item {
   display: flex; align-items: center; padding: 0 22px;
   font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
   color: var(--muted); cursor: pointer; user-select: none;
   border-right: 1px solid var(--border2);
   transition: color .15s, background .15s; position: relative;
+  text-decoration: none;
 }
 .nav-item:hover { color: var(--text); background: var(--surface); }
 .nav-item.active { color: var(--text); background: var(--surface); }
@@ -87,6 +88,47 @@ nav { display: flex; align-items: stretch; border-left: 1px solid var(--border2)
 .badge {
   font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
   border: 1px solid var(--border2); padding: 4px 10px; color: var(--muted);
+}
+
+.hamburger-btn {
+  display: block;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border2);
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.hamburger-btn:hover { background: var(--surface); }
+
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: var(--bg);
+  border-top: 1px solid var(--border2);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  display: none;
+  flex-direction: column;
+  z-index: 90;
+}
+.mobile-menu.open {
+  transform: translateX(0);
+}
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.nav-item.mobile {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border2);
+  border-right: none;
+  font-size: 11px;
 }
 
 /* ════════════════════════════════════════════════════
