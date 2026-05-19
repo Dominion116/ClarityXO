@@ -5,6 +5,11 @@ export default function Hero({ onLaunch }) {
     <section className="lp-hero" id="top">
       <div className="lp-hero-content">
         <div className="lp-hero-eyebrow fade-up d1">Stacks Mainnet · Open-Source · Clarity Contract</div>
+        <div className="lp-proof-chips fade-up d2">
+          <span className="lp-proof-chip">✓ Deployed on Stacks Mainnet</span>
+          <span className="lp-proof-chip">✓ Fully on-chain AI</span>
+          <span className="lp-proof-chip">✓ Weekly NFT prizes</span>
+        </div>
         <h1 className="lp-hero-h1 fade-up d2">
           Tic-Tac-Toe<br /><span>on-chain.</span><br />Forever.
         </h1>

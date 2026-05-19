@@ -1025,6 +1025,15 @@ svg.mark { overflow: visible; }
   min-height: calc(100vh - 61px);
 }
 
+.lp-proof-chips {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
+}
+.lp-proof-chip {
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--green); border: 1px solid rgba(68,187,136,0.25);
+  padding: 4px 10px;
+}
+
 .lp-hero-eyebrow {
   font-size: 10px; letter-spacing: .45em; text-transform: uppercase;
   color: var(--muted); margin-bottom: 24px;
