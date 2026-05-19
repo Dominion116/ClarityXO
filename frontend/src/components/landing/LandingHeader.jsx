@@ -4,6 +4,7 @@ export default function LandingHeader({ onLaunch }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
   const [activeSection, setActiveSection] = useState("top");
+  const [shrunk, setShrunk] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -12,6 +13,7 @@ export default function LandingHeader({ onLaunch }) {
       const el = document.documentElement;
       const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
       setScrollPct(Math.min(100, Math.max(0, pct)));
+      setShrunk(el.scrollTop > 40);
 
       let current = "top";
       for (const id of sections) {
@@ -38,7 +40,7 @@ export default function LandingHeader({ onLaunch }) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
   return (
-    <header className="lp-header">
+    <header className={`lp-header${shrunk ? " lp-header--shrunk" : ""}`}>
       <div className="header-left">
         <div className="logo">Clarity<span>XO</span></div>
         <nav className="desktop-nav">

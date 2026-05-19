@@ -907,6 +907,17 @@ svg.mark { overflow: visible; }
   box-sizing: border-box;
 }
 
+.lp-header {
+  transition: padding .2s ease;
+}
+.lp-header--shrunk {
+  border-bottom-color: var(--border);
+  background: rgba(10,10,10,0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.lp-header--shrunk .header-right { padding: 14px 0; }
+
 .lp-scroll-bar {
   position: absolute; bottom: -1px; left: 0; right: 0;
   height: 1px; background: var(--border); z-index: 1; pointer-events: none;
