@@ -1260,6 +1260,20 @@ svg.mark { overflow: visible; }
   content: ''; flex: 1; height: 1px; background: var(--border);
 }
 
+.lp-steps-connector {
+  display: flex; align-items: center;
+  padding: 0 24px; margin-bottom: 0; margin-top: -1px;
+  position: relative; z-index: 1;
+}
+.lp-connector-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--red); flex-shrink: 0;
+}
+.lp-connector-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(to right, var(--red), var(--ghost));
+}
+
 .lp-steps-grid {
   display: grid; grid-template-columns: repeat(4,1fr);
   border: 1px solid var(--border2);
