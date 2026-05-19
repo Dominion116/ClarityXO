@@ -10,6 +10,12 @@ export default function Features() {
   return (
     <section className="lp-section" id="features">
       <div className="lp-section-title lp-fade">Built on Stacks</div>
+      <div className="lp-key-benefits lp-fade">
+        <span className="lp-key-benefit">⊛ No centralized server</span>
+        <span className="lp-key-benefit">⊛ Deterministic AI</span>
+        <span className="lp-key-benefit">⊛ Fully auditable history</span>
+        <span className="lp-key-benefit">⊛ Self-sovereign rewards</span>
+      </div>
       <div className="lp-features-grid">
         {FEATURES.map((f) => (
           <div className="lp-feature" key={f.title}>

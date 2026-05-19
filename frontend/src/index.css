@@ -1309,6 +1309,14 @@ svg.mark { overflow: visible; }
   box-shadow: 0 6px 24px rgba(0,0,0,0.3);
   z-index: 1; position: relative;
 }
+.lp-key-benefits {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;
+}
+.lp-key-benefit {
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--border); padding: 6px 14px;
+}
+
 .lp-feature-tag   { font-size: 8px; letter-spacing: .3em; text-transform: uppercase; color: var(--dim); border: 1px solid var(--border); display: inline-block; padding: 2px 8px; margin-bottom: 16px; }
 .lp-feature-icon  { font-size: 11px; letter-spacing: .35em; text-transform: uppercase; color: var(--red); margin-bottom: 16px; }
 .lp-feature-title { font-size: 13px; letter-spacing: .08em; color: var(--text); margin-bottom: 12px; font-weight: 400; }
