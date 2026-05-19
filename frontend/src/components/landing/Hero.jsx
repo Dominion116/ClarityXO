@@ -44,6 +44,10 @@ export default function Hero({ onLaunch }) {
         </div>
       </div>
       <div className="fade-up d6"><DemoBoard /></div>
+      <div className="lp-scroll-hint fade-up d6" onClick={() => scrollTo("how-it-works")} aria-label="Scroll to Protocol section">
+        <span className="lp-scroll-hint-arrow">↓</span>
+        <span className="lp-scroll-hint-label">scroll</span>
+      </div>
     </section>
   );
 }
