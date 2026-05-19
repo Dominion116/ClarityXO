@@ -45,6 +45,9 @@ export default function NFTSection() {
             automatically qualify for a ClarityXO Trophy NFT, minted directly to their Stacks
             address. Points don't carry — every week is a fresh competition.
           </div>
+          <a className="lp-nft-contract-link" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">
+            View Trophy Contract ↗
+          </a>
           <div className="lp-nft-tiers">
             {TIERS.map((t) => (
               <div className="lp-nft-tier" key={t.label}>
