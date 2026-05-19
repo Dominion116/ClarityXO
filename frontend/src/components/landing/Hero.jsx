@@ -26,9 +26,21 @@ export default function Hero({ onLaunch }) {
           <a className="lp-cta-ghost" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">View Contract ↗</a>
         </div>
         <div className="lp-hero-stats fade-up d5">
-          <div className="lp-hero-stat"><div className="lp-stat-val red">9</div><div className="lp-stat-label">Cells on-chain</div></div>
-          <div className="lp-hero-stat"><div className="lp-stat-val green">+3</div><div className="lp-stat-label">pts per win</div></div>
-          <div className="lp-hero-stat"><div className="lp-stat-val gold">5</div><div className="lp-stat-label">NFT slots/week</div></div>
+          <div className="lp-hero-stat">
+            <div className="lp-stat-val red">9</div>
+            <div className="lp-stat-label">Cells on-chain</div>
+            <div className="lp-stat-hint">every move a tx</div>
+          </div>
+          <div className="lp-hero-stat">
+            <div className="lp-stat-val green">+3</div>
+            <div className="lp-stat-label">pts per win</div>
+            <div className="lp-stat-hint">draw +1 · loss 0</div>
+          </div>
+          <div className="lp-hero-stat">
+            <div className="lp-stat-val gold">5</div>
+            <div className="lp-stat-label">NFT slots/week</div>
+            <div className="lp-stat-hint">top 5 by points</div>
+          </div>
         </div>
       </div>
       <div className="fade-up d6"><DemoBoard /></div>

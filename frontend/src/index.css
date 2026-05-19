@@ -1106,6 +1106,10 @@ svg.mark { overflow: visible; }
 .lp-stat-label {
   font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--muted);
 }
+.lp-stat-hint {
+  font-size: 8px; letter-spacing: .15em; text-transform: uppercase; color: var(--dim);
+  margin-top: 3px;
+}
 
 .lp-board-wrap {
   display: flex; flex-direction: column; align-items: flex-end;
