@@ -28,6 +28,11 @@ export default function HowItWorks() {
           </div>
         ))}
       </div>
+      <div className="lp-section-link lp-fade">
+        <a className="lp-section-link-a" href="#contract" onClick={(e) => { e.preventDefault(); document.getElementById("contract")?.scrollIntoView({ behavior: "smooth" }); }}>
+          View the smart contract ↓
+        </a>
+      </div>
     </section>
   );
 }

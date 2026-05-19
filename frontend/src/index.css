@@ -1416,6 +1416,14 @@ svg.mark { overflow: visible; }
 .lp-final-sub     { font-size: 11px; letter-spacing: .08em; color: var(--muted); line-height: 2; margin-bottom: 40px; }
 .lp-final-btns    { display: flex; }
   .lp-final-btns   { flex-direction: column; }
+.lp-section-link { margin-top: 24px; text-align: right; }
+.lp-section-link-a {
+  font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--dim); text-decoration: none; transition: color .15s;
+}
+.lp-section-link-a:hover { color: var(--muted); }
+.lp-section-link-a:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
 /* ── Section anchor offset for sticky header ── */
 #top,
 #how-it-works,
