@@ -508,6 +508,16 @@ svg.mark { overflow: visible; }
 
 .footer { margin: 24px 0 16px; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--ghost); text-align: center; }
 
+/* ── REDUCED MOTION ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fade-up  { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .lp-fade  { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .lp-ticker-track { animation-play-state: paused !important; }
+  @keyframes lpFadeUp { from { opacity: 1; transform: none; } }
+  @keyframes lpTicker  { }
+  @keyframes pulse     { }
+}
+
 /* ── KEYFRAMES ────────────────────────────────────── */
 @keyframes drawLine   { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
 @keyframes drawCircle { from { stroke-dashoffset: 87.96; } to { stroke-dashoffset: 0; } }

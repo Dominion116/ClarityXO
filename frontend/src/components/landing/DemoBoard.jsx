@@ -33,6 +33,8 @@ export default function DemoBoard() {
   const timerRef = useRef(null);
 
   useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
     timerRef.current = setInterval(() => {
       setIdx(prev => (prev + 1) % STATES.length);
     }, 1800);
