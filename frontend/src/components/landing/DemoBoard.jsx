@@ -54,9 +54,13 @@ export default function DemoBoard() {
     <div className="lp-board-wrap">
       <div className="lp-board-label">live game state · stacks mainnet</div>
       <div className="lp-board-controls">
+        <button className="lp-board-btn" aria-label="Previous step"
+          onClick={() => { setPlaying(false); setIdx(i => (i - 1 + STATES.length) % STATES.length); }}>‹</button>
         <button className="lp-board-btn" onClick={() => setPlaying(p => !p)} aria-label={playing ? "Pause demo" : "Play demo"}>
           {playing ? "⏸" : "▶"}
         </button>
+        <button className="lp-board-btn" aria-label="Next step"
+          onClick={() => { setPlaying(false); setIdx(i => (i + 1) % STATES.length); }}>›</button>
       </div>
       <div className="lp-demo-board">
         <div className="lp-board-corner-tl"></div>
