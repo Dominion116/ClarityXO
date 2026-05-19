@@ -1218,6 +1218,16 @@ svg.mark { overflow: visible; }
 .lp-final-sub     { font-size: 11px; letter-spacing: .08em; color: var(--muted); line-height: 2; margin-bottom: 40px; }
 .lp-final-btns    { display: flex; }
   .lp-final-btns   { flex-direction: column; }
+/* ── Section anchor offset for sticky header ── */
+#top,
+#how-it-works,
+#features,
+#nft,
+#leaderboard,
+#contract {
+  scroll-margin-top: 61px;
+}
+
 /* ── Footer ── */
 .lp-footer {
   width: 100%; border-top: 1px solid var(--border2);
