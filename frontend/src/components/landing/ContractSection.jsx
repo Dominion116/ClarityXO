@@ -1,12 +1,32 @@
+import React, { useState } from "react";
 import { CONFIG } from "../../config";
+
+function useCopyToast() {
+  const [copied, setCopied] = useState(false);
+  const copy = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+  return [copied, copy];
+}
+
 export default function ContractSection() {
+  const [copied, copy] = useCopyToast();
   return (
-    <section className="lp-contract-section">
+    <section className="lp-contract-section" id="contract">
       <div className="lp-section-title lp-fade">Smart Contract</div>
       <div className="lp-contract-grid">
         <div className="lp-contract-left">
           <div className="lp-contract-label">Contract Address · Stacks Mainnet</div>
-          <div className="lp-contract-addr"><span>{CONFIG.contractAddress}</span><br />.{CONFIG.contractName}</div>
+          <div className="lp-contract-addr-row">
+            <div className="lp-contract-addr"><span>{CONFIG.contractAddress}</span><br />.{CONFIG.contractName}</div>
+            <button className="lp-copy-btn" onClick={() => copy(`${CONFIG.contractAddress}.${CONFIG.contractName}`)} aria-label="Copy contract address">
+              {copied ? "✓ Copied" : "Copy"}
+            </button>
+          </div>
+          {copied && <div className="lp-copy-toast" role="status">Address copied to clipboard</div>}
           <div className="lp-contract-label">NFT Trophy Contract</div>
           <div className="lp-contract-addr" style={{ fontSize: "10px", color: "var(--muted)" }}>
             {CONFIG.nftContractAddress}<br />.{CONFIG.nftContractName}

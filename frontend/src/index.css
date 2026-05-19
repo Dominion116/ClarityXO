@@ -1441,8 +1441,22 @@ svg.mark { overflow: visible; }
 .lp-contract-left   { padding: 40px; border-right: 1px solid var(--border2); }
 .lp-contract-right  { padding: 40px; }
 .lp-contract-label  { font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
-.lp-contract-addr   { font-size: 11px; letter-spacing: .08em; color: var(--text); word-break: break-all; line-height: 1.8; margin-bottom: 24px; }
+.lp-contract-addr-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+.lp-contract-addr   { font-size: 11px; letter-spacing: .08em; color: var(--text); word-break: break-all; line-height: 1.8; flex: 1; }
 .lp-contract-addr span { color: var(--red); }
+.lp-copy-btn {
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  border: 1px solid var(--border2); background: transparent; color: var(--muted);
+  padding: 4px 10px; cursor: pointer; font-family: var(--mono);
+  white-space: nowrap; flex-shrink: 0; transition: border-color .15s, color .15s;
+  margin-top: 2px;
+}
+.lp-copy-btn:hover { border-color: var(--text); color: var(--text); }
+.lp-copy-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.lp-copy-toast {
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--green); margin-bottom: 12px; animation: pageFadeIn .2s ease;
+}
 .lp-code-block {
   background: var(--surface); border: 1px solid var(--border);
   padding: 20px; font-size: 10px; letter-spacing: .06em; line-height: 2;
