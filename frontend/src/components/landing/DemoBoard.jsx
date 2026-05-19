@@ -51,6 +51,19 @@ export default function DemoBoard() {
 
   const state = STATES[idx];
 
+  const WIN_LINES = {
+    "0,1,2": { top: "16.67%", left: "5%",  width: "90%", height: "2px", transform: "none" },
+    "3,4,5": { top: "50%",    left: "5%",  width: "90%", height: "2px", transform: "translateY(-50%)" },
+    "6,7,8": { top: "83.33%", left: "5%",  width: "90%", height: "2px", transform: "translateY(-100%)" },
+    "0,3,6": { top: "5%",     left: "16.67%", width: "2px", height: "90%", transform: "translateX(-50%)" },
+    "1,4,7": { top: "5%",     left: "50%",    width: "2px", height: "90%", transform: "translateX(-50%)" },
+    "2,5,8": { top: "5%",     left: "83.33%", width: "2px", height: "90%", transform: "translateX(-50%)" },
+    "0,4,8": { top: "5%",     left: "5%",  width: "128%", height: "2px", transform: "rotate(45deg)", transformOrigin: "top left" },
+    "2,4,6": { top: "5%",     right: "5%", width: "128%", height: "2px", transform: "rotate(135deg)", transformOrigin: "top right" },
+  };
+  const winKey = state.winLine ? state.winLine.join(",") : null;
+  const winStyle = winKey ? WIN_LINES[winKey] : null;
+
   return (
     <div className="lp-board-wrap">
       <div className="lp-board-label">live game state · stacks mainnet</div>
@@ -69,6 +82,9 @@ export default function DemoBoard() {
       <div className="lp-demo-board">
         <div className="lp-board-corner-tl"></div>
         <div className="lp-board-corner-br"></div>
+        {winStyle && (
+          <div className="lp-win-line" style={winStyle} aria-hidden="true"></div>
+        )}
         {state.board.map((cell, i) => {
           const isWin = state.winLine?.includes(i);
           return (
