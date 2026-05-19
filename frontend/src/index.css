@@ -1556,10 +1556,18 @@ svg.mark { overflow: visible; }
 }
 .lp-footer-link:hover { color: var(--muted); }
 .lp-footer-right  {
-  display: flex; align-items: center;
+  display: flex; align-items: center; gap: 20px;
   font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--ghost);
   padding: 20px 0;
 }
+.lp-back-to-top {
+  background: transparent; border: 1px solid var(--border); color: var(--dim);
+  font-size: 8px; letter-spacing: .25em; text-transform: uppercase;
+  padding: 4px 10px; cursor: pointer; font-family: var(--mono);
+  transition: border-color .15s, color .15s;
+}
+.lp-back-to-top:hover { border-color: var(--muted); color: var(--muted); }
+.lp-back-to-top:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
   .lp-footer       { flex-direction: column; }
   .lp-footer-logo  { padding-right: 0; border-right: none; border-bottom: 1px solid var(--border2); padding: 16px 0; }
   .lp-footer-right { padding: 16px 0; }

@@ -1,4 +1,5 @@
 export default function LandingFooter() {
+  const scrollTop = () => document.getElementById("top")?.scrollIntoView({ behavior: "smooth" });
   return (
     <footer className="lp-footer">
       <div className="lp-footer-left">
@@ -10,7 +11,10 @@ export default function LandingFooter() {
           <span className="lp-footer-link" style={{ cursor: "default" }}>Telegram</span>
         </div>
       </div>
-      <div className="lp-footer-right">Built on Stacks · Clarity · {new Date().getFullYear()}</div>
+      <div className="lp-footer-right">
+        Built on Stacks · Clarity · {new Date().getFullYear()}
+        <button className="lp-back-to-top" onClick={scrollTop} aria-label="Back to top">↑ Top</button>
+      </div>
     </footer>
   );
 }
