@@ -1356,6 +1356,10 @@ svg.mark { overflow: visible; }
 .lp-tier-hint { display: none; font-size: 8px; letter-spacing: .2em; color: var(--gold-dim); }
 .lp-nft-tier:hover .lp-tier-hint { display: block; }
 /* NFT card */
+@keyframes lpShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
 .lp-nft-visual {
   width: 240px; border-left: 1px solid var(--gold-dim);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -1364,6 +1368,22 @@ svg.mark { overflow: visible; }
 .lp-nft-card {
   width: 140px; border: 1px solid var(--gold-dim);
   background: rgba(200,168,75,0.04); position: relative;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.lp-nft-card:hover {
+  transform: perspective(400px) rotateY(6deg) rotateX(-3deg) translateY(-4px);
+  box-shadow: 0 12px 32px rgba(200,168,75,0.12);
+}
+.lp-nft-card::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(200,168,75,0.18) 50%, transparent 60%);
+  background-size: 200% 100%;
+  transition: opacity .25s;
+}
+.lp-nft-card:hover::after {
+  opacity: 1;
+  animation: lpShimmer .8s ease forwards;
 }
 .lp-nft-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
