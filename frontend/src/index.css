@@ -898,6 +898,21 @@ svg.mark { overflow: visible; }
 }
 
 .lp-nav { text-decoration: none; cursor: pointer; }
+
+/* ── Focus-visible outlines ── */
+.lp-cta-primary:focus-visible,
+.lp-cta-secondary:focus-visible,
+.launch-btn:focus-visible,
+.lp-nav:focus-visible,
+.lp-footer-link:focus-visible,
+.hamburger-btn:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+.close-mobile-menu:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
 .launch-btn {
   font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
   background: var(--red); color: #fff; border: none;
