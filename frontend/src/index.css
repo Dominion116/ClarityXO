@@ -1335,7 +1335,10 @@ svg.mark { overflow: visible; }
 }
 
 .lp-nft-main-content { padding: 48px; }
-.lp-nft-tag         { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+.lp-nft-tag         { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.lp-nft-countdown   { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.lp-nft-countdown-label { font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--dim); }
+.lp-nft-countdown-timer { font-size: 14px; letter-spacing: .06em; color: var(--gold); font-variant-numeric: tabular-nums; }
 .lp-nft-main-title  { font-size: 28px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 16px; }
   .lp-nft-main-desc   { font-size: 10px; letter-spacing: .08em; line-height: 2; color: var(--muted); max-width: 100%; margin-bottom: 32px; }
 .lp-nft-tiers       { display: flex; border: 1px solid var(--border2); }

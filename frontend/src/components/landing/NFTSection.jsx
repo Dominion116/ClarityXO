@@ -1,3 +1,26 @@
+import React, { useState, useEffect } from "react";
+
+function useWeekCountdown() {
+  const [time, setTime] = useState("");
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      const sunday = new Date(now);
+      sunday.setUTCDate(now.getUTCDate() + (7 - now.getUTCDay()) % 7 || 7);
+      sunday.setUTCHours(23, 59, 0, 0);
+      const diff = sunday - now;
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setTime(`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
+
 const TIERS = [
   { cls: "t1", label: "1",   name: "Gold Trophy",    sub: "Most points · Week champion" },
   { cls: "t2", label: "2",   name: "Silver Trophy",  sub: "Runner-up · Top 2" },
@@ -5,12 +28,17 @@ const TIERS = [
   { cls: "t45", label: "4–5", name: "Qualifier NFT", sub: "Top 5 · Participation badge" },
 ];
 export default function NFTSection() {
+  const countdown = useWeekCountdown();
   return (
     <section className="lp-nft-section" id="nft">
       <div className="lp-section-title">Weekly Trophy System</div>
       <div className="lp-nft-main">
         <div className="lp-nft-main-content">
           <div className="lp-nft-tag">◈  NFT Prize · Stacks Blockchain</div>
+          <div className="lp-nft-countdown">
+            <span className="lp-nft-countdown-label">Resets in</span>
+            <span className="lp-nft-countdown-timer" aria-live="off">{countdown}</span>
+          </div>
           <div className="lp-nft-main-title">Earn a Trophy.<br />Every week, five wallets win.</div>
           <div className="lp-nft-main-desc">
             The leaderboard resets every Sunday at 23:59 UTC. The top 5 players by points
