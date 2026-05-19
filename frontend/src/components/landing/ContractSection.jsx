@@ -14,6 +14,7 @@ function useCopyToast() {
 
 export default function ContractSection() {
   const [copied, copy] = useCopyToast();
+  const [expanded, setExpanded] = useState(false);
   return (
     <section className="lp-contract-section" id="contract">
       <div className="lp-section-title lp-fade">Smart Contract</div>
@@ -37,8 +38,13 @@ export default function ContractSection() {
           </div>
         </div>
         <div className="lp-contract-right">
-          <div className="lp-contract-label">Public Functions</div>
-          <div className="lp-code-block">
+          <div className="lp-contract-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>Public Functions</span>
+            <button className="lp-code-toggle" onClick={() => setExpanded(e => !e)} aria-expanded={expanded}>
+              {expanded ? "Collapse ↑" : "Expand ↓"}
+            </button>
+          </div>
+          <div className={`lp-code-block${expanded ? " expanded" : " collapsed"}`}>
             <span className="code-comment">{`;; ClarityXO — Tic-Tac-Toe on Stacks`}</span>
             {"\n\n"}
             <span className="code-kw">(define-public</span> (<span className="code-fn">make-move</span>

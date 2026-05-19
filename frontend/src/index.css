@@ -1461,7 +1461,23 @@ svg.mark { overflow: visible; }
   background: var(--surface); border: 1px solid var(--border);
   padding: 20px; font-size: 10px; letter-spacing: .06em; line-height: 2;
   color: var(--muted); white-space: pre-wrap; font-family: var(--mono);
+  overflow: hidden; transition: max-height .3s ease;
 }
+.lp-code-block.collapsed { max-height: 80px; position: relative; }
+.lp-code-block.collapsed::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
+  background: linear-gradient(transparent, var(--surface));
+}
+.lp-code-block.expanded { max-height: 600px; }
+.lp-code-toggle {
+  font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+  border: 1px solid var(--border); background: transparent; color: var(--dim);
+  padding: 3px 8px; cursor: pointer; font-family: var(--mono);
+  transition: color .15s, border-color .15s;
+}
+.lp-code-toggle:hover { color: var(--muted); border-color: var(--muted); }
+.lp-code-toggle:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 .code-fn      { color: var(--green); }
 .code-kw      { color: var(--red); }
 .code-num     { color: var(--text); }
