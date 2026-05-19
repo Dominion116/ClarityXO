@@ -50,7 +50,10 @@ export default function LandingHeader({ onLaunch }) {
         </nav>
       </div>
       <div className="header-right">
-        <div className="badge">mainnet</div>
+        <div className="badge" role="status" aria-label="Network status: mainnet active">
+          <span className="badge-dot" aria-hidden="true"></span>
+          mainnet
+        </div>
         <button className="launch-btn" onClick={onLaunch}>Launch App</button>
         <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? '✕' : '☰'}
