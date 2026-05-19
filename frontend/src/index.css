@@ -1056,7 +1056,16 @@ svg.mark { overflow: visible; }
     color: var(--muted); max-width: 100%; margin-bottom: 40px;
   }
 
-.lp-hero-ctas { display: flex; }
+.lp-hero-ctas { display: flex; flex-wrap: wrap; gap: 0; align-items: stretch; }
+.lp-cta-ghost {
+  padding: 14px 20px; font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+  background: transparent; color: var(--ghost);
+  border: 1px solid var(--border); border-left: none;
+  cursor: pointer; font-family: var(--mono); transition: color .15s;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+.lp-cta-ghost:hover { color: var(--muted); }
+.lp-cta-ghost:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 .lp-cta-primary {
   padding: 14px 32px; font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
   background: var(--red); color: #fff; border: none; cursor: pointer;

@@ -20,6 +20,7 @@ export default function Hero({ onLaunch }) {
         <div className="lp-hero-ctas fade-up d4">
           <button className="lp-cta-primary" onClick={onLaunch}>Play Now</button>
           <button className="lp-cta-secondary" onClick={() => scrollTo("how-it-works")}>How It Works</button>
+          <a className="lp-cta-ghost" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">View Contract ↗</a>
         </div>
         <div className="lp-hero-stats fade-up d5">
           <div className="lp-hero-stat"><div className="lp-stat-val red">9</div><div className="lp-stat-label">Cells on-chain</div></div>
