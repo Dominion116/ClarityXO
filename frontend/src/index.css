@@ -112,16 +112,20 @@ header {
   left: 0;
   right: 0;
   height: 100vh;
-  background: var(--bg);
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid var(--border2);
   transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease;
+  opacity: 0;
   display: none;
   flex-direction: column;
   z-index: 90;
 }
 .mobile-menu.open {
   transform: translateX(0);
+  opacity: 1;
 }
 .mobile-nav {
   display: flex;
