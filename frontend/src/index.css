@@ -1498,6 +1498,13 @@ svg.mark { overflow: visible; }
   display: flex; flex-direction: column; align-items: center; text-align: center;
 }
 .lp-final-eyebrow { font-size: 9px; letter-spacing: .45em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; }
+.lp-trust-badges  { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 32px; }
+.lp-trust-badge   {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+  border: 1px solid var(--border); padding: 6px 14px;
+}
+.lp-trust-badge-icon { color: var(--red); }
 .lp-final-title   { font-size: clamp(28px,4vw,52px); font-weight: 300; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 20px; }
 .lp-final-title span { color: var(--red); }
 .lp-final-sub     { font-size: 11px; letter-spacing: .08em; color: var(--muted); line-height: 2; margin-bottom: 40px; }
