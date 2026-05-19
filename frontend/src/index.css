@@ -992,6 +992,11 @@ svg.mark { overflow: visible; }
 .lp-ticker-dot.g    { background: var(--green); }
 .lp-ticker-dot.r    { background: var(--red); }
 .lp-ticker-dot.gold { background: var(--gold); }
+.lp-ticker-result { font-weight: 500; margin-left: 6px; }
+.lp-ticker-result.win  { color: var(--green); }
+.lp-ticker-result.draw { color: var(--gold); }
+.lp-ticker-result.loss { color: var(--red); }
+.lp-ticker-pts { color: var(--muted); margin-left: 4px; }
 @keyframes lpTicker {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
