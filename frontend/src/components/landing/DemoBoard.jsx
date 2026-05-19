@@ -95,6 +95,7 @@ export default function DemoBoard() {
           );
         })}
       </div>
+      <div aria-live="polite" aria-atomic="true" className="sr-only">{state.label}</div>
       <div className="lp-board-meta">
         <div className="lp-board-meta-item"><span className="mark-x">X</span> · You</div>
         <div className="lp-board-meta-item"><span className="mark-o">O</span> · Contract</div>

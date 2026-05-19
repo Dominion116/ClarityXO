@@ -518,6 +518,11 @@ svg.mark { overflow: visible; }
 
 .footer { margin: 24px 0 16px; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--ghost); text-align: center; }
 
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
 /* ── REDUCED MOTION ──────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .fade-up  { animation: none !important; opacity: 1 !important; transform: none !important; }
