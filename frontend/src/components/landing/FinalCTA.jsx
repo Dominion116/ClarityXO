@@ -23,6 +23,9 @@ export default function FinalCTA({ onLaunch }) {
         <button className="lp-cta-primary lp-cta-lg" onClick={onLaunch}>Launch ClarityXO</button>
         <a className="lp-cta-secondary lp-cta-lg" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">View Contract ↗</a>
       </div>
+      <a className="lp-final-protocol-link" href="#contract" onClick={(e) => { e.preventDefault(); document.getElementById("contract")?.scrollIntoView({ behavior: "smooth" }); }}>
+        Protocol details ↑
+      </a>
     </div>
   );
 }

@@ -1509,6 +1509,12 @@ svg.mark { overflow: visible; }
 .lp-final-title span { color: var(--red); }
 .lp-final-sub     { font-size: 11px; letter-spacing: .08em; color: var(--muted); line-height: 2; margin-bottom: 40px; }
 .lp-final-btns    { display: flex; }
+.lp-final-protocol-link {
+  margin-top: 28px; font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--dim); text-decoration: none; transition: color .15s;
+}
+.lp-final-protocol-link:hover { color: var(--muted); }
+.lp-final-protocol-link:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
   .lp-final-btns   { flex-direction: column; }
 .lp-section-link { margin-top: 24px; text-align: right; }
 .lp-section-link-a {
