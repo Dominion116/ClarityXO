@@ -1,3 +1,4 @@
+import React from "react";
 const ITEMS = [
   { color: "g", text: "SP30V…7Z3Y played [1,1] · Win · +3 pts" },
   { color: "gold", text: "SP1KF…4ABF played [0,2] · Draw · +1 pt" },
@@ -11,7 +12,11 @@ const ITEMS = [
 export default function Ticker() {
   const all = [...ITEMS, ...ITEMS];
   return (
-    <div className="lp-ticker">
+    <div className="lp-ticker" role="marquee" aria-label="Live game feed">
+      <div className="lp-ticker-label" aria-hidden="true">
+        <span className="lp-ticker-pulse"></span>
+        Live
+      </div>
       <div className="lp-ticker-track">
         {all.map((item, i) => (
           <div key={i} className="lp-ticker-item">

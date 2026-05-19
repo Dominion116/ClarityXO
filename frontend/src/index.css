@@ -997,6 +997,21 @@ svg.mark { overflow: visible; }
   to   { transform: translateX(-50%); }
 }
 
+.lp-ticker-label {
+  position: absolute; left: 0; top: 0; bottom: 0; z-index: 3;
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 16px;
+  font-size: 9px; letter-spacing: .3em; text-transform: uppercase; color: var(--muted);
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  pointer-events: none;
+}
+.lp-ticker-pulse {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--green); display: inline-block;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
 .lp-hero {
   width: 100%; max-width: 1100px; margin: 0 auto;
   padding: var(--lp-hero-v) var(--lp-pad-h) 0;
