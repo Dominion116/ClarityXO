@@ -18,6 +18,10 @@ html { overflow-x: hidden; }
   --silver:  #8a8a8a;
   --bronze:  #8b5e3c;
   --mono:    'IBM Plex Mono', 'Courier New', monospace;
+
+  --lp-pad-h:    40px;
+  --lp-section-v: 80px;
+  --lp-hero-v:    80px;
 }
 
 body, #root {
@@ -911,7 +915,7 @@ svg.mark { overflow: visible; }
 
 .lp-hero {
   width: 100%; max-width: 1100px; margin: 0 auto;
-  padding: 80px 40px 0;
+  padding: var(--lp-hero-v) var(--lp-pad-h) 0;
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 60px; align-items: center;
   min-height: calc(100vh - 61px);
@@ -1051,7 +1055,8 @@ svg.mark { overflow: visible; }
 .lp-nft-section,
 .lp-lb-preview,
 .lp-contract-section {
-  width: 100%; max-width: 1100px; margin: 0 auto; padding: 80px 40px;
+  width: 100%; max-width: 1100px; margin: 0 auto;
+  padding: var(--lp-section-v) var(--lp-pad-h);
   box-sizing: border-box;
 }
 .lp-section-title {
@@ -1193,7 +1198,7 @@ svg.mark { overflow: visible; }
 /* ── Final CTA ── */
 .lp-final-cta {
   width: 100%; border-top: 1px solid var(--border2);
-  padding: 80px 40px;
+  padding: var(--lp-section-v) var(--lp-pad-h);
   display: flex; flex-direction: column; align-items: center; text-align: center;
 }
 .lp-final-eyebrow { font-size: 9px; letter-spacing: .45em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; }
