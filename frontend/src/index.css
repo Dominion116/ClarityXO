@@ -1053,8 +1053,12 @@ svg.mark { overflow: visible; }
 
   .lp-hero-sub {
     font-size: 12px; letter-spacing: .08em; line-height: 2;
-    color: var(--muted); max-width: 100%; margin-bottom: 40px;
+    color: var(--muted); max-width: 100%; margin-bottom: 12px;
   }
+.lp-hero-subcopy {
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 32px; line-height: 2;
+}
 
 .lp-hero-ctas { display: flex; flex-wrap: wrap; gap: 0; align-items: stretch; }
 .lp-cta-ghost {

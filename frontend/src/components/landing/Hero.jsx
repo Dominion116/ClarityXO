@@ -17,6 +17,9 @@ export default function Hero({ onLaunch }) {
           Every move is a blockchain transaction. Every win is recorded permanently.
           Compete for weekly NFT trophies on the Stacks network.
         </p>
+        <p className="lp-hero-subcopy fade-up d3">
+          Leaderboard resets every Sunday · Top 5 earn a Trophy NFT · No gas for draws
+        </p>
         <div className="lp-hero-ctas fade-up d4">
           <button className="lp-cta-primary" onClick={onLaunch}>Play Now</button>
           <button className="lp-cta-secondary" onClick={() => scrollTo("how-it-works")}>How It Works</button>
