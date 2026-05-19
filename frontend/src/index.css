@@ -673,6 +673,8 @@ svg.mark { overflow: visible; }
   .lp-final-cta { padding: 40px 10px; }
   .lp-footer { padding: 0 10px; }
 }
+
+@media (max-width: 479px) {
   html, body, #root { width: 100vw; max-width: 100%; overflow-x: hidden; }
   
   header { padding: 0 12px; overflow-x: hidden; }
