@@ -1173,7 +1173,10 @@ svg.mark { overflow: visible; }
   display: flex; align-items: center; justify-content: center;
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+  transition: background .1s;
+  cursor: default;
 }
+.lp-demo-cell:not(.win-cell):hover { background: var(--surface); }
 .lp-demo-cell:nth-child(3n)  { border-right: none; }
 .lp-demo-cell:nth-child(n+7) { border-bottom: none; }
 .lp-demo-cell.win-cell { background: var(--surface); }
