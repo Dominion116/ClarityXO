@@ -977,6 +977,10 @@ svg.mark { overflow: visible; }
   white-space: nowrap;
   animation: lpTicker 30s linear infinite;
 }
+.lp-ticker:hover .lp-ticker-track,
+.lp-ticker:focus-within .lp-ticker-track {
+  animation-play-state: paused;
+}
 .lp-ticker-item {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 24px; border-right: 1px solid var(--border);
