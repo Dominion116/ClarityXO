@@ -3,12 +3,21 @@ import React, { useState, useEffect } from "react";
 export default function LandingHeader({ onLaunch }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
+  const [activeSection, setActiveSection] = useState("top");
 
   useEffect(() => {
+    const sections = ["top", "how-it-works", "features", "nft", "leaderboard"];
     const onScroll = () => {
       const el = document.documentElement;
       const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
       setScrollPct(Math.min(100, Math.max(0, pct)));
+
+      let current = "top";
+      for (const id of sections) {
+        const sec = document.getElementById(id);
+        if (sec && sec.getBoundingClientRect().top <= 80) current = id;
+      }
+      setActiveSection(current);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -21,11 +30,11 @@ export default function LandingHeader({ onLaunch }) {
       <div className="header-left">
         <div className="logo">Clarity<span>XO</span></div>
         <nav className="desktop-nav">
-          <a className="nav-item lp-nav" onClick={() => scrollTo("top")}>Top</a>
-          <a className="nav-item lp-nav" onClick={() => scrollTo("how-it-works")}>Protocol</a>
-          <a className="nav-item lp-nav" onClick={() => scrollTo("features")}>Features</a>
-          <a className="nav-item lp-nav" onClick={() => scrollTo("nft")}>Rewards</a>
-          <a className="nav-item lp-nav" onClick={() => scrollTo("leaderboard")}>Rankings</a>
+          <a className={`nav-item lp-nav${activeSection === "top" ? " active" : ""}`} onClick={() => scrollTo("top")}>Top</a>
+          <a className={`nav-item lp-nav${activeSection === "how-it-works" ? " active" : ""}`} onClick={() => scrollTo("how-it-works")}>Protocol</a>
+          <a className={`nav-item lp-nav${activeSection === "features" ? " active" : ""}`} onClick={() => scrollTo("features")}>Features</a>
+          <a className={`nav-item lp-nav${activeSection === "nft" ? " active" : ""}`} onClick={() => scrollTo("nft")}>Rewards</a>
+          <a className={`nav-item lp-nav${activeSection === "leaderboard" ? " active" : ""}`} onClick={() => scrollTo("leaderboard")}>Rankings</a>
         </nav>
       </div>
       <div className="header-right">
