@@ -39,16 +39,21 @@ export default function LandingHeader({ onLaunch }) {
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+  const handleNavKey = (e, id) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); scrollTo(id); }
+  };
   return (
     <header className={`lp-header${shrunk ? " lp-header--shrunk" : ""}`}>
       <div className="header-left">
         <div className="logo">Clarity<span>XO</span></div>
         <nav className="desktop-nav">
-          <a className={`nav-item lp-nav${activeSection === "top" ? " active" : ""}`} onClick={() => scrollTo("top")}>Top</a>
-          <a className={`nav-item lp-nav${activeSection === "how-it-works" ? " active" : ""}`} onClick={() => scrollTo("how-it-works")}>Protocol</a>
-          <a className={`nav-item lp-nav${activeSection === "features" ? " active" : ""}`} onClick={() => scrollTo("features")}>Features</a>
-          <a className={`nav-item lp-nav${activeSection === "nft" ? " active" : ""}`} onClick={() => scrollTo("nft")}>Rewards</a>
-          <a className={`nav-item lp-nav${activeSection === "leaderboard" ? " active" : ""}`} onClick={() => scrollTo("leaderboard")}>Rankings</a>
+          {[["top","Top"],["how-it-works","Protocol"],["features","Features"],["nft","Rewards"],["leaderboard","Rankings"]].map(([id,label]) => (
+            <a key={id} role="button" tabIndex={0}
+              className={`nav-item lp-nav${activeSection === id ? " active" : ""}`}
+              onClick={() => scrollTo(id)}
+              onKeyDown={(e) => handleNavKey(e, id)}
+            >{label}</a>
+          ))}
         </nav>
       </div>
       <div className="header-right">
