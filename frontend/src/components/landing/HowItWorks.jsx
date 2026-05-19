@@ -7,7 +7,7 @@ const STEPS = [
 export default function HowItWorks() {
   return (
     <section className="lp-section" id="how-it-works">
-      <div className="lp-section-title">How It Works</div>
+      <div className="lp-section-title lp-fade">How It Works</div>
       <div className="lp-steps-grid">
         {STEPS.map((step) => (
           <div className="lp-step" key={step.num}>

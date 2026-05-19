@@ -2,7 +2,7 @@ import { CONFIG } from "../../config";
 export default function ContractSection() {
   return (
     <section className="lp-contract-section">
-      <div className="lp-section-title">Smart Contract</div>
+      <div className="lp-section-title lp-fade">Smart Contract</div>
       <div className="lp-contract-grid">
         <div className="lp-contract-left">
           <div className="lp-contract-label">Contract Address · Stacks Mainnet</div>

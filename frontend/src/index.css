@@ -1049,6 +1049,16 @@ svg.mark { overflow: visible; }
 .mark-o { color: var(--text); }
 
 .fade-up { opacity: 0; animation: lpFadeUp .6s ease forwards; }
+
+.lp-fade {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.lp-fade.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 .d1 { animation-delay: .05s; }
 .d2 { animation-delay: .12s; }
 .d3 { animation-delay: .20s; }

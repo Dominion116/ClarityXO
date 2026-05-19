@@ -9,7 +9,7 @@ const ROWS = [
 export default function LeaderboardPreview() {
   return (
     <section className="lp-lb-preview" id="leaderboard">
-      <div className="lp-section-title">Leaderboard Preview</div>
+      <div className="lp-section-title lp-fade">Leaderboard Preview</div>
       <table className="lp-lb-table">
         <thead>
           <tr>

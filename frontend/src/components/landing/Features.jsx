@@ -9,7 +9,7 @@ const FEATURES = [
 export default function Features() {
   return (
     <section className="lp-section" id="features">
-      <div className="lp-section-title">Built on Stacks</div>
+      <div className="lp-section-title lp-fade">Built on Stacks</div>
       <div className="lp-features-grid">
         {FEATURES.map((f) => (
           <div className="lp-feature" key={f.title}>
