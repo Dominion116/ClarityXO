@@ -31,6 +31,7 @@ function OMark() {
 export default function DemoBoard() {
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
+  const [fast, setFast] = useState(false);
   const timerRef = useRef(null);
 
   const startTimer = (interval = 1800) => {
@@ -43,10 +44,10 @@ export default function DemoBoard() {
   };
 
   useEffect(() => {
-    if (playing) startTimer();
+    if (playing) startTimer(fast ? 700 : 1800);
     else clearInterval(timerRef.current);
     return () => clearInterval(timerRef.current);
-  }, [playing]);
+  }, [playing, fast]);
 
   const state = STATES[idx];
 
@@ -61,6 +62,9 @@ export default function DemoBoard() {
         </button>
         <button className="lp-board-btn" aria-label="Next step"
           onClick={() => { setPlaying(false); setIdx(i => (i + 1) % STATES.length); }}>›</button>
+        <button className={`lp-board-btn${fast ? " active" : ""}`} onClick={() => setFast(f => !f)} aria-label="Toggle speed">
+          {fast ? "1×" : "2×"}
+        </button>
       </div>
       <div className="lp-demo-board">
         <div className="lp-board-corner-tl"></div>

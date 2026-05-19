@@ -1152,6 +1152,7 @@ svg.mark { overflow: visible; }
 }
 .lp-board-btn:hover { border-color: var(--text); color: var(--text); }
 .lp-board-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.lp-board-btn.active { border-color: var(--red); color: var(--red); }
 
 .lp-demo-board {
   width: 320px; height: 320px;
