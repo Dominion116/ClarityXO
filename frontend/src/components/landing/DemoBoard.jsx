@@ -30,22 +30,34 @@ function OMark() {
 
 export default function DemoBoard() {
   const [idx, setIdx] = useState(0);
+  const [playing, setPlaying] = useState(true);
   const timerRef = useRef(null);
 
-  useEffect(() => {
+  const startTimer = (interval = 1800) => {
+    clearInterval(timerRef.current);
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) return;
     timerRef.current = setInterval(() => {
       setIdx(prev => (prev + 1) % STATES.length);
-    }, 1800);
+    }, interval);
+  };
+
+  useEffect(() => {
+    if (playing) startTimer();
+    else clearInterval(timerRef.current);
     return () => clearInterval(timerRef.current);
-  }, []);
+  }, [playing]);
 
   const state = STATES[idx];
 
   return (
     <div className="lp-board-wrap">
       <div className="lp-board-label">live game state · stacks mainnet</div>
+      <div className="lp-board-controls">
+        <button className="lp-board-btn" onClick={() => setPlaying(p => !p)} aria-label={playing ? "Pause demo" : "Play demo"}>
+          {playing ? "⏸" : "▶"}
+        </button>
+      </div>
       <div className="lp-demo-board">
         <div className="lp-board-corner-tl"></div>
         <div className="lp-board-corner-br"></div>

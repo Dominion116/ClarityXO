@@ -1140,8 +1140,18 @@ svg.mark { overflow: visible; }
 }
 .lp-board-label {
   font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
-  color: var(--ghost); margin-bottom: 12px;
+  color: var(--ghost); margin-bottom: 8px;
 }
+.lp-board-controls {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 8px;
+}
+.lp-board-btn {
+  background: transparent; border: 1px solid var(--border2); color: var(--muted);
+  font-size: 11px; padding: 3px 8px; cursor: pointer; font-family: var(--mono);
+  transition: border-color .15s, color .15s;
+}
+.lp-board-btn:hover { border-color: var(--text); color: var(--text); }
+.lp-board-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
 .lp-demo-board {
   width: 320px; height: 320px;
