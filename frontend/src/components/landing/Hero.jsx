@@ -2,7 +2,7 @@ import DemoBoard from "./DemoBoard";
 export default function Hero({ onLaunch }) {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   return (
-    <section className="lp-hero">
+    <section className="lp-hero" id="top">
       <div className="lp-hero-content">
         <div className="lp-hero-eyebrow fade-up d1">Stacks Blockchain · Clarity Smart Contract</div>
         <h1 className="lp-hero-h1 fade-up d2">
