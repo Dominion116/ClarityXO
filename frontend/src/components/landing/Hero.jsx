@@ -4,7 +4,7 @@ export default function Hero({ onLaunch }) {
   return (
     <section className="lp-hero" id="top">
       <div className="lp-hero-content">
-        <div className="lp-hero-eyebrow fade-up d1">Stacks Blockchain · Clarity Smart Contract</div>
+        <div className="lp-hero-eyebrow fade-up d1">Stacks Mainnet · Open-Source · Clarity Contract</div>
         <h1 className="lp-hero-h1 fade-up d2">
           Tic-Tac-Toe<br /><span>on-chain.</span><br />Forever.
         </h1>
