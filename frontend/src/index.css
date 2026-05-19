@@ -1073,9 +1073,14 @@ svg.mark { overflow: visible; }
 .lp-cta-primary {
   padding: 14px 32px; font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
   background: var(--red); color: #fff; border: none; cursor: pointer;
-  font-family: var(--mono); transition: background .15s; text-decoration: none; display: inline-flex; align-items: center;
+  font-family: var(--mono); transition: background .15s, box-shadow .15s, transform .15s;
+  text-decoration: none; display: inline-flex; align-items: center;
 }
-.lp-cta-primary:hover { background: #cc3333; }
+.lp-cta-primary:hover {
+  background: #cc3333;
+  box-shadow: 0 4px 20px rgba(255,68,68,0.25);
+  transform: translateY(-1px);
+}
 .lp-cta-secondary {
   padding: 14px 28px; font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
   background: transparent; color: var(--muted);
@@ -1093,8 +1098,14 @@ svg.mark { overflow: visible; }
 
 .lp-hero-stat {
   flex: 1; padding: 16px 20px; border-right: 1px solid var(--border);
+  transition: background .15s, transform .15s;
+  cursor: default;
 }
 .lp-hero-stat:last-child { border-right: none; }
+.lp-hero-stat:hover {
+  background: var(--surface);
+  transform: translateY(-2px);
+}
 
 .lp-stat-val {
   font-size: 22px; font-weight: 300; letter-spacing: -.02em; margin-bottom: 4px;
