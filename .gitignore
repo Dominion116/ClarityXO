@@ -67,3 +67,4 @@ Thumbs.db
 *.temp
 .temp/
 .tmp/
+config.bat
