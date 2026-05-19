@@ -1,7 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function LandingHeader({ onLaunch }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrollPct, setScrollPct] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const el = document.documentElement;
+      const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+      setScrollPct(Math.min(100, Math.max(0, pct)));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
@@ -22,6 +33,10 @@ export default function LandingHeader({ onLaunch }) {
         <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? '✕' : '☰'}
         </button>
+      </div>
+
+      <div className="lp-scroll-bar" aria-hidden="true">
+        <div className="lp-scroll-bar-fill" style={{ width: `${scrollPct}%` }}></div>
       </div>
 
       <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>

@@ -897,6 +897,15 @@ svg.mark { overflow: visible; }
   box-sizing: border-box;
 }
 
+.lp-scroll-bar {
+  position: absolute; bottom: -1px; left: 0; right: 0;
+  height: 1px; background: var(--border); z-index: 1; pointer-events: none;
+}
+.lp-scroll-bar-fill {
+  height: 100%; background: var(--red);
+  transition: width .1s linear;
+}
+
 .lp-nav { text-decoration: none; cursor: pointer; }
 
 /* ── Focus-visible outlines ── */
