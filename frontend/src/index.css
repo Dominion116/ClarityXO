@@ -1349,8 +1349,12 @@ svg.mark { overflow: visible; }
 .t2  { color: var(--silver);   border: 1px solid var(--silver); }
 .t3  { color: var(--bronze);   border: 1px solid var(--bronze); }
 .t45 { color: var(--gold-dim); border: 1px solid var(--gold-dim); }
+.lp-nft-tier { cursor: default; transition: background .15s; }
+.lp-nft-tier:hover { background: rgba(200,168,75,0.04); }
 .lp-tier-info       { font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); line-height: 1.7; }
 .lp-tier-info strong { color: var(--text); font-weight: 400; display: block; }
+.lp-tier-hint { display: none; font-size: 8px; letter-spacing: .2em; color: var(--gold-dim); }
+.lp-nft-tier:hover .lp-tier-hint { display: block; }
 /* NFT card */
 .lp-nft-visual {
   width: 240px; border-left: 1px solid var(--gold-dim);

@@ -22,10 +22,10 @@ function useWeekCountdown() {
 }
 
 const TIERS = [
-  { cls: "t1", label: "1",   name: "Gold Trophy",    sub: "Most points · Week champion" },
-  { cls: "t2", label: "2",   name: "Silver Trophy",  sub: "Runner-up · Top 2" },
-  { cls: "t3", label: "3",   name: "Bronze Trophy",  sub: "Third place · Top 3" },
-  { cls: "t45", label: "4–5", name: "Qualifier NFT", sub: "Top 5 · Participation badge" },
+  { cls: "t1",  label: "1",   name: "Gold Trophy",    sub: "Most points · Week champion", hint: "≥ 1st place" },
+  { cls: "t2",  label: "2",   name: "Silver Trophy",  sub: "Runner-up · Top 2",           hint: "2nd place" },
+  { cls: "t3",  label: "3",   name: "Bronze Trophy",  sub: "Third place · Top 3",         hint: "3rd place" },
+  { cls: "t45", label: "4–5", name: "Qualifier NFT",  sub: "Top 5 · Participation badge", hint: "4th–5th place" },
 ];
 export default function NFTSection() {
   const countdown = useWeekCountdown();
@@ -49,7 +49,11 @@ export default function NFTSection() {
             {TIERS.map((t) => (
               <div className="lp-nft-tier" key={t.label}>
                 <div className={`lp-tier-medal ${t.cls}`}>{t.label}</div>
-                <div className="lp-tier-info"><strong>{t.name}</strong>{t.sub}</div>
+                <div className="lp-tier-info">
+                <strong>{t.name}</strong>
+                {t.sub}
+                <span className="lp-tier-hint">{t.hint}</span>
+              </div>
               </div>
             ))}
           </div>
