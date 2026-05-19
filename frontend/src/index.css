@@ -1300,8 +1300,15 @@ svg.mark { overflow: visible; }
   padding: 32px 28px;
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border2);
+  transition: background .15s, transform .15s, box-shadow .15s;
 }
 .lp-feature:nth-child(3n) { border-right: none; }
+.lp-feature:hover {
+  background: var(--surface);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  z-index: 1; position: relative;
+}
 .lp-feature-tag   { font-size: 8px; letter-spacing: .3em; text-transform: uppercase; color: var(--dim); border: 1px solid var(--border); display: inline-block; padding: 2px 8px; margin-bottom: 16px; }
 .lp-feature-icon  { font-size: 11px; letter-spacing: .35em; text-transform: uppercase; color: var(--red); margin-bottom: 16px; }
 .lp-feature-title { font-size: 13px; letter-spacing: .08em; color: var(--text); margin-bottom: 12px; font-weight: 400; }
