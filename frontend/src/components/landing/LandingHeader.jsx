@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export default function LandingHeader({ onLaunch }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
   const [activeSection, setActiveSection] = useState("top");
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const sections = ["top", "how-it-works", "features", "nft", "leaderboard"];
@@ -18,10 +19,21 @@ export default function LandingHeader({ onLaunch }) {
         if (sec && sec.getBoundingClientRect().top <= 80) current = id;
       }
       setActiveSection(current);
+      setMobileMenuOpen(false);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const onOutsideClick = (e) => {
+      if (mobileMenuOpen && menuRef.current && !menuRef.current.contains(e.target)) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onOutsideClick);
+    return () => document.removeEventListener("mousedown", onOutsideClick);
+  }, [mobileMenuOpen]);
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
@@ -49,7 +61,7 @@ export default function LandingHeader({ onLaunch }) {
         <div className="lp-scroll-bar-fill" style={{ width: `${scrollPct}%` }}></div>
       </div>
 
-      <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+      <div ref={menuRef} className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
         <button className="close-mobile-menu" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">✕</button>
         <nav className="mobile-nav">
           <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("how-it-works"); }}>Protocol</a>
