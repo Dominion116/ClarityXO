@@ -6,7 +6,7 @@ const ROWS = [
   { rank: 5, medalCls: "mgold", addr: "SP3J…7CXE", pts: 7,  w: 2,  d: 1, l: 4, wr: 28 },
   { rank: 6, medalCls: "mn",    addr: "SP4L…2RTY", pts: 3,  w: 1,  d: 0, l: 5, wr: 16 },
 ];
-export default function LeaderboardPreview() {
+export default function LeaderboardPreview({ onLaunch }) {
   return (
     <section className="lp-lb-preview" id="leaderboard">
       <div className="lp-section-title lp-fade">Leaderboard Preview</div>
@@ -39,6 +39,11 @@ export default function LeaderboardPreview() {
           ))}
         </tbody>
       </table>
+      <div className="lp-lb-cta-row lp-fade">
+        <a className="lp-cta-secondary" href="#leaderboard" onClick={(e) => { e.preventDefault(); onLaunch?.(); }}>
+          See full leaderboard →
+        </a>
+      </div>
     </section>
   );
 }

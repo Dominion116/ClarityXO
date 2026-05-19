@@ -54,7 +54,7 @@ export default function Landing({ onLaunch }) {
       <SectionDivider label="Rewards" num="03" />
       <NFTSection />
       <SectionDivider label="Rankings" num="04" />
-      <LeaderboardPreview />
+      <LeaderboardPreview onLaunch={onLaunch} />
       <SectionDivider label="Protocol" num="05" />
       <ContractSection />
       <FinalCTA onLaunch={onLaunch} />
