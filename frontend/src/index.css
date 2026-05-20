@@ -1425,6 +1425,11 @@ svg.mark { overflow: visible; }
 .lp-feature-icon  { font-size: 11px; letter-spacing: .35em; text-transform: uppercase; color: var(--red); margin-bottom: 16px; }
 .lp-feature-title { font-size: 13px; letter-spacing: .08em; color: var(--text); margin-bottom: 12px; font-weight: 400; }
 .lp-feature-desc  { font-size: 10px; letter-spacing: .06em; line-height: 2; color: var(--muted); }
+.lp-feature-chips { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+.lp-feature-chip  {
+  font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+  border: 1px solid var(--border); color: var(--dim); padding: 2px 7px;
+}
 
 .lp-nft-section { padding-bottom: 0; }
 .lp-nft-main {
