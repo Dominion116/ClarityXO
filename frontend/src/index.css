@@ -1721,13 +1721,39 @@ svg.mark { overflow: visible; }
 .lp-section-link-a:hover { color: var(--muted); }
 .lp-section-link-a:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
+/* ── FAQ ── */
+.lp-faq {
+  width: 100%; max-width: 1100px; margin: 0 auto;
+  padding: var(--lp-section-v) var(--lp-pad-h);
+  box-sizing: border-box;
+}
+.lp-faq-list { border: 1px solid var(--border2); }
+.lp-faq-item { border-bottom: 1px solid var(--border2); }
+.lp-faq-item:last-child { border-bottom: none; }
+.lp-faq-q {
+  width: 100%; background: transparent; border: none;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 28px; cursor: pointer;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--text);
+  text-align: left; transition: background .15s, color .15s;
+}
+.lp-faq-q:hover, .lp-faq-q.open { background: var(--surface); }
+.lp-faq-chevron { font-size: 16px; color: var(--red); flex-shrink: 0; margin-left: 16px; }
+.lp-faq-a {
+  padding: 0 28px 20px;
+  font-size: 10px; letter-spacing: .06em; line-height: 2; color: var(--muted);
+  animation: pageFadeIn .15s ease;
+}
+.lp-faq-q:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
+
 /* ── Section anchor offset for sticky header ── */
 #top,
 #how-it-works,
 #features,
 #nft,
 #leaderboard,
-#contract {
+#contract,
+#faq {
   scroll-margin-top: 61px;
 }
 
