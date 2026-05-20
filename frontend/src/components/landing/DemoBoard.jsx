@@ -32,6 +32,7 @@ export default function DemoBoard() {
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [fast, setFast] = useState(false);
+  const [hoverCell, setHoverCell] = useState(null);
   const timerRef = useRef(null);
 
   const startTimer = (interval = 1800) => {
@@ -87,8 +88,12 @@ export default function DemoBoard() {
         )}
         {state.board.map((cell, i) => {
           const isWin = state.winLine?.includes(i);
+          const row = Math.floor(i / 3);
+          const col = i % 3;
           return (
-            <div key={i} className={`lp-demo-cell${isWin ? " win-cell" : ""}`}>
+            <div key={i} className={`lp-demo-cell${isWin ? " win-cell" : ""}`}
+              onMouseEnter={() => setHoverCell([row, col])}
+              onMouseLeave={() => setHoverCell(null)}>
               {cell === 1 && <XMark win={isWin} />}
               {cell === 2 && <OMark />}
             </div>
@@ -99,7 +104,9 @@ export default function DemoBoard() {
       <div className="lp-board-meta">
         <div className="lp-board-meta-item"><span className="mark-x">X</span> · You</div>
         <div className="lp-board-meta-item"><span className="mark-o">O</span> · Contract</div>
-        <div className="lp-board-meta-item">{state.label}</div>
+        <div className="lp-board-meta-item lp-board-coords" aria-live="off">
+          {hoverCell ? `[${hoverCell[0]},${hoverCell[1]}]` : state.label}
+        </div>
       </div>
     </div>
   );
