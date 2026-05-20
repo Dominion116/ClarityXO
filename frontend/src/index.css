@@ -1612,6 +1612,15 @@ svg.mark { overflow: visible; }
 }
 .lp-copy-btn:hover { border-color: var(--text); color: var(--text); }
 .lp-copy-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.lp-contract-status-row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  font-size: 9px; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 16px;
+}
+.lp-status-val { color: var(--muted); }
+.lp-status-val.live-text { color: var(--green); }
+.lp-contract-status-sep { color: var(--border2); }
+
 .lp-explorer-btn {
   display: inline-block; margin-bottom: 20px;
   font-size: 9px; letter-spacing: .2em; text-transform: uppercase;

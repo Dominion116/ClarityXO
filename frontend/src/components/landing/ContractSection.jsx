@@ -44,6 +44,13 @@ export default function ContractSection() {
             </button>
           </div>
           {nftCopied && <div className="lp-copy-toast" role="status">NFT address copied</div>}
+          <div className="lp-contract-status-row">
+            <span className="lp-contract-status-item">Last tx: <span className="lp-status-val">—</span></span>
+            <span className="lp-contract-status-sep" aria-hidden="true">·</span>
+            <span className="lp-contract-status-item">Block: <span className="lp-status-val">—</span></span>
+            <span className="lp-contract-status-sep" aria-hidden="true">·</span>
+            <span className="lp-contract-status-item">Status: <span className="lp-status-val live-text">Live</span></span>
+          </div>
           <div className="lp-network-indicators">
             <div className="lp-net-indicator"><span className="lp-net-dot live"></span>Mainnet Active</div>
             <div className="lp-net-indicator"><span className="lp-net-dot off"></span>Devnet Off</div>
