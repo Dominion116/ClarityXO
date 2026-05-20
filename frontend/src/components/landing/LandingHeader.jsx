@@ -64,7 +64,13 @@ export default function LandingHeader({ onLaunch }) {
           mainnet
         </div>
         <button className="launch-btn" onClick={onLaunch}>Launch App</button>
-        <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button
+          className="hamburger-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-nav-menu"
+        >
           {mobileMenuOpen ? '✕' : '☰'}
         </button>
       </div>
@@ -73,7 +79,7 @@ export default function LandingHeader({ onLaunch }) {
         <div className="lp-scroll-bar-fill" style={{ width: `${scrollPct}%` }}></div>
       </div>
 
-      <div ref={menuRef} className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+      <div ref={menuRef} id="mobile-nav-menu" className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`} role="dialog" aria-label="Navigation menu" aria-modal="false">
         <button className="close-mobile-menu" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">✕</button>
         <nav className="mobile-nav">
           <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("how-it-works"); }}>Protocol</a>
