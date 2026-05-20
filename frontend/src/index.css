@@ -1449,6 +1449,14 @@ svg.mark { overflow: visible; }
 .lp-nft-countdown-label { font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--dim); }
 .lp-nft-countdown-timer { font-size: 14px; letter-spacing: .06em; color: var(--gold); font-variant-numeric: tabular-nums; }
 .lp-nft-main-title  { font-size: 28px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 12px; }
+.lp-nft-schedule {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  font-size: 9px; letter-spacing: .12em; color: var(--dim);
+  margin-bottom: 20px;
+}
+.lp-nft-schedule strong { color: var(--muted); font-weight: 400; }
+.lp-nft-schedule-sep { color: var(--border2); }
+
 .lp-nft-rarity-bar  { display: flex; height: 4px; border: 1px solid var(--border2); margin-bottom: 6px; margin-top: 4px; overflow: hidden; }
 .lp-nft-rarity-seg  { }
 .lp-nft-rarity-seg.gold      { background: var(--gold); }

@@ -54,6 +54,13 @@ export default function NFTSection() {
             automatically qualify for a ClarityXO Trophy NFT, minted directly to their Stacks
             address. Points don't carry — every week is a fresh competition.
           </div>
+          <div className="lp-nft-schedule" aria-label="Weekly reset schedule">
+            <span className="lp-nft-schedule-item">◷ Resets: <strong>Sunday 23:59 UTC</strong></span>
+            <span className="lp-nft-schedule-sep" aria-hidden="true">·</span>
+            <span className="lp-nft-schedule-item">Mint: <strong>Monday ~01:00 UTC</strong></span>
+            <span className="lp-nft-schedule-sep" aria-hidden="true">·</span>
+            <span className="lp-nft-schedule-item">Points: <strong>do not carry over</strong></span>
+          </div>
           <a className="lp-nft-contract-link" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">
             View Trophy Contract ↗
           </a>
