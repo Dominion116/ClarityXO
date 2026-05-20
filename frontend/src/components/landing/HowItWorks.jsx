@@ -29,6 +29,15 @@ export default function HowItWorks() {
           </div>
         ))}
       </div>
+      <div className="lp-hiw-avg-row lp-fade" aria-label="Average transaction timings">
+        <span className="lp-hiw-avg-item"><span className="lp-hiw-avg-val">~5s</span> avg move tx</span>
+        <span className="lp-hiw-avg-sep" aria-hidden="true">·</span>
+        <span className="lp-hiw-avg-item"><span className="lp-hiw-avg-val">~30s</span> wallet connect</span>
+        <span className="lp-hiw-avg-sep" aria-hidden="true">·</span>
+        <span className="lp-hiw-avg-item"><span className="lp-hiw-avg-val">instant</span> AI response</span>
+        <span className="lp-hiw-avg-sep" aria-hidden="true">·</span>
+        <span className="lp-hiw-avg-item"><span className="lp-hiw-avg-val">weekly</span> NFT mint</span>
+      </div>
       <div className="lp-section-link lp-fade">
         <a className="lp-section-link-a" href="#contract" onClick={(e) => { e.preventDefault(); document.getElementById("contract")?.scrollIntoView({ behavior: "smooth" }); }}>
           View the smart contract ↓

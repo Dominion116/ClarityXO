@@ -1362,6 +1362,15 @@ svg.mark { overflow: visible; }
 .lp-step-title { font-size: 11px; letter-spacing: .25em; text-transform: uppercase; color: var(--text); margin-bottom: 12px; position: relative; z-index: 1; }
 .lp-step-desc  { font-size: 10px; letter-spacing: .06em; line-height: 2; color: var(--muted); position: relative; z-index: 1; }
 
+.lp-hiw-avg-row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  border: 1px solid var(--border2); border-top: none;
+  padding: 14px 24px;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim);
+}
+.lp-hiw-avg-val { color: var(--text); margin-right: 4px; }
+.lp-hiw-avg-sep { color: var(--border2); }
+
 .lp-features-grid {
   display: grid; grid-template-columns: repeat(3,1fr);
   border: 1px solid var(--border2); border-bottom: none;
