@@ -20,6 +20,7 @@ export default function HowItWorks() {
       <div className="lp-steps-grid">
         {STEPS.map((step) => (
           <div className="lp-step" key={step.num}>
+            <div className="lp-step-watermark" aria-hidden="true">{step.num}</div>
             <div className="lp-step-accent"></div>
             <div className="lp-step-num">{step.num}</div>
             <div className="lp-step-time">{step.time}</div>
