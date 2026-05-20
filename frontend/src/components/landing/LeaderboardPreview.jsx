@@ -34,7 +34,10 @@ export default function LeaderboardPreview({ onLaunch }) {
         </thead>
         <tbody>
           {ROWS.map((row) => (
-            <tr key={row.rank} className={row.rank <= 5 ? "nft-row" : ""}>
+            <tr key={row.rank} className={[
+              row.rank <= 5 ? "nft-row" : "",
+              row.rank === 1 ? "top-1" : row.rank === 2 ? "top-2" : row.rank === 3 ? "top-3" : ""
+            ].filter(Boolean).join(" ")}>
               <td><span className={`lp-lb-medal-sm ${row.medalCls}`}>{row.rank}</span></td>
               <td><span className="lp-addr-short">{row.addr}</span></td>
               <td className="pts-col">
