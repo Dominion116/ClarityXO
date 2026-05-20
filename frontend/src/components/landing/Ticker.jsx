@@ -13,6 +13,10 @@ export default function Ticker() {
   const all = [...ITEMS, ...ITEMS];
   return (
     <div className="lp-ticker" role="marquee" aria-label="Live game feed">
+      <p className="sr-only">
+        Live on-chain activity: recent game results include wins (+3 pts), draws (+1 pt), and
+        NFT trophy mints to qualifying players. All moves are Stacks blockchain transactions.
+      </p>
       <div className="lp-ticker-label" aria-hidden="true">
         <span className="lp-ticker-pulse"></span>
         Live
