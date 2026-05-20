@@ -51,6 +51,13 @@ body, #root {
 }
 .lp-skip-link:focus { top: 8px; }
 
+/* ── TARGET HIGHLIGHT ─────────────────────────────── */
+:target { outline: 1px solid var(--border2); outline-offset: -1px; }
+:target::before {
+  content: ""; display: block;
+  height: 80px; margin-top: -80px;
+}
+
 /* ── PAGE TRANSITIONS ─────────────────────────────── */
 .page { display: none; width: 100%; max-width: 100%; overflow-x: hidden; box-sizing: border-box; }
 .page.active { display: flex; flex-direction: column; align-items: center; animation: pageFadeIn 0.2s ease; }
