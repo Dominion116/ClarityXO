@@ -1791,6 +1791,19 @@ svg.mark { overflow: visible; }
 }
 .lp-back-to-top:hover { border-color: var(--muted); color: var(--muted); }
 .lp-back-to-top:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.lp-footer-socials {
+  width: 100%; border-top: 1px solid var(--border);
+  padding: 12px 40px; display: flex; align-items: center; gap: 16px;
+  box-sizing: border-box;
+}
+.lp-footer-social {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim);
+  text-decoration: none; transition: color .15s;
+}
+.lp-footer-social:hover { color: var(--muted); }
+.lp-footer-social-icon { color: var(--red); font-size: 10px; }
+
 .lp-footer-legal {
   width: 100%; border-top: 1px solid var(--border);
   padding: 10px 40px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;

@@ -1,3 +1,9 @@
+const SOCIALS = [
+  { label: "Farcaster", href: "https://warpcast.com", icon: "⌘" },
+  { label: "Discord", href: "#", icon: "◈" },
+  { label: "GitHub", href: "https://github.com/Dominion116/ClarityXO", icon: "⊛" },
+];
+
 export default function LandingFooter() {
   const scrollTop = () => document.getElementById("top")?.scrollIntoView({ behavior: "smooth" });
   return (
@@ -15,6 +21,14 @@ export default function LandingFooter() {
       <div className="lp-footer-right">
         Built on Stacks · Clarity · {new Date().getFullYear()}
         <button className="lp-back-to-top" onClick={scrollTop} aria-label="Back to top">↑ Top</button>
+      </div>
+      <div className="lp-footer-socials">
+        {SOCIALS.map(s => (
+          <a key={s.label} className="lp-footer-social" href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
+            <span className="lp-footer-social-icon" aria-hidden="true">{s.icon}</span>
+            {s.label}
+          </a>
+        ))}
       </div>
       <div className="lp-footer-legal">
         <span className="lp-footer-legal-item">No financial advice · Play at your own risk</span>
