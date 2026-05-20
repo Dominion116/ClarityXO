@@ -1,6 +1,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { overflow-x: hidden; }
+html { overflow-x: hidden; color-scheme: dark; }
 
 :root {
   --bg:      #0a0a0a;
