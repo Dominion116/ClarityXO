@@ -40,6 +40,15 @@ export default function NFTSection() {
             <span className="lp-nft-countdown-timer" aria-live="off">{countdown}</span>
           </div>
           <div className="lp-nft-main-title">Earn a Trophy.<br />Every week, five wallets win.</div>
+          <div className="lp-nft-rarity-bar" aria-label="Trophy rarity distribution">
+            <div className="lp-nft-rarity-seg gold" style={{ flex: 1 }} title="Gold — 1st place (20%)"></div>
+            <div className="lp-nft-rarity-seg silver" style={{ flex: 1 }} title="Silver — 2nd place (20%)"></div>
+            <div className="lp-nft-rarity-seg bronze" style={{ flex: 1 }} title="Bronze — 3rd place (20%)"></div>
+            <div className="lp-nft-rarity-seg qualifier" style={{ flex: 2 }} title="Qualifier — 4th–5th place (40%)"></div>
+          </div>
+          <div className="lp-nft-rarity-labels" aria-hidden="true">
+            <span>Gold</span><span>Silver</span><span>Bronze</span><span>Qualifier ×2</span>
+          </div>
           <div className="lp-nft-main-desc">
             The leaderboard resets every Sunday at 23:59 UTC. The top 5 players by points
             automatically qualify for a ClarityXO Trophy NFT, minted directly to their Stacks

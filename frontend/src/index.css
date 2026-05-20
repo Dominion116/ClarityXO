@@ -1448,7 +1448,19 @@ svg.mark { overflow: visible; }
 .lp-nft-countdown   { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .lp-nft-countdown-label { font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--dim); }
 .lp-nft-countdown-timer { font-size: 14px; letter-spacing: .06em; color: var(--gold); font-variant-numeric: tabular-nums; }
-.lp-nft-main-title  { font-size: 28px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 16px; }
+.lp-nft-main-title  { font-size: 28px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 12px; }
+.lp-nft-rarity-bar  { display: flex; height: 4px; border: 1px solid var(--border2); margin-bottom: 6px; margin-top: 4px; overflow: hidden; }
+.lp-nft-rarity-seg  { }
+.lp-nft-rarity-seg.gold      { background: var(--gold); }
+.lp-nft-rarity-seg.silver    { background: var(--silver); }
+.lp-nft-rarity-seg.bronze    { background: var(--bronze); }
+.lp-nft-rarity-seg.qualifier { background: var(--dim); }
+.lp-nft-rarity-labels {
+  display: flex; font-size: 8px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 20px;
+}
+.lp-nft-rarity-labels span { flex: 1; }
+.lp-nft-rarity-labels span:last-child { flex: 2; text-align: right; }
   .lp-nft-main-desc   { font-size: 10px; letter-spacing: .08em; line-height: 2; color: var(--muted); max-width: 100%; margin-bottom: 32px; }
 .lp-nft-tiers       { display: flex; border: 1px solid var(--border2); }
 .lp-nft-tier        { flex: 1; padding: 16px 20px; border-right: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
