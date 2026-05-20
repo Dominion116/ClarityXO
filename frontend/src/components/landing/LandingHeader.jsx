@@ -8,6 +8,11 @@ export default function LandingHeader({ onLaunch }) {
   const menuRef = useRef(null);
 
   useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     const sections = ["top", "how-it-works", "features", "nft", "leaderboard"];
     const onScroll = () => {
       const el = document.documentElement;
