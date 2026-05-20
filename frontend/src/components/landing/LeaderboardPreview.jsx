@@ -12,15 +12,24 @@ export default function LeaderboardPreview({ onLaunch }) {
       <div className="lp-section-title lp-fade">Leaderboard Preview</div>
       <table className="lp-lb-table" aria-label="Weekly leaderboard preview — top 6 players by points">
         <caption className="sr-only">Weekly leaderboard preview. Top 5 players qualify for Trophy NFT. Rankings reset every Sunday.</caption>
+        <colgroup>
+          <col style={{ width: 58 }} />
+          <col />
+          <col style={{ width: 72 }} />
+          <col style={{ width: 64 }} />
+          <col style={{ width: 64 }} />
+          <col style={{ width: 64 }} />
+          <col style={{ width: 110 }} />
+        </colgroup>
         <thead>
           <tr>
-            <th style={{ width: 58 }}>Rank</th>
+            <th>Rank</th>
             <th>Player</th>
-            <th style={{ width: 72 }}>Points</th>
-            <th style={{ width: 64 }}>Wins</th>
-            <th style={{ width: 64 }}>Draws</th>
-            <th style={{ width: 64 }}>Losses</th>
-            <th style={{ width: 110 }}>Win Rate</th>
+            <th>Points</th>
+            <th>Wins</th>
+            <th>Draws</th>
+            <th>Losses</th>
+            <th>Win Rate</th>
           </tr>
         </thead>
         <tbody>
