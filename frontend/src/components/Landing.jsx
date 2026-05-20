@@ -10,6 +10,7 @@ import LeaderboardPreview from "./landing/LeaderboardPreview";
 import ContractSection  from "./landing/ContractSection";
 import FinalCTA         from "./landing/FinalCTA";
 import LandingFooter    from "./landing/LandingFooter";
+import FAQ              from "./landing/FAQ";
 
 export default function Landing({ onLaunch }) {
   useEffect(() => {
@@ -59,6 +60,8 @@ export default function Landing({ onLaunch }) {
         <SectionDivider label="Protocol" num="05" />
         <ContractSection />
         <FinalCTA onLaunch={onLaunch} />
+        <SectionDivider label="FAQ" num="06" />
+        <FAQ />
       </main>
       <LandingFooter />
     </div>
