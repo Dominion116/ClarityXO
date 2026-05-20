@@ -1167,6 +1167,10 @@ svg.mark { overflow: visible; }
   transform: translateY(-2px);
 }
 
+.lp-stat-glyph {
+  font-size: 14px; color: var(--dim); margin-bottom: 6px;
+}
+
 .lp-stat-val {
   font-size: 22px; font-weight: 300; letter-spacing: -.02em; margin-bottom: 4px;
 }

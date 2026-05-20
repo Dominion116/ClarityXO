@@ -32,16 +32,19 @@ export default function Hero({ onLaunch }) {
         <p className="lp-hero-trust fade-up d4">No sign-up · Non-custodial · Your keys, your trophies</p>
         <div className="lp-hero-stats fade-up d5">
           <div className="lp-hero-stat">
+            <div className="lp-stat-glyph" aria-hidden="true">⊞</div>
             <div className="lp-stat-val red">9</div>
             <div className="lp-stat-label">Cells on-chain</div>
             <div className="lp-stat-hint">every move a tx</div>
           </div>
           <div className="lp-hero-stat">
+            <div className="lp-stat-glyph" aria-hidden="true">◎</div>
             <div className="lp-stat-val green">+3</div>
             <div className="lp-stat-label">pts per win</div>
             <div className="lp-stat-hint">draw +1 · loss 0</div>
           </div>
           <div className="lp-hero-stat">
+            <div className="lp-stat-glyph" aria-hidden="true">◈</div>
             <div className="lp-stat-val gold">5</div>
             <div className="lp-stat-label">NFT slots/week</div>
             <div className="lp-stat-hint">top 5 by points</div>
