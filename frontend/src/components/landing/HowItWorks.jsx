@@ -9,6 +9,11 @@ export default function HowItWorks() {
   return (
     <section className="lp-section" id="how-it-works">
       <div className="lp-section-title lp-fade">How It Works</div>
+      <div className="lp-wallet-badges lp-fade" aria-label="Supported wallets">
+        <span className="lp-wallet-badge">Leather</span>
+        <span className="lp-wallet-badge">Xverse</span>
+        <span className="lp-wallet-badge-note">Stacks-compatible wallets</span>
+      </div>
       <div className="lp-steps-connector" aria-hidden="true">
         {STEPS.map((_, i) => (
           <React.Fragment key={i}>

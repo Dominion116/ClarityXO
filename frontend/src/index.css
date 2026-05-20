@@ -1362,6 +1362,18 @@ svg.mark { overflow: visible; }
 .lp-step-title { font-size: 11px; letter-spacing: .25em; text-transform: uppercase; color: var(--text); margin-bottom: 12px; position: relative; z-index: 1; }
 .lp-step-desc  { font-size: 10px; letter-spacing: .06em; line-height: 2; color: var(--muted); position: relative; z-index: 1; }
 
+.lp-wallet-badges {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 32px; margin-top: -24px;
+}
+.lp-wallet-badge {
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  border: 1px solid var(--border2); color: var(--muted); padding: 3px 10px;
+}
+.lp-wallet-badge-note {
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
+  margin-left: 4px;
+}
+
 .lp-hiw-avg-row {
   display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
   border: 1px solid var(--border2); border-top: none;
