@@ -1708,6 +1708,10 @@ svg.mark { overflow: visible; }
 }
 .lp-final-faq-link { color: var(--muted); text-decoration: none; transition: color .15s; }
 .lp-final-faq-link:hover { color: var(--text); }
+.lp-final-wallet-note {
+  font-size: 9px; letter-spacing: .1em; color: var(--dim);
+  max-width: 460px; line-height: 1.8; margin-top: 16px;
+}
   .lp-final-btns   { flex-direction: column; }
 .lp-section-link { margin-top: 24px; text-align: right; }
 .lp-section-link-a {

@@ -42,6 +42,9 @@ export default function FinalCTA({ onLaunch }) {
       <a className="lp-final-protocol-link" href="#contract" onClick={(e) => { e.preventDefault(); document.getElementById("contract")?.scrollIntoView({ behavior: "smooth" }); }}>
         Protocol details ↑
       </a>
+      <p className="lp-final-wallet-note">
+        ClarityXO never requests seed phrases or private keys. All moves are signed directly by your wallet.
+      </p>
       <div className="lp-final-faq-prompt">
         Questions? <a className="lp-final-faq-link" href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }}>See the FAQ ↓</a>
       </div>
