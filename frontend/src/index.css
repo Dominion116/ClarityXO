@@ -110,6 +110,12 @@ header {
 }
 
 .header-right { display: flex; align-items: center; gap: 12px; padding: 20px 0; }
+.lp-oss-pill {
+  font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+  border: 1px solid var(--border2); color: var(--green);
+  padding: 2px 7px; margin-left: 10px; align-self: center;
+  white-space: nowrap;
+}
 .lp-badge-group { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
 .lp-badge-sub { font-size: 8px; letter-spacing: .12em; color: var(--dim); text-transform: uppercase; }
 .badge {

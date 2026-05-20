@@ -60,6 +60,7 @@ export default function LandingHeader({ onLaunch }) {
     <header className={`lp-header${shrunk ? " lp-header--shrunk" : ""}`}>
       <div className="header-left">
         <div className="logo">Clarity<span>XO</span></div>
+        <div className="lp-oss-pill" title="Open-source Clarity smart contract">OSS</div>
         <nav className="desktop-nav">
           {[["top","Top"],["how-it-works","Protocol"],["features","Features"],["nft","Rewards"],["leaderboard","Rankings"]].map(([id,label]) => (
             <a key={id} role="button" tabIndex={0}
