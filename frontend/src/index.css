@@ -1109,6 +1109,12 @@ svg.mark { overflow: visible; }
   color: var(--dim); margin-bottom: 32px; line-height: 2;
 }
 
+.lp-hero-wallets {
+  font-size: 9px; letter-spacing: .15em; color: var(--dim);
+  margin-bottom: 28px; text-transform: uppercase;
+}
+.lp-hero-wallets span { color: var(--muted); }
+
 .lp-hero-ctas { display: flex; flex-wrap: wrap; gap: 0; align-items: stretch; }
 .lp-cta-ghost {
   padding: 14px 20px; font-size: 10px; letter-spacing: .25em; text-transform: uppercase;

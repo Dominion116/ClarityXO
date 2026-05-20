@@ -21,6 +21,9 @@ export default function Hero({ onLaunch }) {
         <p className="lp-hero-subcopy fade-up d3">
           Leaderboard resets every Sunday · Top 5 earn a Trophy NFT · No gas for draws
         </p>
+        <p className="lp-hero-wallets fade-up d3">
+          Works with <span>Leather</span> and <span>Xverse</span> wallets
+        </p>
         <div className="lp-hero-ctas fade-up d4">
           <button className="lp-cta-primary" onClick={onLaunch}>Play Now</button>
           <button className="lp-cta-secondary" onClick={() => scrollTo("how-it-works")}>How It Works</button>
