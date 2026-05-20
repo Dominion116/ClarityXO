@@ -66,7 +66,9 @@ export default function DemoBoard() {
   const winStyle = winKey ? WIN_LINES[winKey] : null;
 
   return (
-    <div className="lp-board-wrap" role="region" aria-label="Animated demo of an on-chain tic-tac-toe game on Stacks mainnet">
+    <div className="lp-board-wrap" role="region" aria-label="Animated demo of an on-chain tic-tac-toe game on Stacks mainnet"
+      onMouseEnter={() => { if (playing) setPlaying(false); }}
+      onMouseLeave={() => setPlaying(true)}>
       <div className="lp-board-label">live game state · stacks mainnet</div>
       <div className="lp-board-controls">
         <button className="lp-board-btn" aria-label="Previous step"
