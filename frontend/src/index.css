@@ -1033,6 +1033,12 @@ svg.mark { overflow: visible; }
 .lp-ticker-result.draw { color: var(--gold); }
 .lp-ticker-result.loss { color: var(--red); }
 .lp-ticker-pts { color: var(--muted); margin-left: 4px; }
+.lp-ticker-item::after {
+  content: '';
+  display: inline-block; width: 1px; height: 10px;
+  background: linear-gradient(to bottom, transparent, var(--border2), transparent);
+  margin-left: 24px; vertical-align: middle;
+}
 @keyframes lpTicker {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }

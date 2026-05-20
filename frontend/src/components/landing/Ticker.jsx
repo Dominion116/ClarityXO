@@ -23,7 +23,7 @@ export default function Ticker() {
       </div>
       <div className="lp-ticker-track">
         {all.map((item, i) => (
-          <div key={i} className="lp-ticker-item">
+          <div key={i} className="lp-ticker-item" role="listitem">
             <span className={`lp-ticker-dot ${item.color}`}></span>
             {item.text}
             {item.result && (
