@@ -16,6 +16,13 @@ export default function LandingFooter() {
         Built on Stacks · Clarity · {new Date().getFullYear()}
         <button className="lp-back-to-top" onClick={scrollTop} aria-label="Back to top">↑ Top</button>
       </div>
+      <div className="lp-footer-legal">
+        <span className="lp-footer-legal-item">No financial advice · Play at your own risk</span>
+        <span className="lp-footer-legal-sep" aria-hidden="true">·</span>
+        <a className="lp-footer-legal-link" href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }}>Terms</a>
+        <span className="lp-footer-legal-sep" aria-hidden="true">·</span>
+        <a className="lp-footer-legal-link" href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }}>Privacy</a>
+      </div>
     </footer>
   );
 }
