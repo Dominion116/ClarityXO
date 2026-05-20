@@ -1824,3 +1824,26 @@ svg.mark { overflow: visible; }
   .lp-footer       { flex-direction: column; }
   .lp-footer-logo  { padding-right: 0; border-right: none; border-bottom: 1px solid var(--border2); padding: 16px 0; }
   .lp-footer-right { padding: 16px 0; }
+
+@media print {
+  .lp-ticker,
+  .lp-ticker-track,
+  .lp-hero-grid,
+  .lp-scanlines,
+  .lp-scroll-bar,
+  .lp-scroll-hint,
+  .lp-board-controls,
+  .lp-steps-connector,
+  .lp-back-to-top,
+  .lp-footer-socials,
+  .lp-footer-status,
+  .lp-footer-legal { display: none !important; }
+
+  .lp-hero, .lp-section, .lp-nft-section, .lp-lb-preview, .lp-contract-section, .lp-faq {
+    page-break-inside: avoid;
+    padding: 24px 0;
+  }
+
+  .lp-demo-board { animation: none !important; }
+  * { animation-play-state: paused !important; transition: none !important; }
+}
