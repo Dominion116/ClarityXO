@@ -33,8 +33,15 @@ export default function LandingHeader({ onLaunch }) {
         setMobileMenuOpen(false);
       }
     };
+    const onKeyDown = (e) => {
+      if (e.key === "Escape" && mobileMenuOpen) setMobileMenuOpen(false);
+    };
     document.addEventListener("mousedown", onOutsideClick);
-    return () => document.removeEventListener("mousedown", onOutsideClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onOutsideClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [mobileMenuOpen]);
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
