@@ -14,6 +14,7 @@ function useCopyToast() {
 
 export default function ContractSection() {
   const [copied, copy] = useCopyToast();
+  const [nftCopied, copyNft] = useCopyToast();
   const [expanded, setExpanded] = useState(false);
   return (
     <section className="lp-contract-section" id="contract">
@@ -34,9 +35,15 @@ export default function ContractSection() {
             View in Explorer ↗
           </a>
           <div className="lp-contract-label">NFT Trophy Contract</div>
-          <div className="lp-contract-addr" style={{ fontSize: "10px", color: "var(--muted)" }}>
-            {CONFIG.nftContractAddress}<br />.{CONFIG.nftContractName}
+          <div className="lp-contract-addr-row">
+            <div className="lp-contract-addr" style={{ fontSize: "10px", color: "var(--muted)" }}>
+              {CONFIG.nftContractAddress}<br />.{CONFIG.nftContractName}
+            </div>
+            <button className="lp-copy-btn" onClick={() => copyNft(`${CONFIG.nftContractAddress}.${CONFIG.nftContractName}`)} aria-label="Copy NFT contract address">
+              {nftCopied ? "✓" : "Copy"}
+            </button>
           </div>
+          {nftCopied && <div className="lp-copy-toast" role="status">NFT address copied</div>}
           <div className="lp-network-indicators">
             <div className="lp-net-indicator"><span className="lp-net-dot live"></span>Mainnet Active</div>
             <div className="lp-net-indicator"><span className="lp-net-dot off"></span>Devnet Off</div>
