@@ -13,7 +13,7 @@ export default function LandingHeader({ onLaunch }) {
   }, [mobileMenuOpen]);
 
   useEffect(() => {
-    const sections = ["top", "how-it-works", "features", "nft", "leaderboard"];
+    const sections = ["top", "how-it-works", "features", "nft", "leaderboard", "faq"];
     const onScroll = () => {
       const el = document.documentElement;
       const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
@@ -62,7 +62,7 @@ export default function LandingHeader({ onLaunch }) {
         <div className="logo">Clarity<span>XO</span></div>
         <div className="lp-oss-pill" title="Open-source Clarity smart contract">OSS</div>
         <nav className="desktop-nav">
-          {[["top","Top"],["how-it-works","Protocol"],["features","Features"],["nft","Rewards"],["leaderboard","Rankings"]].map(([id,label]) => (
+          {[["top","Top"],["how-it-works","Protocol"],["features","Features"],["nft","Rewards"],["leaderboard","Rankings"],["faq","FAQ"]].map(([id,label]) => (
             <a key={id} role="button" tabIndex={0}
               className={`nav-item lp-nav${activeSection === id ? " active" : ""}`}
               onClick={() => scrollTo(id)}
@@ -102,6 +102,7 @@ export default function LandingHeader({ onLaunch }) {
           <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("features"); }}>Features</a>
           <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("nft"); }}>Rewards</a>
           <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("leaderboard"); }}>Rankings</a>
+          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("faq"); }}>FAQ</a>
         </nav>
       </div>
     </header>
