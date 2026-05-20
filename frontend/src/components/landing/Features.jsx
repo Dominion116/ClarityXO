@@ -10,6 +10,13 @@ export default function Features() {
   return (
     <section className="lp-section" id="features">
       <div className="lp-section-title lp-fade">Built on Stacks</div>
+      <div className="lp-quick-facts lp-fade">
+        <span className="lp-quick-fact">Written in <strong>Clarity</strong> — a decidable smart contract language</span>
+        <span className="lp-quick-fact-sep" aria-hidden="true">·</span>
+        <span className="lp-quick-fact">Secured by <strong>Stacks</strong> and <strong>Bitcoin</strong> finality</span>
+        <span className="lp-quick-fact-sep" aria-hidden="true">·</span>
+        <span className="lp-quick-fact"><strong>Open-source</strong> — read the contract on-chain</span>
+      </div>
       <div className="lp-key-benefits lp-fade">
         <span className="lp-key-benefit">⊛ No centralized server</span>
         <span className="lp-key-benefit">⊛ Deterministic AI</span>
