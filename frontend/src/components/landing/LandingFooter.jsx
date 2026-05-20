@@ -7,6 +7,7 @@ export default function LandingFooter() {
         <div className="lp-footer-links">
           <a className="lp-footer-link" href="https://stacks.co" target="_blank" rel="noopener noreferrer">Stacks</a>
           <a className="lp-footer-link" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">Contract</a>
+          <a className="lp-footer-link" href="https://github.com/Dominion116/ClarityXO" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
           <a className="lp-footer-link" href="https://warpcast.com" target="_blank" rel="noopener noreferrer">Farcaster</a>
           <span className="lp-footer-link" style={{ cursor: "default" }}>Telegram</span>
         </div>
