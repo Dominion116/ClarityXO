@@ -3,6 +3,7 @@ export default function Hero({ onLaunch }) {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   return (
     <section className="lp-hero" id="top">
+      <div className="lp-hero-grid" aria-hidden="true"></div>
       <div className="lp-hero-content">
         <div className="lp-hero-eyebrow fade-up d1">Stacks Mainnet · Open-Source · Clarity Contract</div>
         <div className="lp-proof-chips fade-up d2">

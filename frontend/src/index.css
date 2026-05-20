@@ -1059,7 +1059,20 @@ svg.mark { overflow: visible; }
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 60px; align-items: center;
   min-height: calc(100vh - 61px);
+  position: relative;
 }
+
+.lp-hero-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+  opacity: 0.35; z-index: 0;
+}
+.lp-hero-content { position: relative; z-index: 1; }
 
 .lp-proof-chips {
   display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
