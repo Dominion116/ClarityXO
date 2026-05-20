@@ -43,6 +43,8 @@ export default function LandingHeader({ onLaunch }) {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); scrollTo(id); }
   };
   return (
+    <>
+    <a href="#main-content" className="lp-skip-link">Skip to content</a>
     <header className={`lp-header${shrunk ? " lp-header--shrunk" : ""}`}>
       <div className="header-left">
         <div className="logo">Clarity<span>XO</span></div>
@@ -81,5 +83,6 @@ export default function LandingHeader({ onLaunch }) {
         </nav>
       </div>
     </header>
+    </>
   );
 }
