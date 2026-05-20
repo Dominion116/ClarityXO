@@ -49,6 +49,13 @@ export default function LeaderboardPreview({ onLaunch }) {
           ))}
         </tbody>
       </table>
+      <div className="lp-lb-legend" aria-label="Legend">
+        <span className="lp-lb-legend-item nft-indicator">Top 5 qualify for Trophy NFT</span>
+        <span className="lp-lb-legend-sep" aria-hidden="true">·</span>
+        <span className="lp-lb-legend-item">Win = 3 pts · Draw = 1 pt · Loss = 0 pts</span>
+        <span className="lp-lb-legend-sep" aria-hidden="true">·</span>
+        <span className="lp-lb-legend-item">Resets Sunday 23:59 UTC</span>
+      </div>
       <div className="lp-lb-cta-row lp-fade">
         <a className="lp-cta-secondary" href="#leaderboard" onClick={(e) => { e.preventDefault(); onLaunch?.(); }}>
           See full leaderboard →
