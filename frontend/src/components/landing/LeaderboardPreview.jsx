@@ -10,7 +10,8 @@ export default function LeaderboardPreview({ onLaunch }) {
   return (
     <section className="lp-lb-preview" id="leaderboard">
       <div className="lp-section-title lp-fade">Leaderboard Preview</div>
-      <table className="lp-lb-table">
+      <table className="lp-lb-table" aria-label="Weekly leaderboard preview — top 6 players by points">
+        <caption className="sr-only">Weekly leaderboard preview. Top 5 players qualify for Trophy NFT. Rankings reset every Sunday.</caption>
         <thead>
           <tr>
             <th style={{ width: 58 }}>Rank</th>
