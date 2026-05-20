@@ -30,6 +30,15 @@ export default function LandingFooter() {
           </a>
         ))}
       </div>
+      <div className="lp-footer-status" aria-label="Build information">
+        <span>v1.0.0</span>
+        <span className="lp-footer-status-sep" aria-hidden="true">·</span>
+        <span>Stacks Mainnet</span>
+        <span className="lp-footer-status-sep" aria-hidden="true">·</span>
+        <span>Clarity v2</span>
+        <span className="lp-footer-status-sep" aria-hidden="true">·</span>
+        <span>Open Source</span>
+      </div>
       <div className="lp-footer-legal">
         <span className="lp-footer-legal-item">No financial advice · Play at your own risk</span>
         <span className="lp-footer-legal-sep" aria-hidden="true">·</span>

@@ -1791,6 +1791,14 @@ svg.mark { overflow: visible; }
 }
 .lp-back-to-top:hover { border-color: var(--muted); color: var(--muted); }
 .lp-back-to-top:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.lp-footer-status {
+  width: 100%; border-top: 1px solid var(--border);
+  padding: 8px 40px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--ghost);
+  box-sizing: border-box;
+}
+.lp-footer-status-sep { color: var(--border2); }
+
 .lp-footer-socials {
   width: 100%; border-top: 1px solid var(--border);
   padding: 12px 40px; display: flex; align-items: center; gap: 16px;
