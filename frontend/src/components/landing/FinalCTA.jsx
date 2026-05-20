@@ -19,6 +19,22 @@ export default function FinalCTA({ onLaunch }) {
           </div>
         ))}
       </div>
+      <div className="lp-final-stat-strip" aria-label="Protocol statistics">
+        <div className="lp-final-stat">
+          <div className="lp-final-stat-val">9</div>
+          <div className="lp-final-stat-label">cells per board</div>
+        </div>
+        <div className="lp-final-stat-sep" aria-hidden="true"></div>
+        <div className="lp-final-stat">
+          <div className="lp-final-stat-val">~5s</div>
+          <div className="lp-final-stat-label">avg move finality</div>
+        </div>
+        <div className="lp-final-stat-sep" aria-hidden="true"></div>
+        <div className="lp-final-stat">
+          <div className="lp-final-stat-val">&lt;0.01 STX</div>
+          <div className="lp-final-stat-label">avg tx fee</div>
+        </div>
+      </div>
       <div className="lp-final-btns">
         <button className="lp-cta-primary lp-cta-lg" onClick={onLaunch}>Launch ClarityXO</button>
         <a className="lp-cta-secondary lp-cta-lg" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">View Contract ↗</a>

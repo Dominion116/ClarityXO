@@ -1692,6 +1692,17 @@ svg.mark { overflow: visible; }
 }
 .lp-final-protocol-link:hover { color: var(--muted); }
 .lp-final-protocol-link:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.lp-final-stat-strip {
+  display: flex; align-items: stretch; gap: 0;
+  border: 1px solid var(--border2); margin-bottom: 40px; margin-top: -20px;
+}
+.lp-final-stat {
+  padding: 16px 32px; text-align: center;
+}
+.lp-final-stat-val   { font-size: 20px; font-weight: 300; letter-spacing: -.02em; margin-bottom: 4px; }
+.lp-final-stat-label { font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.lp-final-stat-sep   { width: 1px; background: var(--border2); flex-shrink: 0; }
+
 .lp-final-faq-prompt {
   margin-top: 12px; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim);
 }
