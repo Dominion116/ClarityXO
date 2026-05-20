@@ -28,6 +28,11 @@ export default function ContractSection() {
             </button>
           </div>
           {copied && <div className="lp-copy-toast" role="status">Address copied to clipboard</div>}
+          <a className="lp-explorer-btn"
+            href={`https://explorer.hiro.so/address/${CONFIG.contractAddress}.${CONFIG.contractName}?chain=mainnet`}
+            target="_blank" rel="noopener noreferrer">
+            View in Explorer ↗
+          </a>
           <div className="lp-contract-label">NFT Trophy Contract</div>
           <div className="lp-contract-addr" style={{ fontSize: "10px", color: "var(--muted)" }}>
             {CONFIG.nftContractAddress}<br />.{CONFIG.nftContractName}

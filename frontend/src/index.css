@@ -1612,6 +1612,15 @@ svg.mark { overflow: visible; }
 }
 .lp-copy-btn:hover { border-color: var(--text); color: var(--text); }
 .lp-copy-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.lp-explorer-btn {
+  display: inline-block; margin-bottom: 20px;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  border: 1px solid var(--border2); color: var(--muted);
+  padding: 5px 12px; text-decoration: none;
+  transition: border-color .15s, color .15s;
+}
+.lp-explorer-btn:hover { border-color: var(--text); color: var(--text); }
+
 .lp-copy-toast {
   font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
   color: var(--green); margin-bottom: 12px; animation: pageFadeIn .2s ease;
