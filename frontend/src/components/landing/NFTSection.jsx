@@ -70,6 +70,9 @@ export default function NFTSection() {
           <a className="lp-nft-contract-link" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">
             View Trophy Contract ↗
           </a>
+          <a className="lp-nft-faq-link" href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }}>
+            Common questions about NFTs ↓
+          </a>
           <div className="lp-nft-tiers">
             {TIERS.map((t) => (
               <div className="lp-nft-tier" key={t.label}>
