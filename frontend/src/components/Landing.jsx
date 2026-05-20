@@ -46,18 +46,20 @@ export default function Landing({ onLaunch }) {
       <div className="lp-scanlines" aria-hidden="true"></div>
       <LandingHeader onLaunch={onLaunch} />
       <Ticker />
-      <Hero onLaunch={onLaunch} />
-      <SectionDivider label="Protocol" num="01" />
-      <HowItWorks />
-      <SectionDivider label="Features" num="02" />
-      <Features />
-      <SectionDivider label="Rewards" num="03" />
-      <NFTSection />
-      <SectionDivider label="Rankings" num="04" />
-      <LeaderboardPreview onLaunch={onLaunch} />
-      <SectionDivider label="Protocol" num="05" />
-      <ContractSection />
-      <FinalCTA onLaunch={onLaunch} />
+      <main id="main-content">
+        <Hero onLaunch={onLaunch} />
+        <SectionDivider label="Protocol" num="01" />
+        <HowItWorks />
+        <SectionDivider label="Features" num="02" />
+        <Features />
+        <SectionDivider label="Rewards" num="03" />
+        <NFTSection />
+        <SectionDivider label="Rankings" num="04" />
+        <LeaderboardPreview onLaunch={onLaunch} />
+        <SectionDivider label="Protocol" num="05" />
+        <ContractSection />
+        <FinalCTA onLaunch={onLaunch} />
+      </main>
       <LandingFooter />
     </div>
   );
