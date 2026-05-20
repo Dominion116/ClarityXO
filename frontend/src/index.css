@@ -1449,6 +1449,14 @@ svg.mark { overflow: visible; }
 .lp-nft-countdown-label { font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--dim); }
 .lp-nft-countdown-timer { font-size: 14px; letter-spacing: .06em; color: var(--gold); font-variant-numeric: tabular-nums; }
 .lp-nft-main-title  { font-size: 28px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 12px; }
+.lp-nft-rules {
+  list-style: none; padding: 0; margin-bottom: 20px;
+  font-size: 10px; letter-spacing: .06em; line-height: 2; color: var(--muted);
+}
+.lp-nft-rules li::before {
+  content: '—'; margin-right: 8px; color: var(--dim);
+}
+
 .lp-nft-schedule {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
   font-size: 9px; letter-spacing: .12em; color: var(--dim);

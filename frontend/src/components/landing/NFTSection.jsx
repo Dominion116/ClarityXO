@@ -61,6 +61,12 @@ export default function NFTSection() {
             <span className="lp-nft-schedule-sep" aria-hidden="true">·</span>
             <span className="lp-nft-schedule-item">Points: <strong>do not carry over</strong></span>
           </div>
+          <ul className="lp-nft-rules" aria-label="NFT eligibility rules">
+            <li>Play at least one game during the week</li>
+            <li>Finish in the top 5 by total points at reset time</li>
+            <li>Hold a Stacks wallet at the time of minting</li>
+            <li>No staking or lock-up required — trophies are freely tradable</li>
+          </ul>
           <a className="lp-nft-contract-link" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">
             View Trophy Contract ↗
           </a>
