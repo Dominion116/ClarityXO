@@ -1109,6 +1109,11 @@ svg.mark { overflow: visible; }
   color: var(--dim); margin-bottom: 32px; line-height: 2;
 }
 
+.lp-hero-trust {
+  font-size: 9px; letter-spacing: .15em; color: var(--dim);
+  margin-top: 10px; text-transform: uppercase;
+}
+
 .lp-hero-wallets {
   font-size: 9px; letter-spacing: .15em; color: var(--dim);
   margin-bottom: 28px; text-transform: uppercase;

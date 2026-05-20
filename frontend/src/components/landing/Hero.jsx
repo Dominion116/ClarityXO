@@ -29,6 +29,7 @@ export default function Hero({ onLaunch }) {
           <button className="lp-cta-secondary" onClick={() => scrollTo("how-it-works")}>How It Works</button>
           <a className="lp-cta-ghost" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">View Contract ↗</a>
         </div>
+        <p className="lp-hero-trust fade-up d4">No sign-up · Non-custodial · Your keys, your trophies</p>
         <div className="lp-hero-stats fade-up d5">
           <div className="lp-hero-stat">
             <div className="lp-stat-val red">9</div>
