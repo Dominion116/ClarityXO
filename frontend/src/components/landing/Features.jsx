@@ -17,8 +17,9 @@ export default function Features() {
         <span className="lp-key-benefit">⊛ Self-sovereign rewards</span>
       </div>
       <div className="lp-features-grid">
-        {FEATURES.map((f) => (
+        {FEATURES.map((f, i) => (
           <div className="lp-feature" key={f.title}>
+            <div className="lp-feature-index" aria-hidden="true">{String(i + 1).padStart(2, "0")}</div>
             <div className="lp-feature-tag">{f.tag}</div>
             <div className="lp-feature-icon">{f.icon}</div>
             <div className="lp-feature-title">{f.title}</div>
