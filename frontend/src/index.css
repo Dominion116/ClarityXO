@@ -51,6 +51,10 @@ body, #root {
 }
 .lp-skip-link:focus { top: 8px; }
 
+/* ── SELECTION ────────────────────────────────────── */
+::selection { background: rgba(255,68,68,.25); color: var(--text); }
+::-moz-selection { background: rgba(255,68,68,.25); color: var(--text); }
+
 /* ── TARGET HIGHLIGHT ─────────────────────────────── */
 :target { outline: 1px solid var(--border2); outline-offset: -1px; }
 :target::before {
