@@ -1692,6 +1692,11 @@ svg.mark { overflow: visible; }
 }
 .lp-final-protocol-link:hover { color: var(--muted); }
 .lp-final-protocol-link:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.lp-final-faq-prompt {
+  margin-top: 12px; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim);
+}
+.lp-final-faq-link { color: var(--muted); text-decoration: none; transition: color .15s; }
+.lp-final-faq-link:hover { color: var(--text); }
   .lp-final-btns   { flex-direction: column; }
 .lp-section-link { margin-top: 24px; text-align: right; }
 .lp-section-link-a {

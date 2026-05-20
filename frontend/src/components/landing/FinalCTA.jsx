@@ -26,6 +26,9 @@ export default function FinalCTA({ onLaunch }) {
       <a className="lp-final-protocol-link" href="#contract" onClick={(e) => { e.preventDefault(); document.getElementById("contract")?.scrollIntoView({ behavior: "smooth" }); }}>
         Protocol details ↑
       </a>
+      <div className="lp-final-faq-prompt">
+        Questions? <a className="lp-final-faq-link" href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }}>See the FAQ ↓</a>
+      </div>
     </div>
   );
 }
