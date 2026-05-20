@@ -43,9 +43,11 @@ export default function FAQ() {
               {item.q}
               <span className="lp-faq-chevron" aria-hidden="true">{open === i ? "−" : "+"}</span>
             </button>
-            <div className={`lp-faq-a${open === i ? " open" : ""}`}
-              dangerouslySetInnerHTML={{ __html: item.a }}>
-            </div>
+            {open === i && (
+              <div className="lp-faq-a open"
+                dangerouslySetInnerHTML={{ __html: item.a }}>
+              </div>
+            )}
           </div>
         ))}
       </div>
