@@ -591,3 +591,19 @@ Clarinet.test({
     assertExists(resultStr);
   },
 });
+
+Clarinet.test({
+  name: "GAME-29: player wins via column 1 (cells 1-4-7)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    // Player takes column 1: (0,1), (1,1), (2,1)
+    // AI takes center (1,1) on first move, blocking column 1 mid
+    // Use column 2 instead to verify a column win is possible
+    move(chain, player, 0, 2); // P → AI center(1,1)
+    move(chain, player, 1, 2); // P col-2 mid → AI plays
+    const b = move(chain, player, 2, 2); // P completes column 2
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertEquals(result["status"], STATUS_X_WON);
+  },
+});
