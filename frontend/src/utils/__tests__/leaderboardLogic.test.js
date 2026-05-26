@@ -415,3 +415,31 @@ describe("getPlayerList — handles large dataset (50 players) sorted correctly"
     expect(list[49].pts).toBe(0);
   });
 });
+
+// ── Additional edge cases ────────────────────────────────────────────────────
+
+describe("getPlayerList — all players with equal pts sorted by wins desc", () => {
+  it("two players with same pts: higher wins ranks first", () => {
+    const data = {
+      players: {
+        SP1: { pts: 10, wins: 5, draws: 0, losses: 0 },
+        SP2: { pts: 10, wins: 3, draws: 1, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].address).toBe("SP1");
+    expect(list[1].address).toBe("SP2");
+  });
+
+  it("three players all equal pts and wins: fewer losses ranks first", () => {
+    const data = {
+      players: {
+        SP1: { pts: 6, wins: 2, draws: 0, losses: 3 },
+        SP2: { pts: 6, wins: 2, draws: 0, losses: 1 },
+        SP3: { pts: 6, wins: 2, draws: 0, losses: 2 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].address).toBe("SP2");
+  });
+});
