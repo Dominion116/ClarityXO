@@ -607,3 +607,16 @@ Clarinet.test({
     assertEquals(result["status"], STATUS_X_WON);
   },
 });
+
+Clarinet.test({
+  name: "GAME-30: player wins via column 2 (cells 2-5-8) direct sequence",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 2); // AI → center
+    move(chain, player, 1, 2); // AI blocks elsewhere
+    const b = move(chain, player, 2, 2);
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertEquals(result["status"], STATUS_X_WON);
+  },
+});
