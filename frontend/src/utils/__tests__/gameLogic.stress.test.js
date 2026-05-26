@@ -271,3 +271,20 @@ describe("AI takes winning move over all alternatives", () => {
     expect(move).toBe(5);
   });
 });
+
+describe("checkWinner on every possible 3-in-a-row board", () => {
+  it("X wins anti-diagonal [2,4,6]", () => {
+    const board = [E,E,X, E,X,E, X,E,E];
+    expect(checkWinner(board)).toBe(X);
+  });
+
+  it("O wins column 2 [2,5,8]", () => {
+    const board = [E,E,O, E,E,O, E,E,O];
+    expect(checkWinner(board)).toBe(O);
+  });
+
+  it("no winner on a board with 4 X and 4 O (no 3-in-a-row)", () => {
+    const board = [X,O,X, O,X,O, O,X,E];
+    expect(checkWinner(board)).toBe(E);
+  });
+});
