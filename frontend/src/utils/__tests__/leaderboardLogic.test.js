@@ -36,3 +36,17 @@ describe("formatCountdown — seconds only", () => {
     expect(formatCountdown(59000)).toBe("00:00:59");
   });
 });
+
+describe("formatCountdown — minutes", () => {
+  it("returns 00:01:00 for exactly 1 minute", () => {
+    expect(formatCountdown(60000)).toBe("00:01:00");
+  });
+
+  it("returns 00:30:00 for 30 minutes", () => {
+    expect(formatCountdown(1800000)).toBe("00:30:00");
+  });
+
+  it("returns 00:59:59 for 59 min 59 sec", () => {
+    expect(formatCountdown(3599000)).toBe("00:59:59");
+  });
+});
