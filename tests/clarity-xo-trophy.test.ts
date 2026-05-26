@@ -551,3 +551,17 @@ Clarinet.test({
     getRank(chain, 0, p1).result.expectOk().expectNone();
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-22: single winner list (rank 1 only) works correctly",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+
+    advanceMonth(chain);
+    // List needs exactly 5 elements per contract — use p1 five times
+    const b = setWinners(chain, deployer, 0, [p1, p1, p1, p1, p1]);
+    b.receipts[0].result.expectOk().expectBool(true);
+    getRank(chain, 0, p1).result.expectOk().expectSome().expectUint(1);
+  },
+});
