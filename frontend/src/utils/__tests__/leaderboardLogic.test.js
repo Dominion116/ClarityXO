@@ -475,3 +475,21 @@ describe("getPlayerList — games field is calculated correctly", () => {
     expect(list[0].games).toBe(1);
   });
 });
+
+describe("formatCountdown — boundary seconds", () => {
+  it("59 seconds formats as 00:00:59", () => {
+    expect(formatCountdown(59_000)).toBe("00:00:59");
+  });
+
+  it("60 seconds formats as 00:01:00", () => {
+    expect(formatCountdown(60_000)).toBe("00:01:00");
+  });
+
+  it("3599 seconds formats as 00:59:59", () => {
+    expect(formatCountdown(3_599_000)).toBe("00:59:59");
+  });
+
+  it("3600 seconds formats as 01:00:00", () => {
+    expect(formatCountdown(3_600_000)).toBe("01:00:00");
+  });
+});
