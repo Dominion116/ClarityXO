@@ -326,3 +326,13 @@ describe("chooseAiMove — prefers winning over blocking", () => {
     expect(chooseAiMove(board)).toBe(6);
   });
 });
+
+describe("chooseAiMove — takes center when available and no threats", () => {
+  it("plays center (index 4) on an empty board", () => {
+    expect(chooseAiMove([E,E,E, E,E,E, E,E,E])).toBe(4);
+  });
+
+  it("plays center when only one corner is occupied by X", () => {
+    expect(chooseAiMove([X,E,E, E,E,E, E,E,E])).toBe(4);
+  });
+});
