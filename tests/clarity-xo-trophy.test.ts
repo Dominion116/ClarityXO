@@ -771,3 +771,16 @@ Clarinet.test({
     assertEquals(meta["month"], types.uint(1));
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-34: get-trophy-meta returns none for an un-minted token id",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+
+    const result = chain.callReadOnlyFn(
+      TROPHY, "get-trophy-meta", [types.uint(999)], p1.address
+    ).result.expectOk();
+
+    result.expectNone();
+  },
+});
