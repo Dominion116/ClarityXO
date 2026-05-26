@@ -205,3 +205,19 @@ describe("wouldWin — placing does not create a winner", () => {
     expect(wouldWin(board, 2, O)).toBe(false);
   });
 });
+
+describe("wouldWin — does not mutate original board", () => {
+  it("original board is unchanged after wouldWin call that returns true", () => {
+    const board = [X,X,E, E,E,E, E,E,E];
+    const copy  = [...board];
+    wouldWin(board, 2, X);
+    expect(board).toEqual(copy);
+  });
+
+  it("original board is unchanged after wouldWin call that returns false", () => {
+    const board = [E,E,E, E,E,E, E,E,E];
+    const copy  = [...board];
+    wouldWin(board, 4, X);
+    expect(board).toEqual(copy);
+  });
+});
