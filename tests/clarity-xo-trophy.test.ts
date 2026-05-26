@@ -1155,3 +1155,35 @@ Clarinet.test({
     block.receipts[0].result.expectOk();
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-48: month 0 and month 1 winners are stored independently",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+    const p6 = accounts.get("wallet_6")!;
+    const p7 = accounts.get("wallet_7")!;
+    const p8 = accounts.get("wallet_8")!;
+    const p9 = accounts.get("wallet_9")!;
+
+    advanceMonth(chain, 3); // months 0, 1, 2 are history
+
+    setWinners(chain, deployer, 0, [p1, p2, p3, p4, p5]);
+    setWinners(chain, deployer, 1, [p6, p7, p8, p9, p1]);
+
+    const rank1Month0 = chain.callReadOnlyFn(
+      TROPHY, "get-player-rank", [types.uint(0), types.principal(p1.address)], p1.address
+    ).result.expectOk().expectSome();
+
+    const rank1Month1 = chain.callReadOnlyFn(
+      TROPHY, "get-player-rank", [types.uint(1), types.principal(p6.address)], p6.address
+    ).result.expectOk().expectSome();
+
+    assertEquals(rank1Month0, types.uint(1));
+    assertEquals(rank1Month1, types.uint(1));
+  },
+});
