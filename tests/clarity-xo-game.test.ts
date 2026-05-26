@@ -1261,3 +1261,28 @@ Clarinet.test({
     move(chain, player, 0, 3).receipts[0].result.expectErr().expectUint(102);
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 19 — Game count and history
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-71: month-totals games count matches number of completed games",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+
+    startGame(chain, p1);
+    move(chain, p1, 0, 0); move(chain, p1, 0, 1); move(chain, p1, 0, 2); // game 1 win
+
+    startGame(chain, p2);
+    resign(chain, p2); // game 2 loss
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], p1.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const totals = chain.callReadOnlyFn(
+      GAME, "get-month-totals", [types.uint(m)], p1.address
+    ).result.expectTuple();
+    assertEquals(totals["games"], types.uint(2));
+  },
+});
