@@ -861,3 +861,24 @@ Clarinet.test({
     assertEquals(active2, types.uint(2));
   },
 });
+
+Clarinet.test({
+  name: "GAME-46: game IDs are unique across all players",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+
+    const b1 = startGame(chain, p1);
+    const b2 = startGame(chain, p2);
+    const b3 = startGame(chain, p3);
+
+    const id1 = b1.receipts[0].result.expectOk();
+    const id2 = b2.receipts[0].result.expectOk();
+    const id3 = b3.receipts[0].result.expectOk();
+
+    assertEquals(id1, types.uint(1));
+    assertEquals(id2, types.uint(2));
+    assertEquals(id3, types.uint(3));
+  },
+});
