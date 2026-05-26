@@ -221,3 +221,19 @@ describe("wouldWin — does not mutate original board", () => {
     expect(board).toEqual(copy);
   });
 });
+
+// ── findWinningMove ───────────────────────────────────────────────────────────
+
+describe("findWinningMove — finds row winning move", () => {
+  it("finds index 2 to complete X row 0", () => {
+    expect(findWinningMove([X,X,E, E,E,E, E,E,E], X)).toBe(2);
+  });
+
+  it("finds index 5 to complete O row 1", () => {
+    expect(findWinningMove([E,E,E, O,O,E, E,E,E], O)).toBe(5);
+  });
+
+  it("finds index 6 to complete X row 2", () => {
+    expect(findWinningMove([E,E,E, E,E,E, E,X,X], X)).toBe(6);
+  });
+});
