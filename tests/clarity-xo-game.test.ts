@@ -1109,3 +1109,11 @@ Clarinet.test({
     b.receipts[0].result.expectErr().expectUint(106);
   },
 });
+
+Clarinet.test({
+  name: "GAME-60: get-active-game before any start returns none",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    getActiveGame(chain, player).result.expectOk().expectNone();
+  },
+});
