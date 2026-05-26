@@ -1286,3 +1286,19 @@ Clarinet.test({
     assertEquals(totals["games"], types.uint(2));
   },
 });
+
+Clarinet.test({
+  name: "GAME-72: resigned game is counted in month-totals games",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    resign(chain, player);
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], player.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const totals = chain.callReadOnlyFn(
+      GAME, "get-month-totals", [types.uint(m)], player.address
+    ).result.expectTuple();
+    assertEquals(totals["games"], types.uint(1));
+  },
+});
