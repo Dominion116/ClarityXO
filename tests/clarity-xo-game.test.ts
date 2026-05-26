@@ -479,3 +479,23 @@ Clarinet.test({
     assertEquals(stats["pts"], types.uint(1));
   },
 });
+
+Clarinet.test({
+  name: "GAME-23: draw increments draws counter in monthly-stats",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+    move(chain, player, 0, 2);
+    move(chain, player, 2, 0);
+    move(chain, player, 1, 2);
+    move(chain, player, 2, 1);
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], player.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const stats = getStats(chain, player, m).result.expectTuple();
+    assertEquals(stats["draws"],  types.uint(1));
+    assertEquals(stats["wins"],   types.uint(0));
+    assertEquals(stats["losses"], types.uint(0));
+  },
+});
