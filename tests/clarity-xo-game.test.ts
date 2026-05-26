@@ -760,3 +760,17 @@ Clarinet.test({
     assertExists(board);
   },
 });
+
+Clarinet.test({
+  name: "GAME-40: move counter increments by 2 each full round (player+AI)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0); // round 1 → moves should be 2
+
+    const movesResult = chain.callReadOnlyFn(
+      GAME, "get-game-moves", [types.uint(1)], player.address
+    ).result.expectOk();
+    assertEquals(movesResult, types.uint(2));
+  },
+});
