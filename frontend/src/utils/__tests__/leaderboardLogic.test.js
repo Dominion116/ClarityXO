@@ -78,3 +78,21 @@ describe("formatCountdown — days", () => {
     expect(formatCountdown(7 * 86400000 + 12 * 3600000 + 30 * 60000)).toBe("7d 12h 30m");
   });
 });
+
+describe("formatCountdown — pads single-digit values with leading zeros", () => {
+  it("pads hours less than 10 with a leading zero", () => {
+    expect(formatCountdown(3600000 + 5000)).toBe("01:00:05");
+  });
+
+  it("pads minutes less than 10 with a leading zero", () => {
+    expect(formatCountdown(9 * 60000)).toBe("00:09:00");
+  });
+
+  it("pads seconds less than 10 with a leading zero", () => {
+    expect(formatCountdown(7000)).toBe("00:00:07");
+  });
+
+  it("pads hours and minutes in day-format when single digit", () => {
+    expect(formatCountdown(86400000 + 3600000 + 60000)).toBe("1d 01h 01m");
+  });
+});
