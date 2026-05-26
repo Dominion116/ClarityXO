@@ -691,3 +691,11 @@ Clarinet.test({
     getOwner(chain, 999, deployer).result.expectOk().expectNone();
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-30: get-owner returns none for token id 0",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    getOwner(chain, 0, deployer).result.expectOk().expectNone();
+  },
+});
