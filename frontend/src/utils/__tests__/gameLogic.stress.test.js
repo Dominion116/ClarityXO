@@ -217,3 +217,20 @@ describe("AI move is deterministic on the same board state", () => {
     expect(moveA).toBe(moveB);
   });
 });
+
+describe("wouldWin correctly identifies all 8 win lines", () => {
+  it("wouldWin detects win via row 1 (indices 3,4,5)", () => {
+    const board = [E,E,E, X,X,E, E,E,E];
+    expect(wouldWin(board, 5, X)).toBe(true);
+  });
+
+  it("wouldWin detects win via column 2 (indices 2,5,8)", () => {
+    const board = [E,E,X, E,E,X, E,E,E];
+    expect(wouldWin(board, 8, X)).toBe(true);
+  });
+
+  it("wouldWin returns false when no win is created", () => {
+    const board = [E,E,E, E,O,E, E,E,E];
+    expect(wouldWin(board, 0, X)).toBe(false);
+  });
+});
