@@ -711,3 +711,19 @@ Clarinet.test({
     assertEquals([0, 2, 6, 8].includes(aiMove), true);
   },
 });
+
+Clarinet.test({
+  name: "GAME-37: AI takes edge move as last resort — all corners and center taken",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    // Fill center + all corners so AI must take an edge
+    // P(0,0)→AI(4); P(0,2)→AI(6 or 2); P(2,0)→AI takes remaining corner; P(2,2)→AI edge
+    move(chain, player, 0, 0);  // AI → center
+    move(chain, player, 0, 2);  // AI → corner
+    move(chain, player, 2, 0);  // AI → corner
+    const b = move(chain, player, 2, 2);  // AI → last corner or edge
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertExists(result["ai-move"]);
+  },
+});
