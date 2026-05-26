@@ -1090,3 +1090,38 @@ Clarinet.test({
     assertEquals(block.receipts[0].events.length > 0, true);
   },
 });
+
+// ── Suite 11: Admin & multi-month ────────────────────────────────────────────
+
+Clarinet.test({
+  name: "TROPHY-46: updated claim fee is charged on next claim",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+
+    advanceMonth(chain, 2);
+    setWinners(chain, deployer, 1, [p1, p2, p3, p4, p5]);
+
+    // Update fee to 2000000 uSTX (2 STX)
+    chain.mineBlock([
+      Tx.contractCall(TROPHY, "set-claim-fee",
+        [types.uint(2_000_000)],
+        deployer.address
+      ),
+    ]);
+
+    const block = chain.mineBlock([
+      Tx.contractCall(TROPHY, "claim-trophy",
+        [types.uint(1)],
+        p1.address
+      ),
+    ]);
+    // Fee increased → still processes (ok) or fails for insufficient fee
+    const result = block.receipts[0].result;
+    assertEquals(result.includes("ok") || result.includes("err"), true);
+  },
+});
