@@ -412,3 +412,13 @@ describe("getWinningLine — column 0", () => {
     expect(getWinningLine([O,E,E, O,E,E, O,E,E])).toEqual([0,3,6]);
   });
 });
+
+describe("getWinningLine — column 1", () => {
+  it("returns [1,4,7] when X wins column 1", () => {
+    expect(getWinningLine([E,X,E, E,X,E, E,X,E])).toEqual([1,4,7]);
+  });
+
+  it("returns [1,4,7] when O wins column 1", () => {
+    expect(getWinningLine([E,O,E, E,O,E, E,O,E])).toEqual([1,4,7]);
+  });
+});
