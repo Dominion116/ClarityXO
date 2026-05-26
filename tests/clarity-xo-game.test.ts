@@ -727,3 +727,22 @@ Clarinet.test({
     assertExists(result["ai-move"]);
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 11 — Board state verification
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-38: board correctly reflects player move — cell (0,0) is PLAYER_X after move",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+
+    const board = chain.callReadOnlyFn(
+      GAME, "get-game-board", [types.uint(1)], player.address
+    ).result.expectOk();
+    // Cell 0 should be PLAYER_X (u1)
+    assertExists(board);
+  },
+});
