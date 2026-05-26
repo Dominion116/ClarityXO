@@ -141,3 +141,13 @@ describe("checkWinner — anti-diagonal (2-4-6)", () => {
     expect(checkWinner([E,E,O, E,O,E, O,E,E])).toBe(O);
   });
 });
+
+describe("checkWinner — empty board", () => {
+  it("returns EMPTY for a fully empty board", () => {
+    expect(checkWinner([E,E,E, E,E,E, E,E,E])).toBe(E);
+  });
+
+  it("returns EMPTY for a board with one piece", () => {
+    expect(checkWinner([X,E,E, E,E,E, E,E,E])).toBe(E);
+  });
+});
