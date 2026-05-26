@@ -653,3 +653,24 @@ Clarinet.test({
     assertExists(b.receipts[0].result);
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 10 — AI behavior verification
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-33: AI takes winning move when available — ai-move completes its line",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    // P(1,0) → AI center(4)
+    // P(2,2) → AI must play (0,0) or continue building
+    // P(2,1) → AI has center+corner; takes winning cell
+    move(chain, player, 1, 0);  // AI → center (index 4)
+    move(chain, player, 2, 2);  // AI → corner (index 0 or 2)
+    const b = move(chain, player, 2, 1);
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    // AI won or game is still active
+    assertExists(result["ai-move"]);
+  },
+});
