@@ -1089,3 +1089,13 @@ Clarinet.test({
     b.receipts[0].result.expectErr().expectUint(104);
   },
 });
+
+Clarinet.test({
+  name: "GAME-58: move with col=3 returns u102 (out-of-bounds col)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    const b = move(chain, player, 0, 3);
+    b.receipts[0].result.expectErr().expectUint(102);
+  },
+});
