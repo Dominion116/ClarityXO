@@ -131,3 +131,13 @@ describe("checkWinner — main diagonal (0-4-8)", () => {
     expect(checkWinner([O,E,E, E,O,E, E,E,O])).toBe(O);
   });
 });
+
+describe("checkWinner — anti-diagonal (2-4-6)", () => {
+  it("returns PLAYER_X when X occupies anti-diagonal", () => {
+    expect(checkWinner([E,E,X, E,X,E, X,E,E])).toBe(X);
+  });
+
+  it("returns PLAYER_O when O occupies anti-diagonal", () => {
+    expect(checkWinner([E,E,O, E,O,E, O,E,E])).toBe(O);
+  });
+});
