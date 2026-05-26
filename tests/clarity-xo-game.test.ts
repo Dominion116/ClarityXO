@@ -1028,3 +1028,16 @@ Clarinet.test({
     assertEquals(totals["games"],     types.uint(2));
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 14 — get-next-game-id
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-53: get-next-game-id returns u1 before any game is started",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    chain.callReadOnlyFn(GAME, "get-next-game-id", [], player.address)
+      .result.expectOk().expectUint(1);
+  },
+});
