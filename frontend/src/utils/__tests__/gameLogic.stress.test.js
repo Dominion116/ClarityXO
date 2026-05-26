@@ -89,3 +89,16 @@ describe("simulate full game — player wins via row 0", () => {
     expect(checkWinner(board)).toBe(X);
   });
 });
+
+describe("simulate full game — player wins via column 0", () => {
+  it("player completes column 0 (cells 0,3,6) before AI blocks", () => {
+    let board = [E,E,E, E,E,E, E,E,E];
+    board = applyMove(board, 0, X);
+    board = applyMove(board, chooseAiMove(board), O);
+    board = applyMove(board, 3, X);
+    const ai2 = chooseAiMove(board);
+    if (board[ai2] === E) board = applyMove(board, ai2, O);
+    board = applyMove(board, 6, X);
+    expect(checkWinner(board)).toBe(X);
+  });
+});
