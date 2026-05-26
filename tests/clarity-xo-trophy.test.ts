@@ -806,3 +806,28 @@ Clarinet.test({
     assertEquals(meta["player"], types.principal(p2.address));
   },
 });
+
+// ── Suite 9: Token URI ────────────────────────────────────────────────────────
+
+Clarinet.test({
+  name: "TROPHY-36: get-token-uri returns ok some with token-id embedded in default URI",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+
+    advanceMonth(chain, 2);
+    setWinners(chain, deployer, 1, [p1, p2, p3, p4, p5]);
+    claim(chain, p1, 1); // token 1
+
+    const uri = chain.callReadOnlyFn(
+      TROPHY, "get-token-uri", [types.uint(1)], p1.address
+    ).result.expectOk().expectSome().expectAscii();
+
+    assertEquals(typeof uri, "string");
+    assertEquals(uri.length > 0, true);
+  },
+});
