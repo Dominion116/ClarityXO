@@ -517,3 +517,27 @@ describe("getPlayerList — address field is set from object key", () => {
     expect(list[1].address).toBe("SP_CAROL");
   });
 });
+
+describe("getPlayerList — single player is always rank 1", () => {
+  it("single player with zero stats is at index 0", () => {
+    const data = {
+      players: {
+        "SP_ONLY": { pts: 0, wins: 0, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list).toHaveLength(1);
+    expect(list[0].address).toBe("SP_ONLY");
+  });
+
+  it("single player with high stats is still the only entry", () => {
+    const data = {
+      players: {
+        "SP_TOP": { pts: 99, wins: 33, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list).toHaveLength(1);
+    expect(list[0].pts).toBe(99);
+  });
+});
