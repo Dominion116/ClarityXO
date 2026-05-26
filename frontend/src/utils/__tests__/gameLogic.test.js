@@ -43,3 +43,17 @@ describe("checkLine — truthful matches", () => {
     expect(checkLine(1, 1, 1)).toBe(true);
   });
 });
+
+describe("checkLine — false when cells differ", () => {
+  it("returns false when first and second cells differ", () => {
+    expect(checkLine(X, O, X)).toBe(false);
+  });
+
+  it("returns false when second and third cells differ", () => {
+    expect(checkLine(X, X, O)).toBe(false);
+  });
+
+  it("returns false when all three cells differ", () => {
+    expect(checkLine(X, O, E)).toBe(false);
+  });
+});
