@@ -526,3 +526,28 @@ Clarinet.test({
     assertEquals(uri, "https://clarityxo.xyz/nft/1");
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 6 — set-month-winners edge cases
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "TROPHY-21: owner can overwrite winners for same past month",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+    const p6 = accounts.get("wallet_6")!;
+
+    advanceMonth(chain);
+    setWinners(chain, deployer, 0, [p1, p2, p3, p4, p5]);
+    // Overwrite with new winners
+    const b = setWinners(chain, deployer, 0, [p6, p2, p3, p4, p5]);
+    b.receipts[0].result.expectOk().expectBool(true);
+    getRank(chain, 0, p6).result.expectOk().expectSome().expectUint(1);
+    getRank(chain, 0, p1).result.expectOk().expectNone();
+  },
+});
