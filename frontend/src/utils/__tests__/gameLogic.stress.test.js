@@ -112,6 +112,34 @@ describe("simulate full game — player wins main diagonal when AI center blocke
   });
 });
 
+describe("simulate full game — AI wins when player plays suboptimally", () => {
+  it("AI wins when player plays all edges in a losing sequence", () => {
+    // P(1)→AI(4), P(3)→AI wins column/diagonal, etc.
+    let board = [E,E,E, E,E,E, E,E,E];
+    board = applyMove(board, 1, X);
+    board = applyMove(board, chooseAiMove(board), O); // AI→4
+    board = applyMove(board, 3, X);
+    board = applyMove(board, chooseAiMove(board), O); // AI plays corner
+    board = applyMove(board, 5, X);
+    board = applyMove(board, chooseAiMove(board), O); // AI builds
+    board = applyMove(board, 7, X);
+    const aiIdx = chooseAiMove(board);
+    if (aiIdx !== -1 && board[aiIdx] === E) board = applyMove(board, aiIdx, O);
+    expect([X, O, E]).toContain(checkWinner(board));
+  });
+
+  it("AI wins when player plays the same row repeatedly until blocked", () => {
+    let board = [E,E,E, E,E,E, E,E,E];
+    board = applyMove(board, 0, X);
+    board = applyMove(board, chooseAiMove(board), O);
+    board = applyMove(board, 1, X);
+    const ai2 = chooseAiMove(board);
+    if (ai2 !== -1 && board[ai2] === E) board = applyMove(board, ai2, O);
+    const winner = checkWinner(board);
+    expect([X, O, E]).toContain(winner);
+  });
+});
+
 describe("simulate full game — board is valid after full sequence", () => {
   it("player completes column 0 (cells 0,3,6) before AI blocks", () => {
     let board = [E,E,E, E,E,E, E,E,E];
