@@ -432,3 +432,13 @@ describe("getWinningLine — column 2", () => {
     expect(getWinningLine([E,E,O, E,E,O, E,E,O])).toEqual([2,5,8]);
   });
 });
+
+describe("getWinningLine — main diagonal (0-4-8)", () => {
+  it("returns [0,4,8] when X wins main diagonal", () => {
+    expect(getWinningLine([X,E,E, E,X,E, E,E,X])).toEqual([0,4,8]);
+  });
+
+  it("returns [0,4,8] when O wins main diagonal", () => {
+    expect(getWinningLine([O,E,E, E,O,E, E,E,O])).toEqual([0,4,8]);
+  });
+});
