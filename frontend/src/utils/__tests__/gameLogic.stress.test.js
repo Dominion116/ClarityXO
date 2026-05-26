@@ -140,6 +140,13 @@ describe("simulate full game — AI wins when player plays suboptimally", () => 
   });
 });
 
+describe("simulate full game — draw when both play corners", () => {
+  it("game ends in draw — X O X / O O X / X X O is a known draw", () => {
+    const board = [X,O,X, O,O,X, X,X,O];
+    expect(checkWinner(board)).toBe(E);
+  });
+});
+
 describe("simulate full game — board is valid after full sequence", () => {
   it("player completes column 0 (cells 0,3,6) before AI blocks", () => {
     let board = [E,E,E, E,E,E, E,E,E];
