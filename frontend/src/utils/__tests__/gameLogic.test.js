@@ -312,3 +312,17 @@ describe("chooseAiMove — blocks player threat when no AI win", () => {
     expect(chooseAiMove(board)).toBe(8);
   });
 });
+
+describe("chooseAiMove — prefers winning over blocking", () => {
+  it("takes winning move even when player also has a two-in-a-row", () => {
+    // O can win at index 8 (column 2: 2,5,8); X threatens row 0 (0,1,2)
+    // O should win rather than block
+    const board = [X,X,O, E,E,O, E,E,E];
+    expect(chooseAiMove(board)).toBe(8);
+  });
+
+  it("O wins anti-diagonal even when X threatens a row", () => {
+    const board = [X,X,O, E,O,E, E,E,E];
+    expect(chooseAiMove(board)).toBe(6);
+  });
+});
