@@ -808,3 +808,24 @@ Clarinet.test({
     assertExists(state["month"]);
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 12 — Concurrent multi-player games
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-43: three players can hold simultaneous active games",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+
+    startGame(chain, p1);
+    startGame(chain, p2);
+    startGame(chain, p3);
+
+    getActiveGame(chain, p1).result.expectOk().expectSome();
+    getActiveGame(chain, p2).result.expectOk().expectSome();
+    getActiveGame(chain, p3).result.expectOk().expectSome();
+  },
+});
