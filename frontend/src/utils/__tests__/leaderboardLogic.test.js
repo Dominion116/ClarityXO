@@ -50,3 +50,17 @@ describe("formatCountdown — minutes", () => {
     expect(formatCountdown(3599000)).toBe("00:59:59");
   });
 });
+
+describe("formatCountdown — hours", () => {
+  it("returns 01:00:00 for exactly 1 hour", () => {
+    expect(formatCountdown(3600000)).toBe("01:00:00");
+  });
+
+  it("returns 12:00:00 for 12 hours", () => {
+    expect(formatCountdown(43200000)).toBe("12:00:00");
+  });
+
+  it("returns 23:59:59 for one second less than a full day", () => {
+    expect(formatCountdown(86399000)).toBe("23:59:59");
+  });
+});
