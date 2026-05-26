@@ -443,3 +443,35 @@ describe("getPlayerList — all players with equal pts sorted by wins desc", () 
     expect(list[0].address).toBe("SP2");
   });
 });
+
+describe("getPlayerList — games field is calculated correctly", () => {
+  it("games = wins + draws + losses", () => {
+    const data = {
+      players: {
+        SP1: { pts: 7, wins: 2, draws: 1, losses: 3 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].games).toBe(6);
+  });
+
+  it("games is 0 when all stats are 0", () => {
+    const data = {
+      players: {
+        SP1: { pts: 0, wins: 0, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].games).toBe(0);
+  });
+
+  it("single win gives games=1", () => {
+    const data = {
+      players: {
+        SP1: { pts: 3, wins: 1, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].games).toBe(1);
+  });
+});
