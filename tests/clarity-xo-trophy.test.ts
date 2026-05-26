@@ -699,3 +699,31 @@ Clarinet.test({
     getOwner(chain, 0, deployer).result.expectOk().expectNone();
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 8 — Trophy metadata
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "TROPHY-31: rank-2 player trophy has rank u2 in meta",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+
+    advanceMonth(chain);
+    setWinners(chain, deployer, 0, [p1, p2, p3, p4, p5]);
+    claim(chain, p2, 0); // token 1 — p2 is rank 2
+
+    const meta = chain.callReadOnlyFn(
+      TROPHY, "get-trophy-meta", [types.uint(1)], p2.address
+    ).result.expectOk().expectSome().expectTuple();
+
+    assertEquals(meta["rank"],   types.uint(2));
+    assertEquals(meta["month"],  types.uint(0));
+    assertEquals(meta["player"], p2.address);
+  },
+});
