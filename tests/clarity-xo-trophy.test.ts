@@ -296,7 +296,7 @@ Clarinet.test({
     advanceMonth(chain);
     setWinners(chain, deployer, 0, players);
 
-    players.forEach((p, i) => {
+    players.forEach((p) => {
       const b = claim(chain, p, 0);
       b.receipts[0].result.expectOk().expectBool(true);
     });
@@ -1185,5 +1185,34 @@ Clarinet.test({
 
     assertEquals(rank1Month0, types.uint(1));
     assertEquals(rank1Month1, types.uint(1));
+  },
+});
+
+Clarinet.test({
+  name: "TROPHY-49: month 0 player cannot claim trophy for month 1",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+    const p6 = accounts.get("wallet_6")!;
+    const p7 = accounts.get("wallet_7")!;
+    const p8 = accounts.get("wallet_8")!;
+    const p9 = accounts.get("wallet_9")!;
+
+    advanceMonth(chain, 3);
+    setWinners(chain, deployer, 0, [p1, p2, p3, p4, p5]);
+    setWinners(chain, deployer, 1, [p6, p7, p8, p9, p2]);
+
+    // p1 is a month-0 winner but not month-1 winner
+    const block = chain.mineBlock([
+      Tx.contractCall(TROPHY, "claim-trophy",
+        [types.uint(1)], // month 1
+        p1.address
+      ),
+    ]);
+    block.receipts[0].result.expectErr();
   },
 });
