@@ -442,3 +442,13 @@ describe("getWinningLine — main diagonal (0-4-8)", () => {
     expect(getWinningLine([O,E,E, E,O,E, E,E,O])).toEqual([0,4,8]);
   });
 });
+
+describe("getWinningLine — anti-diagonal (2-4-6)", () => {
+  it("returns [2,4,6] when X wins anti-diagonal", () => {
+    expect(getWinningLine([E,E,X, E,X,E, X,E,E])).toEqual([2,4,6]);
+  });
+
+  it("returns [2,4,6] when O wins anti-diagonal", () => {
+    expect(getWinningLine([E,E,O, E,O,E, O,E,E])).toEqual([2,4,6]);
+  });
+});
