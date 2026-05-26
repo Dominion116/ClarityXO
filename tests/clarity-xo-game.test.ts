@@ -1252,3 +1252,12 @@ Clarinet.test({
     move(chain, player, 3, 0).receipts[0].result.expectErr().expectUint(102);
   },
 });
+
+Clarinet.test({
+  name: "GAME-70: move at col=3 returns err-invalid-move u102",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 3).receipts[0].result.expectErr().expectUint(102);
+  },
+});
