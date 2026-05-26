@@ -261,3 +261,18 @@ describe("findWinningMove — finds diagonal winning move", () => {
     expect(findWinningMove([E,E,O, E,E,E, O,E,E], O)).toBe(4);
   });
 });
+
+describe("findWinningMove — returns -1 when no winning move exists", () => {
+  it("returns -1 for an empty board", () => {
+    expect(findWinningMove([E,E,E, E,E,E, E,E,E], X)).toBe(-1);
+  });
+
+  it("returns -1 when player has only one piece on board", () => {
+    expect(findWinningMove([X,E,E, E,E,E, E,E,E], X)).toBe(-1);
+  });
+
+  it("returns -1 when two-in-a-row is blocked by opponent", () => {
+    // X X O in row 0 — index 2 is taken by O so no win possible on row 0
+    expect(findWinningMove([X,X,O, E,E,E, E,E,E], X)).toBe(-1);
+  });
+});
