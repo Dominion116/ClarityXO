@@ -12,3 +12,13 @@ describe("formatCountdown — zero ms", () => {
     expect(formatCountdown(1)).toBe("00:00:00");
   });
 });
+
+describe("formatCountdown — negative ms", () => {
+  it('returns "00:00:00" for -1ms', () => {
+    expect(formatCountdown(-1)).toBe("00:00:00");
+  });
+
+  it('returns "00:00:00" for a large negative value', () => {
+    expect(formatCountdown(-999999)).toBe("00:00:00");
+  });
+});
