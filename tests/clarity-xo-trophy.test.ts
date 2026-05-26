@@ -889,3 +889,16 @@ Clarinet.test({
     assertEquals(typeof uri, "string");
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-39: get-token-uri for un-minted token returns ok none",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+
+    const result = chain.callReadOnlyFn(
+      TROPHY, "get-token-uri", [types.uint(42)], p1.address
+    ).result.expectOk();
+
+    result.expectNone();
+  },
+});
