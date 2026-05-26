@@ -336,3 +336,21 @@ describe("chooseAiMove — takes center when available and no threats", () => {
     expect(chooseAiMove([X,E,E, E,E,E, E,E,E])).toBe(4);
   });
 });
+
+describe("chooseAiMove — takes corner when center is occupied", () => {
+  it("plays a corner when center is taken by X and no threats exist", () => {
+    const move = chooseAiMove([E,E,E, E,X,E, E,E,E]);
+    expect([0, 2, 6, 8]).toContain(move);
+  });
+
+  it("plays a corner when center is taken by O and no threats exist", () => {
+    const move = chooseAiMove([E,E,E, E,O,E, E,E,E]);
+    expect([0, 2, 6, 8]).toContain(move);
+  });
+
+  it("plays the first available corner (0) when center taken and corners 2,6,8 are occupied", () => {
+    // center=X, corners 2,6,8 taken — only corner 0 remains
+    const board = [E,E,X, E,X,E, X,E,X];
+    expect(chooseAiMove(board)).toBe(0);
+  });
+});
