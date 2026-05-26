@@ -22,3 +22,17 @@ describe("formatCountdown — negative ms", () => {
     expect(formatCountdown(-999999)).toBe("00:00:00");
   });
 });
+
+describe("formatCountdown — seconds only", () => {
+  it("returns 00:00:01 for exactly 1000ms", () => {
+    expect(formatCountdown(1000)).toBe("00:00:01");
+  });
+
+  it("returns 00:00:30 for 30 seconds", () => {
+    expect(formatCountdown(30000)).toBe("00:00:30");
+  });
+
+  it("returns 00:00:59 for 59 seconds", () => {
+    expect(formatCountdown(59000)).toBe("00:00:59");
+  });
+});
