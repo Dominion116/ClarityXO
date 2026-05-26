@@ -170,3 +170,22 @@ describe("checkWinner — partial boards with no winner", () => {
     expect(checkWinner([X,X,O, O,O,X, E,E,E])).toBe(E);
   });
 });
+
+// ── wouldWin ─────────────────────────────────────────────────────────────────
+
+describe("wouldWin — placing creates a winner", () => {
+  it("returns true when X completing row 0 wins", () => {
+    const board = [X,X,E, E,E,E, E,E,E];
+    expect(wouldWin(board, 2, X)).toBe(true);
+  });
+
+  it("returns true when O completing column 2 wins", () => {
+    const board = [E,E,O, E,E,O, E,E,E];
+    expect(wouldWin(board, 8, O)).toBe(true);
+  });
+
+  it("returns true when X completing main diagonal wins", () => {
+    const board = [X,E,E, E,X,E, E,E,E];
+    expect(wouldWin(board, 8, X)).toBe(true);
+  });
+});
