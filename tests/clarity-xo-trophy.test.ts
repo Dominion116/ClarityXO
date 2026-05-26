@@ -581,3 +581,14 @@ Clarinet.test({
     getRank(chain, 0, p1).result.expectOk().expectSome().expectUint(1);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-24: cannot set winners for a month that is still current (u103)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    // current-month=0, trying to set month 0 should fail
+    const b = setWinners(chain, deployer, 0, [p1, p1, p1, p1, p1]);
+    b.receipts[0].result.expectErr().expectUint(103);
+  },
+});
