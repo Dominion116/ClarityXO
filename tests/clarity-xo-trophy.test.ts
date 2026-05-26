@@ -933,3 +933,41 @@ Clarinet.test({
     assertEquals(owner, p1.address);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-41: chain transfer A→B→C results in C owning the token",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+    const p6 = accounts.get("wallet_6")!;
+
+    advanceMonth(chain, 2);
+    setWinners(chain, deployer, 1, [p1, p2, p3, p4, p5]);
+    claim(chain, p1, 1); // token 1 → p1
+
+    // A→B
+    chain.mineBlock([
+      Tx.contractCall(TROPHY, "transfer",
+        [types.uint(1), types.principal(p1.address), types.principal(p2.address)],
+        p1.address
+      ),
+    ]);
+
+    // B→C
+    chain.mineBlock([
+      Tx.contractCall(TROPHY, "transfer",
+        [types.uint(1), types.principal(p2.address), types.principal(p6.address)],
+        p2.address
+      ),
+    ]);
+
+    const owner = chain.callReadOnlyFn(
+      TROPHY, "get-owner", [types.uint(1)], p6.address
+    ).result.expectOk().expectSome().expectPrincipal();
+    assertEquals(owner, p6.address);
+  },
+});
