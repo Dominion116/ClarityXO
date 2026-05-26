@@ -394,3 +394,24 @@ describe("getPlayerList — coerces NaN stats values to 0", () => {
     expect(getPlayerList(data)[0].losses).toBe(0);
   });
 });
+
+describe("getPlayerList — handles large dataset (50 players) sorted correctly", () => {
+  it("50 players are returned and first has highest pts", () => {
+    const players = {};
+    for (let i = 0; i < 50; i++) {
+      players[`SP${i}`] = { pts: i, wins: Math.floor(i / 3), draws: 0, losses: 0 };
+    }
+    const list = getPlayerList({ players });
+    expect(list).toHaveLength(50);
+    expect(list[0].pts).toBe(49);
+  });
+
+  it("50 players last entry has pts=0", () => {
+    const players = {};
+    for (let i = 0; i < 50; i++) {
+      players[`SP${i}`] = { pts: i, wins: Math.floor(i / 3), draws: 0, losses: 0 };
+    }
+    const list = getPlayerList({ players });
+    expect(list[49].pts).toBe(0);
+  });
+});
