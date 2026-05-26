@@ -1137,3 +1137,20 @@ Clarinet.test({
     assertEquals(stats["wins"], types.uint(1));
   },
 });
+
+Clarinet.test({
+  name: "GAME-62: get-full-game-state month field matches current-month",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+
+    const monthResult = chain.callReadOnlyFn(GAME, "current-month", [], player.address);
+    const currentMonth = monthResult.result;
+
+    const state = chain.callReadOnlyFn(
+      GAME, "get-full-game-state", [types.uint(1)], player.address
+    ).result.expectOk().expectTuple();
+
+    assertEquals(state["month"], currentMonth);
+  },
+});
