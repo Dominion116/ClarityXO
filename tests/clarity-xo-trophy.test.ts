@@ -860,3 +860,32 @@ Clarinet.test({
     assertEquals(uri.includes("https://example.com/trophies/"), true);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-38: get-token-uri for token 10 returns ok some",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+
+    // Month 1 winners
+    advanceMonth(chain, 2);
+    setWinners(chain, deployer, 1, [p1, p2, p3, p4, p5]);
+    [p1, p2, p3, p4, p5].forEach(p => claim(chain, p, 1));
+
+    // Month 2 winners
+    advanceMonth(chain, 3);
+    setWinners(chain, deployer, 2, [p1, p2, p3, p4, p5]);
+    // 5 more claims → tokens 6-10
+    [p1, p2, p3, p4, p5].forEach(p => claim(chain, p, 2));
+
+    const uri = chain.callReadOnlyFn(
+      TROPHY, "get-token-uri", [types.uint(10)], p5.address
+    ).result.expectOk().expectSome().expectAscii();
+
+    assertEquals(typeof uri, "string");
+  },
+});
