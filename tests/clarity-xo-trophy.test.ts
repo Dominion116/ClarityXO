@@ -683,3 +683,11 @@ Clarinet.test({
     getOwner(chain, 3, p6).result.expectOk().expectSome().expectPrincipal(p6.address);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-29: get-owner returns none for a token that has not been minted",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    getOwner(chain, 999, deployer).result.expectOk().expectNone();
+  },
+});
