@@ -790,3 +790,21 @@ Clarinet.test({
     assertEquals(state["status"], STATUS_X_WON);
   },
 });
+
+Clarinet.test({
+  name: "GAME-42: full game board state — get-full-game-state shape is complete",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+
+    const state = chain.callReadOnlyFn(
+      GAME, "get-full-game-state", [types.uint(1)], player.address
+    ).result.expectOk().expectTuple();
+
+    assertExists(state["board"]);
+    assertExists(state["status"]);
+    assertExists(state["moves"]);
+    assertExists(state["month"]);
+  },
+});
