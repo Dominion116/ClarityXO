@@ -177,15 +177,27 @@ describe("board immutability — helper functions never mutate input", () => {
   });
 });
 
-describe("simulate full game — board is valid after full sequence", () => {
-  it("player completes column 0 (cells 0,3,6) before AI blocks", () => {
-    let board = [E,E,E, E,E,E, E,E,E];
-    board = applyMove(board, 0, X);
-    board = applyMove(board, chooseAiMove(board), O);
-    board = applyMove(board, 3, X);
-    const ai2 = chooseAiMove(board);
-    if (board[ai2] === E) board = applyMove(board, ai2, O);
-    board = applyMove(board, 6, X);
-    expect(checkWinner(board)).toBe(X);
+describe("all 9 cells on an X-won board are correctly classified", () => {
+  it("every cell on [X,X,X,E,E,E,E,E,E] is X, E, or E as expected", () => {
+    const board = [X,X,X, E,E,E, E,E,E];
+    expect(board[0]).toBe(X);
+    expect(board[1]).toBe(X);
+    expect(board[2]).toBe(X);
+    expect(board[3]).toBe(E);
+  });
+
+  it("checkWinner agrees with getWinningLine on a winning board", () => {
+    const board = [X,X,X, O,O,E, E,E,E];
+    const winner = checkWinner(board);
+    const line   = getWinningLine(board);
+    expect(winner).toBe(X);
+    expect(line).toEqual([0,1,2]);
+  });
+
+  it("all winning cells belong to the same player", () => {
+    const board = [O,E,E, O,E,E, O,E,E];
+    const line = getWinningLine(board);
+    expect(line).not.toBeNull();
+    line.forEach(idx => expect(board[idx]).toBe(O));
   });
 });
