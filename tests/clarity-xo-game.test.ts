@@ -499,3 +499,19 @@ Clarinet.test({
     assertEquals(stats["losses"], types.uint(0));
   },
 });
+
+Clarinet.test({
+  name: "GAME-24: draw clears player active game mapping",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+    move(chain, player, 0, 2);
+    move(chain, player, 2, 0);
+    move(chain, player, 1, 2);
+    move(chain, player, 2, 1);
+
+    const active = getActiveGame(chain, player);
+    active.result.expectOk().expectNone();
+  },
+});
