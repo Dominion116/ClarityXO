@@ -175,3 +175,40 @@ describe("getPlayerList — single player", () => {
     expect(getPlayerList(data)[0].addr).toBe("SP1");
   });
 });
+
+describe("getPlayerList — sorts by pts descending", () => {
+  it("higher pts player appears first", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 3, wins: 1, draws: 0, losses: 0 },
+        "SP2": { pts: 9, wins: 3, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].addr).toBe("SP2");
+    expect(list[1].addr).toBe("SP1");
+  });
+
+  it("three players sorted by pts correctly", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 3, wins: 1, draws: 0, losses: 0 },
+        "SP2": { pts: 6, wins: 2, draws: 0, losses: 0 },
+        "SP3": { pts: 1, wins: 0, draws: 1, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list.map(p => p.addr)).toEqual(["SP2", "SP1", "SP3"]);
+  });
+
+  it("pts=0 players appear at the bottom", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 0, wins: 0, draws: 0, losses: 2 },
+        "SP2": { pts: 3, wins: 1, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].addr).toBe("SP2");
+  });
+});
