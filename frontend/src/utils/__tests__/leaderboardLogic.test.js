@@ -150,3 +150,16 @@ describe("getMonthEnd — is in the future relative to start of today", () => {
     expect(getMonthEnd().getTime()).toBeGreaterThan(0);
   });
 });
+
+// ── getPlayerList ─────────────────────────────────────────────────────────────
+
+describe("getPlayerList — empty players object", () => {
+  it("returns an empty array when players is {}", () => {
+    expect(getPlayerList({ players: {} })).toEqual([]);
+  });
+
+  it("returns an empty array and not null or undefined", () => {
+    const result = getPlayerList({ players: {} });
+    expect(Array.isArray(result)).toBe(true);
+  });
+});
