@@ -698,3 +698,16 @@ Clarinet.test({
     assertEquals(result["ai-move"], types.uint(4));
   },
 });
+
+Clarinet.test({
+  name: "GAME-36: AI takes corner when center is occupied by player",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    const b = move(chain, player, 1, 1);  // Player takes center
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    // AI should take a corner: 0, 2, 6, or 8
+    const aiMove = parseInt(result["ai-move"].toString().replace("u", ""));
+    assertEquals([0, 2, 6, 8].includes(aiMove), true);
+  },
+});
