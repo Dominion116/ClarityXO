@@ -107,3 +107,17 @@ describe("checkWinner — row 2 wins", () => {
     expect(checkWinner([E,E,E, E,E,E, O,O,O])).toBe(O);
   });
 });
+
+describe("checkWinner — column wins", () => {
+  it("returns PLAYER_X when X occupies column 0 (indices 0,3,6)", () => {
+    expect(checkWinner([X,E,E, X,E,E, X,E,E])).toBe(X);
+  });
+
+  it("returns PLAYER_X when X occupies column 1 (indices 1,4,7)", () => {
+    expect(checkWinner([E,X,E, E,X,E, E,X,E])).toBe(X);
+  });
+
+  it("returns PLAYER_O when O occupies column 2 (indices 2,5,8)", () => {
+    expect(checkWinner([E,E,O, E,E,O, E,E,O])).toBe(O);
+  });
+});
