@@ -348,3 +348,15 @@ describe("getPlayerList — handles missing draws field (defaults to 0)", () => 
     expect(getPlayerList(data)[0].games).toBe(3);
   });
 });
+
+describe("getPlayerList — handles missing losses field (defaults to 0)", () => {
+  it("missing losses becomes 0", () => {
+    const data = { players: { "SP1": { pts: 3, wins: 1, draws: 0 } } };
+    expect(getPlayerList(data)[0].losses).toBe(0);
+  });
+
+  it("missing losses keeps games count correct", () => {
+    const data = { players: { "SP1": { pts: 3, wins: 1, draws: 2 } } };
+    expect(getPlayerList(data)[0].games).toBe(3);
+  });
+});
