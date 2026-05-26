@@ -1117,3 +1117,23 @@ Clarinet.test({
     getActiveGame(chain, player).result.expectOk().expectNone();
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 16 — Month assignment
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-61: game started in current month stored in correct month",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+    move(chain, player, 0, 1);
+    move(chain, player, 0, 2);
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], player.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const stats = getStats(chain, player, m).result.expectTuple();
+    assertEquals(stats["wins"], types.uint(1));
+  },
+});
