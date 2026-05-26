@@ -462,3 +462,21 @@ describe("getWinningLine — null for empty board", () => {
     expect(getWinningLine([X,E,E, E,E,E, E,E,E])).toBeNull();
   });
 });
+
+describe("getWinningLine — null when no three-in-a-row", () => {
+  it("returns null for a draw board (no winner)", () => {
+    expect(getWinningLine([X,O,X, O,O,X, X,X,O])).toBeNull();
+  });
+
+  it("returns null when both players have two in a row but neither has three", () => {
+    expect(getWinningLine([X,X,O, O,O,X, E,E,E])).toBeNull();
+  });
+
+  it("returns null for a mid-game board with no current winner", () => {
+    expect(getWinningLine([X,O,E, E,X,E, E,E,O])).toBeNull();
+  });
+
+  it("returns null when pieces are scattered with no line", () => {
+    expect(getWinningLine([X,E,O, E,E,E, O,E,X])).toBeNull();
+  });
+});
