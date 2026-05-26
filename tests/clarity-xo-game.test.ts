@@ -1078,3 +1078,14 @@ Clarinet.test({
     b.receipts[0].result.expectErr().expectUint(105);
   },
 });
+
+Clarinet.test({
+  name: "GAME-57: move to occupied center after AI returns u104",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);    // AI takes center (1,1)
+    const b = move(chain, player, 1, 1); // center is occupied by AI
+    b.receipts[0].result.expectErr().expectUint(104);
+  },
+});
