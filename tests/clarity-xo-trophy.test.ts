@@ -784,3 +784,25 @@ Clarinet.test({
     result.expectNone();
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-35: player field in trophy meta matches the wallet that claimed",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+
+    advanceMonth(chain, 2);
+    setWinners(chain, deployer, 1, [p1, p2, p3, p4, p5]);
+    claim(chain, p2, 1); // p2 claims rank-2 trophy → token 1
+
+    const meta = chain.callReadOnlyFn(
+      TROPHY, "get-trophy-meta", [types.uint(1)], p2.address
+    ).result.expectOk().expectSome().expectTuple();
+
+    assertEquals(meta["player"], types.principal(p2.address));
+  },
+});
