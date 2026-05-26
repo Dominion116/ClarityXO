@@ -75,3 +75,15 @@ describe("checkLine — false when any cell is EMPTY", () => {
     expect(checkLine(E, E, E)).toBe(false);
   });
 });
+
+// ── checkWinner ──────────────────────────────────────────────────────────────
+
+describe("checkWinner — row 0 wins", () => {
+  it("returns PLAYER_X when X occupies row 0", () => {
+    expect(checkWinner([X,X,X, E,E,E, E,E,E])).toBe(X);
+  });
+
+  it("returns PLAYER_O when O occupies row 0", () => {
+    expect(checkWinner([O,O,O, E,E,E, E,E,E])).toBe(O);
+  });
+});
