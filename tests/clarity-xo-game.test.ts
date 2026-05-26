@@ -1188,3 +1188,16 @@ Clarinet.test({
     assertEquals(result["status"],  STATUS_ACTIVE);
   },
 });
+
+Clarinet.test({
+  name: "GAME-65: after second move get-game-moves returns u4",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0); // round 1: moves → u2
+    move(chain, player, 0, 1); // round 2: moves → u4
+
+    chain.callReadOnlyFn(GAME, "get-game-moves", [types.uint(1)], player.address)
+      .result.expectOk().expectUint(4);
+  },
+});
