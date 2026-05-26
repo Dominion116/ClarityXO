@@ -247,3 +247,39 @@ describe("getPlayerList — breaks pts tie by wins descending", () => {
     expect(list[1].addr).toBe("SP3");
   });
 });
+
+describe("getPlayerList — breaks wins tie by losses ascending", () => {
+  it("player with fewer losses ranks higher on equal pts and wins", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 3, wins: 1, draws: 0, losses: 5 },
+        "SP2": { pts: 3, wins: 1, draws: 0, losses: 1 },
+      },
+    };
+    expect(getPlayerList(data)[0].addr).toBe("SP2");
+  });
+
+  it("zero-loss player ranks above one-loss player on equal pts and wins", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 6, wins: 2, draws: 0, losses: 0 },
+        "SP2": { pts: 6, wins: 2, draws: 0, losses: 1 },
+      },
+    };
+    expect(getPlayerList(data)[0].addr).toBe("SP1");
+  });
+
+  it("full tiebreak chain pts→wins→losses gives correct final order", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 3, wins: 1, draws: 0, losses: 10 },
+        "SP2": { pts: 3, wins: 1, draws: 0, losses: 2 },
+        "SP3": { pts: 3, wins: 2, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].addr).toBe("SP3");
+    expect(list[1].addr).toBe("SP2");
+    expect(list[2].addr).toBe("SP1");
+  });
+});
