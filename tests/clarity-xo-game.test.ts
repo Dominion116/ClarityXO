@@ -1363,3 +1363,13 @@ Clarinet.test({
     getStatus(chain, 999, player).result.expectOk().expectUint(0);
   },
 });
+
+Clarinet.test({
+  name: "GAME-77: get-game-moves for new game returns u0",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    chain.callReadOnlyFn(GAME, "get-game-moves", [types.uint(1)], player.address)
+      .result.expectOk().expectUint(0);
+  },
+});
