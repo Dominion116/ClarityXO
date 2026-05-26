@@ -360,3 +360,20 @@ describe("getPlayerList — handles missing losses field (defaults to 0)", () =>
     expect(getPlayerList(data)[0].games).toBe(3);
   });
 });
+
+describe("getPlayerList — handles legacy losss typo in data", () => {
+  it("reads losses from losss field when losses is missing", () => {
+    const data = { players: { "SP1": { pts: 0, wins: 0, draws: 0, losss: 3 } } };
+    expect(getPlayerList(data)[0].losses).toBe(3);
+  });
+
+  it("legacy losss field contributes to games count", () => {
+    const data = { players: { "SP1": { pts: 0, wins: 1, draws: 0, losss: 2 } } };
+    expect(getPlayerList(data)[0].games).toBe(3);
+  });
+
+  it("losses field takes precedence over losss when both present", () => {
+    const data = { players: { "SP1": { pts: 0, wins: 0, draws: 0, losses: 1, losss: 99 } } };
+    expect(getPlayerList(data)[0].losses).toBe(1);
+  });
+});
