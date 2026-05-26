@@ -909,3 +909,45 @@ Clarinet.test({
     assertEquals(s2["wins"],   types.uint(0));
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 13 — Points edge cases
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-48: ten-game mix — 5 wins + 3 losses + 2 draws = correct pts",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+
+    // 5 wins (+3 each = 15)
+    for (let i = 0; i < 5; i++) {
+      startGame(chain, player);
+      move(chain, player, 0, 0);
+      move(chain, player, 0, 1);
+      move(chain, player, 0, 2);
+    }
+    // 3 losses via resign (+0 each)
+    for (let i = 0; i < 3; i++) {
+      startGame(chain, player);
+      resign(chain, player);
+    }
+    // 2 draws (+1 each = 2)
+    for (let i = 0; i < 2; i++) {
+      startGame(chain, player);
+      move(chain, player, 0, 0);
+      move(chain, player, 0, 2);
+      move(chain, player, 2, 0);
+      move(chain, player, 1, 2);
+      move(chain, player, 2, 1);
+    }
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], player.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const stats = getStats(chain, player, m).result.expectTuple();
+
+    assertEquals(stats["wins"],   types.uint(5));
+    assertEquals(stats["losses"], types.uint(3));
+    assertEquals(stats["draws"],  types.uint(2));
+    assertEquals(stats["pts"],    types.uint(17)); // 5*3 + 3*0 + 2*1
+  },
+});
