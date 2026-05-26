@@ -592,3 +592,20 @@ Clarinet.test({
     b.receipts[0].result.expectErr().expectUint(103);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-25: set-month-winners for month 2 after two advances works",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+
+    advanceMonth(chain, 3); // now current-month=3, months 0,1,2 are over
+    const b = setWinners(chain, deployer, 2, [p1, p2, p3, p4, p5]);
+    b.receipts[0].result.expectOk().expectBool(true);
+    getRank(chain, 2, p1).result.expectOk().expectSome().expectUint(1);
+  },
+});
