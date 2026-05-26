@@ -295,3 +295,20 @@ describe("chooseAiMove — takes winning move when available", () => {
     expect(chooseAiMove(board)).toBe(8);
   });
 });
+
+describe("chooseAiMove — blocks player threat when no AI win", () => {
+  it("blocks X completing row 0 at index 2", () => {
+    const board = [X,X,E, E,O,E, E,E,E];
+    expect(chooseAiMove(board)).toBe(2);
+  });
+
+  it("blocks X completing column 0 at index 6", () => {
+    const board = [X,O,E, X,E,E, E,E,E];
+    expect(chooseAiMove(board)).toBe(6);
+  });
+
+  it("blocks X completing main diagonal at index 8", () => {
+    const board = [X,O,E, E,X,E, E,E,E];
+    expect(chooseAiMove(board)).toBe(8);
+  });
+});
