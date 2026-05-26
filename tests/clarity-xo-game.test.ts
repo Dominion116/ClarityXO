@@ -1053,3 +1053,13 @@ Clarinet.test({
       .result.expectOk().expectUint(3);
   },
 });
+
+Clarinet.test({
+  name: "GAME-55: get-next-game-id returns u6 after five games started",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const wallets = ["wallet_1","wallet_2","wallet_3","wallet_4","wallet_5"];
+    wallets.forEach(w => startGame(chain, accounts.get(w)!));
+    chain.callReadOnlyFn(GAME, "get-next-game-id", [], accounts.get("wallet_1")!.address)
+      .result.expectOk().expectUint(6);
+  },
+});
