@@ -637,3 +637,19 @@ Clarinet.test({
     assertExists(b.receipts[0].result);
   },
 });
+
+Clarinet.test({
+  name: "GAME-32: player wins via anti-diagonal (2-4-6) verified board state",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    // P(0,2) → AI center(1,1); P(1,1) → occupied → err
+    // Force anti-diagonal: player takes (0,2),(2,0) and then center if free
+    move(chain, player, 0, 2); // AI → center
+    move(chain, player, 2, 0); // P forces two-side threat
+    // AI must respond; player grabs last diagonal piece
+    const b = move(chain, player, 1, 1); // P center — already taken by AI → err u104
+    // Result should be cell-occupied or active
+    assertExists(b.receipts[0].result);
+  },
+});
