@@ -984,3 +984,20 @@ Clarinet.test({
     assertEquals(stats["losses"], types.uint(1));
   },
 });
+
+Clarinet.test({
+  name: "GAME-51: win awards exactly PTS_WIN (u3) — verified directly",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+    move(chain, player, 0, 1);
+    move(chain, player, 0, 2);
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], player.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const stats = getStats(chain, player, m).result.expectTuple();
+    assertEquals(stats["pts"],  types.uint(3));
+    assertEquals(stats["wins"], types.uint(1));
+  },
+});
