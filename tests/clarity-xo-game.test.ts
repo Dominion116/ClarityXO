@@ -515,3 +515,25 @@ Clarinet.test({
     active.result.expectOk().expectNone();
   },
 });
+
+Clarinet.test({
+  name: "GAME-25: draw is tracked in month-totals total-pts",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+    move(chain, player, 0, 2);
+    move(chain, player, 2, 0);
+    move(chain, player, 1, 2);
+    move(chain, player, 2, 1);
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], player.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const totals = chain.callReadOnlyFn(
+      GAME, "get-month-totals", [types.uint(m)], player.address
+    ).result.expectTuple();
+
+    assertEquals(totals["total-pts"], types.uint(1));
+    assertEquals(totals["games"],     types.uint(1));
+  },
+});
