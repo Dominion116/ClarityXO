@@ -212,3 +212,38 @@ describe("getPlayerList — sorts by pts descending", () => {
     expect(list[0].addr).toBe("SP2");
   });
 });
+
+describe("getPlayerList — breaks pts tie by wins descending", () => {
+  it("player with more wins ranks higher when pts are equal", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 3, wins: 1, draws: 0, losses: 0 },
+        "SP2": { pts: 3, wins: 3, draws: 0, losses: 6 },
+      },
+    };
+    expect(getPlayerList(data)[0].addr).toBe("SP2");
+  });
+
+  it("player with fewer wins ranks lower when pts are equal", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 6, wins: 2, draws: 0, losses: 0 },
+        "SP2": { pts: 6, wins: 0, draws: 6, losses: 0 },
+      },
+    };
+    expect(getPlayerList(data)[0].addr).toBe("SP1");
+  });
+
+  it("three-way tie on pts resolves by wins", () => {
+    const data = {
+      players: {
+        "SP1": { pts: 3, wins: 1, draws: 0, losses: 0 },
+        "SP2": { pts: 3, wins: 3, draws: 0, losses: 4 },
+        "SP3": { pts: 3, wins: 2, draws: 0, losses: 2 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].addr).toBe("SP2");
+    expect(list[1].addr).toBe("SP3");
+  });
+});
