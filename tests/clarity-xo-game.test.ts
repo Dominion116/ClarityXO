@@ -1001,3 +1001,30 @@ Clarinet.test({
     assertEquals(stats["wins"], types.uint(1));
   },
 });
+
+Clarinet.test({
+  name: "GAME-52: month-totals total-pts includes draw points correctly",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+
+    // p1 draws (+1 pt)
+    startGame(chain, p1);
+    move(chain, p1, 0, 0); move(chain, p1, 0, 2);
+    move(chain, p1, 2, 0); move(chain, p1, 1, 2);
+    move(chain, p1, 2, 1);
+
+    // p2 wins (+3 pts)
+    startGame(chain, p2);
+    move(chain, p2, 0, 0); move(chain, p2, 0, 1); move(chain, p2, 0, 2);
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], p1.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const totals = chain.callReadOnlyFn(
+      GAME, "get-month-totals", [types.uint(m)], p1.address
+    ).result.expectTuple();
+
+    assertEquals(totals["total-pts"], types.uint(4)); // 1+3
+    assertEquals(totals["games"],     types.uint(2));
+  },
+});
