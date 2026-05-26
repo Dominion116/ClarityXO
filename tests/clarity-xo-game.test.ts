@@ -842,3 +842,22 @@ Clarinet.test({
     players.forEach(p => getActiveGame(chain, p).result.expectOk().expectSome());
   },
 });
+
+Clarinet.test({
+  name: "GAME-45: each player's board is independent from others",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+
+    startGame(chain, p1);
+    startGame(chain, p2);
+
+    move(chain, p1, 0, 0);  // only p1 moves
+
+    const active1 = getActiveGame(chain, p1).result.expectOk().expectSome().expectUint(1);
+    const active2 = getActiveGame(chain, p2).result.expectOk().expectSome().expectUint(2);
+
+    assertEquals(active1, types.uint(1));
+    assertEquals(active2, types.uint(2));
+  },
+});
