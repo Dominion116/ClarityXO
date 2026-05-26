@@ -68,3 +68,6 @@ Thumbs.db
 .temp/
 .tmp/
 config.bat
+
+# Local planning docs
+TEST_IMPLEMENTATION_PLAN.md
