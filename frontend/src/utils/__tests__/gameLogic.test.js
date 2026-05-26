@@ -251,3 +251,13 @@ describe("findWinningMove — finds column winning move", () => {
     expect(findWinningMove([E,E,E, E,E,X, E,E,X], X)).toBe(2);
   });
 });
+
+describe("findWinningMove — finds diagonal winning move", () => {
+  it("finds index 8 to complete X main diagonal", () => {
+    expect(findWinningMove([X,E,E, E,X,E, E,E,E], X)).toBe(8);
+  });
+
+  it("finds index 4 to complete O anti-diagonal with O at 2 and 6", () => {
+    expect(findWinningMove([E,E,O, E,E,E, O,E,E], O)).toBe(4);
+  });
+});
