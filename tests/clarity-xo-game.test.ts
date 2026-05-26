@@ -1041,3 +1041,15 @@ Clarinet.test({
       .result.expectOk().expectUint(1);
   },
 });
+
+Clarinet.test({
+  name: "GAME-54: get-next-game-id increments by 1 after each start-game",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    startGame(chain, p1);
+    startGame(chain, p2);
+    chain.callReadOnlyFn(GAME, "get-next-game-id", [], p1.address)
+      .result.expectOk().expectUint(3);
+  },
+});
