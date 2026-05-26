@@ -128,3 +128,13 @@ describe("getMonthEnd — returns last day of current UTC month", () => {
     expect(getMonthEnd().getUTCFullYear()).toBe(new Date().getUTCFullYear());
   });
 });
+
+describe("getMonthEnd — time is 23:59:59 UTC", () => {
+  it("UTC hours are 23", () => {
+    expect(getMonthEnd().getUTCHours()).toBe(23);
+  });
+
+  it("UTC minutes are 59", () => {
+    expect(getMonthEnd().getUTCMinutes()).toBe(59);
+  });
+});
