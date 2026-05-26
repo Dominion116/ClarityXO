@@ -687,3 +687,14 @@ Clarinet.test({
     assertEquals(result["ai-move"], types.uint(2));
   },
 });
+
+Clarinet.test({
+  name: "GAME-35: AI takes center (index 4) on opening move",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    const b = move(chain, player, 0, 0);  // Player takes corner → AI takes center
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertEquals(result["ai-move"], types.uint(4));
+  },
+});
