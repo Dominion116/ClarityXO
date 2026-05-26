@@ -1320,3 +1320,23 @@ Clarinet.test({
     assertEquals(totals["games"], types.uint(1));
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 20 — Read-only completeness
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-74: get-game-board for new game returns nine zeros",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    const board = chain.callReadOnlyFn(
+      GAME, "get-game-board", [types.uint(1)], player.address
+    ).result.expectOk();
+    assertEquals(board, types.list([
+      types.uint(0), types.uint(0), types.uint(0),
+      types.uint(0), types.uint(0), types.uint(0),
+      types.uint(0), types.uint(0), types.uint(0),
+    ]));
+  },
+});
