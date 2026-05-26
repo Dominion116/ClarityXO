@@ -1219,3 +1219,17 @@ Clarinet.test({
     assertEquals(state["moves"],  types.uint(5)); // 3 player + 2 AI (AI doesn't move on win)
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 18 — Boundary conditions
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-67: move at (0,0) is valid (top-left boundary)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    const b = move(chain, player, 0, 0);
+    b.receipts[0].result.expectOk();
+  },
+});
