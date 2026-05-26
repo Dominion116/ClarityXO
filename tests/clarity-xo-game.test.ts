@@ -1340,3 +1340,18 @@ Clarinet.test({
     ]));
   },
 });
+
+Clarinet.test({
+  name: "GAME-75: get-game-board for unknown game-id returns nine zeros (default)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    const board = chain.callReadOnlyFn(
+      GAME, "get-game-board", [types.uint(999)], player.address
+    ).result.expectOk();
+    assertEquals(board, types.list([
+      types.uint(0), types.uint(0), types.uint(0),
+      types.uint(0), types.uint(0), types.uint(0),
+      types.uint(0), types.uint(0), types.uint(0),
+    ]));
+  },
+});
