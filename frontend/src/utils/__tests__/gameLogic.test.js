@@ -121,3 +121,13 @@ describe("checkWinner — column wins", () => {
     expect(checkWinner([E,E,O, E,E,O, E,E,O])).toBe(O);
   });
 });
+
+describe("checkWinner — main diagonal (0-4-8)", () => {
+  it("returns PLAYER_X when X occupies main diagonal", () => {
+    expect(checkWinner([X,E,E, E,X,E, E,E,X])).toBe(X);
+  });
+
+  it("returns PLAYER_O when O occupies main diagonal", () => {
+    expect(checkWinner([O,E,E, E,O,E, E,E,O])).toBe(O);
+  });
+});
