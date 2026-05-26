@@ -312,3 +312,15 @@ describe("getPlayerList — handles player with zero stats", () => {
     expect(getPlayerList(data)[0].wins).toBe(0);
   });
 });
+
+describe("getPlayerList — handles missing pts field (defaults to 0)", () => {
+  it("missing pts becomes 0", () => {
+    const data = { players: { "SP1": { wins: 1, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)[0].pts).toBe(0);
+  });
+
+  it("missing pts does not crash — returns valid entry", () => {
+    const data = { players: { "SP1": { wins: 1, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)).toHaveLength(1);
+  });
+});
