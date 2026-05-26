@@ -423,3 +423,41 @@ Clarinet.test({
     assertEquals(stats["losses"], types.uint(0));
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 8 — Draw scenarios
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Helper: force a draw by playing a known draw sequence
+// Board after sequence: X O X / O O X / X X O  (draw)
+// Player plays: (0,0),(0,2),(1,2),(2,0),(2,1)  — 5 X moves
+// AI  plays:    center, then blocks optimally   — 4 O moves
+
+function forceDraw(chain: Chain, player: Account) {
+  startGame(chain, player);
+  // Move 1: player (0,0) → AI → center (1,1)
+  move(chain, player, 0, 0);
+  // Move 2: player (0,2) → AI blocks
+  move(chain, player, 0, 2);
+  // Move 3: player (2,0) → AI continues
+  move(chain, player, 2, 0);
+  // Move 4: player (1,2) → AI continues
+  move(chain, player, 1, 2);
+  // Move 5: player (2,1) — fills board → draw
+  return move(chain, player, 2, 1);
+}
+
+Clarinet.test({
+  name: "GAME-21: draw when board fills — STATUS_DRAW returned",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+    move(chain, player, 0, 2);
+    move(chain, player, 2, 0);
+    move(chain, player, 1, 2);
+    const b = move(chain, player, 2, 1);
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertEquals(result["status"], STATUS_DRAW);
+  },
+});
