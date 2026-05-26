@@ -73,3 +73,19 @@ describe("AI always wins or draws when playing optimally", () => {
     expect(["O", "draw"]).toContain(result);
   });
 });
+
+// ── Full game simulations — player wins ───────────────────────────────────────
+
+describe("simulate full game — player wins via row 0", () => {
+  it("player completes row 0 before AI can block", () => {
+    // P(0,0)→AI(4), P(0,1)→AI blocks or corners, P(0,2)→X wins
+    let board = [E,E,E, E,E,E, E,E,E];
+    board = applyMove(board, 0, X); // P
+    board = applyMove(board, chooseAiMove(board), O); // AI
+    board = applyMove(board, 1, X); // P
+    const aiIdx = chooseAiMove(board);
+    board = applyMove(board, aiIdx, O); // AI
+    board = applyMove(board, 2, X); // P wins row 0
+    expect(checkWinner(board)).toBe(X);
+  });
+});
