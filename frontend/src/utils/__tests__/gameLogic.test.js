@@ -151,3 +151,22 @@ describe("checkWinner — empty board", () => {
     expect(checkWinner([X,E,E, E,E,E, E,E,E])).toBe(E);
   });
 });
+
+describe("checkWinner — partial boards with no winner", () => {
+  it("returns EMPTY when board has 4 pieces and no three-in-a-row", () => {
+    expect(checkWinner([X,O,E, O,X,E, E,E,E])).toBe(E);
+  });
+
+  it("returns EMPTY for a near-draw board with no winner", () => {
+    // X O X / O O X / X X O  — draw, no winner
+    expect(checkWinner([X,O,X, O,O,X, X,X,O])).toBe(E);
+  });
+
+  it("returns EMPTY when pieces are scattered diagonally without lining up", () => {
+    expect(checkWinner([X,E,O, E,E,E, O,E,X])).toBe(E);
+  });
+
+  it("returns EMPTY for a board where both players have two in a row but not three", () => {
+    expect(checkWinner([X,X,O, O,O,X, E,E,E])).toBe(E);
+  });
+});
