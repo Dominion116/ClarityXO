@@ -251,3 +251,23 @@ describe("findWinningMove exhaustive — all 8 lines", () => {
     expect(findWinningMove(board, X)).toBe(6);
   });
 });
+
+describe("AI takes winning move over all alternatives", () => {
+  it("AI takes column 0 win (0,3,6) when available", () => {
+    const board = [O,X,X, O,E,E, E,E,E];
+    const move = chooseAiMove(board);
+    expect(move).toBe(6);
+  });
+
+  it("AI takes row 2 win (6,7,8) when available", () => {
+    const board = [X,X,E, E,E,E, O,O,E];
+    const move = chooseAiMove(board);
+    expect(move).toBe(8);
+  });
+
+  it("AI blocks player two-in-a-row on row 1 (3,4,5)", () => {
+    const board = [E,E,E, X,X,E, E,E,E];
+    const move = chooseAiMove(board);
+    expect(move).toBe(5);
+  });
+});
