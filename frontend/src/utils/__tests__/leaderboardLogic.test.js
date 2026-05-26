@@ -108,3 +108,23 @@ describe("getMonthEnd — returns a Date instance", () => {
     expect(isNaN(getMonthEnd().getTime())).toBe(false);
   });
 });
+
+describe("getMonthEnd — returns last day of current UTC month", () => {
+  it("returned date is in the same UTC month as today", () => {
+    const end = getMonthEnd();
+    const now = new Date();
+    expect(end.getUTCMonth()).toBe(now.getUTCMonth());
+  });
+
+  it("returned date day equals the last day of the current month", () => {
+    const end   = getMonthEnd();
+    const year  = end.getUTCFullYear();
+    const month = end.getUTCMonth();
+    const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    expect(end.getUTCDate()).toBe(lastDay);
+  });
+
+  it("returned year matches current UTC year", () => {
+    expect(getMonthEnd().getUTCFullYear()).toBe(new Date().getUTCFullYear());
+  });
+});
