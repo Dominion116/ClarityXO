@@ -96,3 +96,15 @@ describe("formatCountdown — pads single-digit values with leading zeros", () =
     expect(formatCountdown(86400000 + 3600000 + 60000)).toBe("1d 01h 01m");
   });
 });
+
+// ── getMonthEnd ───────────────────────────────────────────────────────────────
+
+describe("getMonthEnd — returns a Date instance", () => {
+  it("returns a Date object", () => {
+    expect(getMonthEnd()).toBeInstanceOf(Date);
+  });
+
+  it("returns a Date that is not NaN (i.e. valid)", () => {
+    expect(isNaN(getMonthEnd().getTime())).toBe(false);
+  });
+});
