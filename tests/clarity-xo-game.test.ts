@@ -1171,3 +1171,20 @@ Clarinet.test({
     assertEquals(stats["losses"], types.uint(0));
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 17 — Board after AI
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-64: after first move board has X at chosen spot and O at center",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    const b = move(chain, player, 0, 0); // X at index 0, AI O at center (4)
+
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertEquals(result["ai-move"], types.uint(4)); // center
+    assertEquals(result["status"],  STATUS_ACTIVE);
+  },
+});
