@@ -493,3 +493,27 @@ describe("formatCountdown — boundary seconds", () => {
     expect(formatCountdown(3_600_000)).toBe("01:00:00");
   });
 });
+
+describe("getPlayerList — address field is set from object key", () => {
+  it("address on returned player matches the key used in players object", () => {
+    const data = {
+      players: {
+        "SP_ALICE": { pts: 5, wins: 1, draws: 1, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].address).toBe("SP_ALICE");
+  });
+
+  it("two players have distinct address fields from their keys", () => {
+    const data = {
+      players: {
+        "SP_BOB":   { pts: 9, wins: 3, draws: 0, losses: 0 },
+        "SP_CAROL": { pts: 6, wins: 2, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].address).toBe("SP_BOB");
+    expect(list[1].address).toBe("SP_CAROL");
+  });
+});
