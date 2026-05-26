@@ -283,3 +283,20 @@ describe("getPlayerList — breaks wins tie by losses ascending", () => {
     expect(list[2].addr).toBe("SP1");
   });
 });
+
+describe("getPlayerList — calculates games as wins+draws+losses", () => {
+  it("games = 1 for a player with 1 win", () => {
+    const data = { players: { "SP1": { pts: 3, wins: 1, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)[0].games).toBe(1);
+  });
+
+  it("games = 5 for 2 wins + 1 draw + 2 losses", () => {
+    const data = { players: { "SP1": { pts: 7, wins: 2, draws: 1, losses: 2 } } };
+    expect(getPlayerList(data)[0].games).toBe(5);
+  });
+
+  it("games = 0 for a player with all zeros", () => {
+    const data = { players: { "SP1": { pts: 0, wins: 0, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)[0].games).toBe(0);
+  });
+});
