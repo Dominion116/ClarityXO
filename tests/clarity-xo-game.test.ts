@@ -1201,3 +1201,21 @@ Clarinet.test({
       .result.expectOk().expectUint(4);
   },
 });
+
+Clarinet.test({
+  name: "GAME-66: specific board state matches expected after three rounds of moves",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0); // round 1
+    move(chain, player, 0, 1); // round 2
+    move(chain, player, 0, 2); // round 3 → player wins
+
+    const state = chain.callReadOnlyFn(
+      GAME, "get-full-game-state", [types.uint(1)], player.address
+    ).result.expectOk().expectTuple();
+
+    assertEquals(state["status"], STATUS_X_WON);
+    assertEquals(state["moves"],  types.uint(5)); // 3 player + 2 AI (AI doesn't move on win)
+  },
+});
