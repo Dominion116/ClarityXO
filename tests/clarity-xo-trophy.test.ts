@@ -565,3 +565,19 @@ Clarinet.test({
     getRank(chain, 0, p1).result.expectOk().expectSome().expectUint(1);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-23: same principal appears twice — get-player-rank finds first occurrence",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+
+    advanceMonth(chain);
+    // p1 appears at positions 0 and 2
+    setWinners(chain, deployer, 0, [p1, p2, p1, p3, p3]);
+    // rank should be 1 (first occurrence)
+    getRank(chain, 0, p1).result.expectOk().expectSome().expectUint(1);
+  },
+});
