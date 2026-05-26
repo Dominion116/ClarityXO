@@ -659,3 +659,27 @@ Clarinet.test({
       .result.expectOk().expectUint(10);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-28: token IDs are globally sequential not per-month",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+    const p6 = accounts.get("wallet_6")!;
+
+    advanceMonth(chain);
+    setWinners(chain, deployer, 0, [p1, p2, p3, p4, p5]);
+    claim(chain, p1, 0); // token 1
+    claim(chain, p2, 0); // token 2
+
+    advanceMonth(chain);
+    setWinners(chain, deployer, 1, [p6, p2, p3, p4, p5]);
+    claim(chain, p6, 1); // token 3 — not 1
+
+    getOwner(chain, 3, p6).result.expectOk().expectSome().expectPrincipal(p6.address);
+  },
+});
