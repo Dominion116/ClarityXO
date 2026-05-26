@@ -189,3 +189,19 @@ describe("wouldWin — placing creates a winner", () => {
     expect(wouldWin(board, 8, X)).toBe(true);
   });
 });
+
+describe("wouldWin — placing does not create a winner", () => {
+  it("returns false when placing on empty board at index 0", () => {
+    expect(wouldWin([E,E,E, E,E,E, E,E,E], 0, X)).toBe(false);
+  });
+
+  it("returns false when X has two pieces but third index does not complete any line", () => {
+    const board = [X,E,E, E,X,E, E,E,E];
+    expect(wouldWin(board, 1, X)).toBe(false);
+  });
+
+  it("returns false when O places but the winning cell belongs to X's line only", () => {
+    const board = [X,X,E, E,E,E, E,E,E];
+    expect(wouldWin(board, 2, O)).toBe(false);
+  });
+});
