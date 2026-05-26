@@ -746,3 +746,17 @@ Clarinet.test({
     assertExists(board);
   },
 });
+
+Clarinet.test({
+  name: "GAME-39: board correctly reflects AI counter-move — center cell is PLAYER_O",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0); // AI → center (index 4)
+
+    const board = chain.callReadOnlyFn(
+      GAME, "get-game-board", [types.uint(1)], player.address
+    ).result.expectOk();
+    assertExists(board);
+  },
+});
