@@ -1063,3 +1063,18 @@ Clarinet.test({
       .result.expectOk().expectUint(6);
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 15 — Error code verification
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-56: resign after game already finished returns u105",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    resign(chain, player);          // game 1 ends
+    const b = resign(chain, player); // no active game
+    b.receipts[0].result.expectErr().expectUint(105);
+  },
+});
