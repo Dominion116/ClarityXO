@@ -674,3 +674,16 @@ Clarinet.test({
     assertExists(result["ai-move"]);
   },
 });
+
+Clarinet.test({
+  name: "GAME-34: AI blocks player threat on next move",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    // P(0,0)→AI center(4); P(0,1)→AI must block at (0,2)
+    move(chain, player, 0, 0);  // AI → center index 4
+    const b = move(chain, player, 0, 1);  // AI must block row 0 at index 2
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertEquals(result["ai-move"], types.uint(2));
+  },
+});
