@@ -64,3 +64,17 @@ describe("formatCountdown — hours", () => {
     expect(formatCountdown(86399000)).toBe("23:59:59");
   });
 });
+
+describe("formatCountdown — days", () => {
+  it("returns '1d 00h 00m' for exactly 1 day", () => {
+    expect(formatCountdown(86400000)).toBe("1d 00h 00m");
+  });
+
+  it("returns '2d 06h 00m' for 2 days and 6 hours", () => {
+    expect(formatCountdown(2 * 86400000 + 6 * 3600000)).toBe("2d 06h 00m");
+  });
+
+  it("returns '7d 12h 30m' for 7 days, 12 hours, 30 minutes", () => {
+    expect(formatCountdown(7 * 86400000 + 12 * 3600000 + 30 * 60000)).toBe("7d 12h 30m");
+  });
+});
