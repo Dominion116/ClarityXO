@@ -147,6 +147,36 @@ describe("simulate full game — draw when both play corners", () => {
   });
 });
 
+describe("board immutability — helper functions never mutate input", () => {
+  it("checkWinner does not modify the board array", () => {
+    const board = [X,O,X, E,E,E, E,E,E];
+    const snap = [...board];
+    checkWinner(board);
+    expect(board).toEqual(snap);
+  });
+
+  it("findWinningMove does not modify the board array", () => {
+    const board = [X,X,E, E,E,E, E,E,E];
+    const snap = [...board];
+    findWinningMove(board, X);
+    expect(board).toEqual(snap);
+  });
+
+  it("chooseAiMove does not modify the board array", () => {
+    const board = [X,E,E, E,O,E, E,E,E];
+    const snap = [...board];
+    chooseAiMove(board);
+    expect(board).toEqual(snap);
+  });
+
+  it("getWinningLine does not modify the board array", () => {
+    const board = [X,X,X, E,E,E, E,E,E];
+    const snap = [...board];
+    getWinningLine(board);
+    expect(board).toEqual(snap);
+  });
+});
+
 describe("simulate full game — board is valid after full sequence", () => {
   it("player completes column 0 (cells 0,3,6) before AI blocks", () => {
     let board = [E,E,E, E,E,E, E,E,E];
