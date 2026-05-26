@@ -1373,3 +1373,17 @@ Clarinet.test({
       .result.expectOk().expectUint(0);
   },
 });
+
+Clarinet.test({
+  name: "GAME-78: get-full-game-state player field matches tx-sender",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+
+    const state = chain.callReadOnlyFn(
+      GAME, "get-full-game-state", [types.uint(1)], player.address
+    ).result.expectOk().expectTuple();
+
+    assertEquals(state["player"], types.some(types.principal(player.address)));
+  },
+});
