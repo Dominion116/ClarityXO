@@ -557,3 +557,17 @@ Clarinet.test({
     assertEquals(result["status"], STATUS_X_WON);
   },
 });
+
+Clarinet.test({
+  name: "GAME-27: player wins via row 2 (cells 6-7-8)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0); // P corner → AI center
+    move(chain, player, 2, 0); // P row-2 left → AI builds
+    move(chain, player, 2, 1); // P row-2 mid → AI blocks elsewhere
+    const b = move(chain, player, 2, 2); // P completes row 2
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertEquals(result["status"], STATUS_X_WON);
+  },
+});
