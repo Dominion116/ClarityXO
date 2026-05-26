@@ -392,3 +392,13 @@ describe("getWinningLine — row 1", () => {
     expect(getWinningLine([E,E,E, O,O,O, E,E,E])).toEqual([3,4,5]);
   });
 });
+
+describe("getWinningLine — row 2", () => {
+  it("returns [6,7,8] when X wins row 2", () => {
+    expect(getWinningLine([E,E,E, E,E,E, X,X,X])).toEqual([6,7,8]);
+  });
+
+  it("returns [6,7,8] when O wins row 2", () => {
+    expect(getWinningLine([E,E,E, E,E,E, O,O,O])).toEqual([6,7,8]);
+  });
+});
