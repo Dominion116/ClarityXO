@@ -300,3 +300,15 @@ describe("getPlayerList — calculates games as wins+draws+losses", () => {
     expect(getPlayerList(data)[0].games).toBe(0);
   });
 });
+
+describe("getPlayerList — handles player with zero stats", () => {
+  it("maps pts as 0 correctly", () => {
+    const data = { players: { "SP1": { pts: 0, wins: 0, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)[0].pts).toBe(0);
+  });
+
+  it("maps wins as 0 correctly", () => {
+    const data = { players: { "SP1": { pts: 0, wins: 0, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)[0].wins).toBe(0);
+  });
+});
