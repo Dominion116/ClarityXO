@@ -377,3 +377,20 @@ describe("getPlayerList — handles legacy losss typo in data", () => {
     expect(getPlayerList(data)[0].losses).toBe(1);
   });
 });
+
+describe("getPlayerList — coerces NaN stats values to 0", () => {
+  it("undefined pts becomes 0", () => {
+    const data = { players: { "SP1": { pts: undefined, wins: 0, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)[0].pts).toBe(0);
+  });
+
+  it("null wins becomes 0", () => {
+    const data = { players: { "SP1": { pts: 3, wins: null, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)[0].wins).toBe(0);
+  });
+
+  it("string 'abc' for losses becomes 0", () => {
+    const data = { players: { "SP1": { pts: 0, wins: 0, draws: 0, losses: "abc" } } };
+    expect(getPlayerList(data)[0].losses).toBe(0);
+  });
+});
