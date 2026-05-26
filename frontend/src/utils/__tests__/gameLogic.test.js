@@ -370,3 +370,15 @@ describe("chooseAiMove — takes edge as last resort", () => {
     expect([1, 7]).toContain(move);
   });
 });
+
+// ── getWinningLine ───────────────────────────────────────────────────────────
+
+describe("getWinningLine — row 0", () => {
+  it("returns [0,1,2] when X wins row 0", () => {
+    expect(getWinningLine([X,X,X, E,E,E, E,E,E])).toEqual([0,1,2]);
+  });
+
+  it("returns [0,1,2] when O wins row 0", () => {
+    expect(getWinningLine([O,O,O, E,E,E, E,E,E])).toEqual([0,1,2]);
+  });
+});
