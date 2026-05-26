@@ -1355,3 +1355,11 @@ Clarinet.test({
     ]));
   },
 });
+
+Clarinet.test({
+  name: "GAME-76: get-game-status for unknown game-id returns STATUS_ACTIVE (default)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    getStatus(chain, 999, player).result.expectOk().expectUint(0);
+  },
+});
