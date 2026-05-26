@@ -1154,3 +1154,20 @@ Clarinet.test({
     assertEquals(state["month"], currentMonth);
   },
 });
+
+Clarinet.test({
+  name: "GAME-63: stats query for wrong month returns zeros",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0);
+    move(chain, player, 0, 1);
+    move(chain, player, 0, 2); // win recorded in month 0
+
+    // Query a different month (e.g., month 999)
+    const stats = getStats(chain, player, 999).result.expectTuple();
+    assertEquals(stats["pts"],    types.uint(0));
+    assertEquals(stats["wins"],   types.uint(0));
+    assertEquals(stats["losses"], types.uint(0));
+  },
+});
