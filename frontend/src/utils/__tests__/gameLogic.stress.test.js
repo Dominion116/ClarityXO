@@ -234,3 +234,20 @@ describe("wouldWin correctly identifies all 8 win lines", () => {
     expect(wouldWin(board, 0, X)).toBe(false);
   });
 });
+
+describe("findWinningMove exhaustive — all 8 lines", () => {
+  it("finds winning move for row 2 (indices 6,7,8)", () => {
+    const board = [E,E,E, E,E,E, X,X,E];
+    expect(findWinningMove(board, X)).toBe(8);
+  });
+
+  it("finds winning move for column 1 (indices 1,4,7)", () => {
+    const board = [E,O,E, E,O,E, E,E,E];
+    expect(findWinningMove(board, O)).toBe(7);
+  });
+
+  it("finds winning move for anti-diagonal (indices 2,4,6)", () => {
+    const board = [E,E,X, E,X,E, E,E,E];
+    expect(findWinningMove(board, X)).toBe(6);
+  });
+});
