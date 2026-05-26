@@ -57,3 +57,21 @@ describe("checkLine — false when cells differ", () => {
     expect(checkLine(X, O, E)).toBe(false);
   });
 });
+
+describe("checkLine — false when any cell is EMPTY", () => {
+  it("returns false when first cell is EMPTY", () => {
+    expect(checkLine(E, X, X)).toBe(false);
+  });
+
+  it("returns false when middle cell is EMPTY", () => {
+    expect(checkLine(X, E, X)).toBe(false);
+  });
+
+  it("returns false when last cell is EMPTY", () => {
+    expect(checkLine(X, X, E)).toBe(false);
+  });
+
+  it("returns false when all three cells are EMPTY", () => {
+    expect(checkLine(E, E, E)).toBe(false);
+  });
+});
