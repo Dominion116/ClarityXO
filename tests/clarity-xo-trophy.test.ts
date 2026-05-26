@@ -1216,3 +1216,32 @@ Clarinet.test({
     block.receipts[0].result.expectErr();
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-50: last-token-id matches total number of claims across all months",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+
+    advanceMonth(chain, 3);
+    setWinners(chain, deployer, 0, [p1, p2, p3, p4, p5]);
+    setWinners(chain, deployer, 1, [p1, p2, p3, p4, p5]);
+
+    // 3 claims from month 0, 2 claims from month 1 = 5 total
+    claim(chain, p1, 0);
+    claim(chain, p2, 0);
+    claim(chain, p3, 0);
+    claim(chain, p1, 1);
+    claim(chain, p2, 1);
+
+    const lastId = chain.callReadOnlyFn(
+      TROPHY, "get-last-token-id", [], deployer.address
+    ).result.expectOk();
+
+    assertEquals(lastId, types.uint(5));
+  },
+});
