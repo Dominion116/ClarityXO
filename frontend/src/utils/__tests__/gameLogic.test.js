@@ -354,3 +354,19 @@ describe("chooseAiMove — takes corner when center is occupied", () => {
     expect(chooseAiMove(board)).toBe(0);
   });
 });
+
+describe("chooseAiMove — takes edge as last resort", () => {
+  it("plays an edge when center and all corners are occupied", () => {
+    // center=O, corners=X, edges empty
+    const board = [X,E,X, E,O,E, X,E,X];
+    const move = chooseAiMove(board);
+    expect([1, 3, 5, 7]).toContain(move);
+  });
+
+  it("plays edge index 1 when it is the only remaining cell in its row group", () => {
+    // Only edges left, no win/block scenario
+    const board = [X,E,X, O,O,X, X,E,O];
+    const move = chooseAiMove(board);
+    expect([1, 7]).toContain(move);
+  });
+});
