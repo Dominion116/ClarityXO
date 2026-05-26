@@ -971,3 +971,28 @@ Clarinet.test({
     assertEquals(owner, p6.address);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-42: transfer with wrong sender returns err",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+    const p6 = accounts.get("wallet_6")!;
+
+    advanceMonth(chain, 2);
+    setWinners(chain, deployer, 1, [p1, p2, p3, p4, p5]);
+    claim(chain, p1, 1); // token 1 → p1
+
+    const block = chain.mineBlock([
+      Tx.contractCall(TROPHY, "transfer",
+        [types.uint(1), types.principal(p1.address), types.principal(p6.address)],
+        p2.address // wrong sender — p2 does not own token 1
+      ),
+    ]);
+    block.receipts[0].result.expectErr();
+  },
+});
