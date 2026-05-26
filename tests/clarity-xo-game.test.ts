@@ -1233,3 +1233,13 @@ Clarinet.test({
     b.receipts[0].result.expectOk();
   },
 });
+
+Clarinet.test({
+  name: "GAME-68: move at (2,2) is valid (max boundary)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    const b = move(chain, player, 2, 2);
+    b.receipts[0].result.expectOk();
+  },
+});
