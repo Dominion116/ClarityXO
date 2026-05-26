@@ -201,3 +201,19 @@ describe("all 9 cells on an X-won board are correctly classified", () => {
     line.forEach(idx => expect(board[idx]).toBe(O));
   });
 });
+
+describe("AI move is deterministic on the same board state", () => {
+  it("calling chooseAiMove twice on the same board returns the same index", () => {
+    const board = [X,E,E, E,O,E, E,E,E];
+    const move1 = chooseAiMove(board);
+    const move2 = chooseAiMove(board);
+    expect(move1).toBe(move2);
+  });
+
+  it("AI picks same move regardless of call order", () => {
+    const board = [X,O,E, E,E,E, E,E,E];
+    const moveA = chooseAiMove(board);
+    const moveB = chooseAiMove([...board]);
+    expect(moveA).toBe(moveB);
+  });
+});
