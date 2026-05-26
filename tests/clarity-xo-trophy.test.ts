@@ -633,3 +633,29 @@ Clarinet.test({
       .result.expectOk().expectUint(1);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-27: after 10 claims across 2 months last-token-id is 10",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const m0 = [
+      accounts.get("wallet_1")!, accounts.get("wallet_2")!,
+      accounts.get("wallet_3")!, accounts.get("wallet_4")!, accounts.get("wallet_5")!,
+    ];
+    const m1 = [
+      accounts.get("wallet_6")!, accounts.get("wallet_7")!,
+      accounts.get("wallet_8")!, accounts.get("wallet_9")!, accounts.get("wallet_10")!,
+    ];
+
+    advanceMonth(chain);
+    setWinners(chain, deployer, 0, m0);
+    m0.forEach(p => claim(chain, p, 0));
+
+    advanceMonth(chain);
+    setWinners(chain, deployer, 1, m1);
+    m1.forEach(p => claim(chain, p, 1));
+
+    chain.callReadOnlyFn(TROPHY, "get-last-token-id", [], deployer.address)
+      .result.expectOk().expectUint(10);
+  },
+});
