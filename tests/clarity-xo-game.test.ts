@@ -829,3 +829,16 @@ Clarinet.test({
     getActiveGame(chain, p3).result.expectOk().expectSome();
   },
 });
+
+Clarinet.test({
+  name: "GAME-44: five players can hold simultaneous active games",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const players = [
+      accounts.get("wallet_1")!, accounts.get("wallet_2")!,
+      accounts.get("wallet_3")!, accounts.get("wallet_4")!,
+      accounts.get("wallet_5")!,
+    ];
+    players.forEach(p => startGame(chain, p));
+    players.forEach(p => getActiveGame(chain, p).result.expectOk().expectSome());
+  },
+});
