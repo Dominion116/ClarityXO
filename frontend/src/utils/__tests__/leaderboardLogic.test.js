@@ -138,3 +138,15 @@ describe("getMonthEnd — time is 23:59:59 UTC", () => {
     expect(getMonthEnd().getUTCMinutes()).toBe(59);
   });
 });
+
+describe("getMonthEnd — is in the future relative to start of today", () => {
+  it("returned timestamp is greater than the current time minus 24 hours", () => {
+    const end  = getMonthEnd().getTime();
+    const dayAgo = Date.now() - 86400000;
+    expect(end).toBeGreaterThan(dayAgo);
+  });
+
+  it("returned timestamp is a positive number", () => {
+    expect(getMonthEnd().getTime()).toBeGreaterThan(0);
+  });
+});
