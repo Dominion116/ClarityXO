@@ -882,3 +882,30 @@ Clarinet.test({
     assertEquals(id3, types.uint(3));
   },
 });
+
+Clarinet.test({
+  name: "GAME-47: multiple players monthly stats do not interfere",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+
+    startGame(chain, p1);
+    move(chain, p1, 0, 0);
+    move(chain, p1, 0, 1);
+    move(chain, p1, 0, 2);  // p1 wins
+
+    startGame(chain, p2);
+    resign(chain, p2);      // p2 loses
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], p1.address);
+    const m = parseInt(month.result.replace("u", ""));
+
+    const s1 = getStats(chain, p1, m).result.expectTuple();
+    const s2 = getStats(chain, p2, m).result.expectTuple();
+
+    assertEquals(s1["wins"],   types.uint(1));
+    assertEquals(s2["losses"], types.uint(1));
+    assertEquals(s1["losses"], types.uint(0));
+    assertEquals(s2["wins"],   types.uint(0));
+  },
+});
