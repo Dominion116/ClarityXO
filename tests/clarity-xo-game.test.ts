@@ -537,3 +537,23 @@ Clarinet.test({
     assertEquals(totals["games"],     types.uint(1));
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 9 — All player win lines
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-26: player wins via row 1 (cells 3-4-5)",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    // P(1,0)→AI, P(1,1) but AI may take center; force row 1
+    // Use a sequence where row 1 is open and player fills it
+    move(chain, player, 2, 2); // P corner → AI center
+    move(chain, player, 1, 0); // P row-1 left → AI corner
+    move(chain, player, 1, 1); // P row-1 mid → AI blocks elsewhere
+    const b = move(chain, player, 1, 2); // P completes row 1
+    const result = b.receipts[0].result.expectOk().expectTuple();
+    assertEquals(result["status"], STATUS_X_WON);
+  },
+});
