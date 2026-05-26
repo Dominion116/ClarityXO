@@ -452,3 +452,13 @@ describe("getWinningLine — anti-diagonal (2-4-6)", () => {
     expect(getWinningLine([E,E,O, E,O,E, O,E,E])).toEqual([2,4,6]);
   });
 });
+
+describe("getWinningLine — null for empty board", () => {
+  it("returns null for a fully empty board", () => {
+    expect(getWinningLine([E,E,E, E,E,E, E,E,E])).toBeNull();
+  });
+
+  it("returns null for a board with a single piece", () => {
+    expect(getWinningLine([X,E,E, E,E,E, E,E,E])).toBeNull();
+  });
+});
