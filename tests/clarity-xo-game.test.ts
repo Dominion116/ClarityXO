@@ -774,3 +774,19 @@ Clarinet.test({
     assertEquals(movesResult, types.uint(2));
   },
 });
+
+Clarinet.test({
+  name: "GAME-41: get-game-board after 3 moves has 6 occupied cells",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    move(chain, player, 0, 0); // +2 cells
+    move(chain, player, 0, 1); // +2 cells
+    move(chain, player, 0, 2); // player wins — AI doesn't move, +1 cell
+
+    const state = chain.callReadOnlyFn(
+      GAME, "get-full-game-state", [types.uint(1)], player.address
+    ).result.expectOk().expectTuple();
+    assertEquals(state["status"], STATUS_X_WON);
+  },
+});
