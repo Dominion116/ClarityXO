@@ -276,3 +276,22 @@ describe("findWinningMove — returns -1 when no winning move exists", () => {
     expect(findWinningMove([X,X,O, E,E,E, E,E,E], X)).toBe(-1);
   });
 });
+
+// ── chooseAiMove ─────────────────────────────────────────────────────────────
+
+describe("chooseAiMove — takes winning move when available", () => {
+  it("completes row 1 for O when two Os are in row 1", () => {
+    const board = [X,E,E, O,O,E, E,E,X];
+    expect(chooseAiMove(board)).toBe(5);
+  });
+
+  it("completes column 2 for O when two Os are in column 2", () => {
+    const board = [E,E,O, E,E,O, E,E,E];
+    expect(chooseAiMove(board)).toBe(8);
+  });
+
+  it("completes main diagonal for O when O is at 0 and 4", () => {
+    const board = [O,X,E, E,O,E, E,E,E];
+    expect(chooseAiMove(board)).toBe(8);
+  });
+});
