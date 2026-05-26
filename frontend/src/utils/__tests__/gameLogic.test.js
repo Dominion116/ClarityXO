@@ -237,3 +237,17 @@ describe("findWinningMove — finds row winning move", () => {
     expect(findWinningMove([E,E,E, E,E,E, E,X,X], X)).toBe(6);
   });
 });
+
+describe("findWinningMove — finds column winning move", () => {
+  it("finds index 6 to complete O column 0", () => {
+    expect(findWinningMove([O,E,E, O,E,E, E,E,E], O)).toBe(6);
+  });
+
+  it("finds index 7 to complete X column 1", () => {
+    expect(findWinningMove([E,X,E, E,X,E, E,E,E], X)).toBe(7);
+  });
+
+  it("finds index 2 to complete X column 2", () => {
+    expect(findWinningMove([E,E,E, E,E,X, E,E,X], X)).toBe(2);
+  });
+});
