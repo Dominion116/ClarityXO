@@ -727,3 +727,25 @@ Clarinet.test({
     assertEquals(meta["player"], p2.address);
   },
 });
+
+Clarinet.test({
+  name: "TROPHY-32: rank-3 through rank-5 meta has correct ranks",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const players = [
+      accounts.get("wallet_1")!, accounts.get("wallet_2")!,
+      accounts.get("wallet_3")!, accounts.get("wallet_4")!, accounts.get("wallet_5")!,
+    ];
+
+    advanceMonth(chain);
+    setWinners(chain, deployer, 0, players);
+    players.forEach(p => claim(chain, p, 0));
+
+    for (let i = 2; i < 5; i++) {
+      const meta = chain.callReadOnlyFn(
+        TROPHY, "get-trophy-meta", [types.uint(i + 1)], players[i].address
+      ).result.expectOk().expectSome().expectTuple();
+      assertEquals(meta["rank"], types.uint(i + 1));
+    }
+  },
+});
