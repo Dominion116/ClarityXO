@@ -36,3 +36,23 @@ describe("STATUS constants are 0,1,2,3 respectively", () => {
     expect(STATUS_DRAW).toBe(3);
   });
 });
+
+// ── Distinctness ──────────────────────────────────────────────────────────────
+
+describe("all constants are distinct with no collisions", () => {
+  it("cell constants are all different from each other", () => {
+    expect(EMPTY).not.toBe(PLAYER_X);
+    expect(EMPTY).not.toBe(PLAYER_O);
+    expect(PLAYER_X).not.toBe(PLAYER_O);
+  });
+
+  it("STATUS constants are all different from each other", () => {
+    const statuses = [STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW];
+    const unique = new Set(statuses);
+    expect(unique.size).toBe(4);
+  });
+
+  it("EMPTY does not collide with any STATUS constant", () => {
+    expect(EMPTY).toBe(STATUS_ACTIVE);
+  });
+});
