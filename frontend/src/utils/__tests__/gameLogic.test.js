@@ -87,3 +87,13 @@ describe("checkWinner — row 0 wins", () => {
     expect(checkWinner([O,O,O, E,E,E, E,E,E])).toBe(O);
   });
 });
+
+describe("checkWinner — row 1 wins", () => {
+  it("returns PLAYER_X when X occupies row 1", () => {
+    expect(checkWinner([E,E,E, X,X,X, E,E,E])).toBe(X);
+  });
+
+  it("returns PLAYER_O when O occupies row 1", () => {
+    expect(checkWinner([E,E,E, O,O,O, E,E,E])).toBe(O);
+  });
+});
