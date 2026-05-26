@@ -1099,3 +1099,13 @@ Clarinet.test({
     b.receipts[0].result.expectErr().expectUint(102);
   },
 });
+
+Clarinet.test({
+  name: "GAME-59: second start-game while active returns u106",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    startGame(chain, player);
+    const b = startGame(chain, player);
+    b.receipts[0].result.expectErr().expectUint(106);
+  },
+});
