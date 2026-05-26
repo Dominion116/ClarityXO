@@ -163,3 +163,15 @@ describe("getPlayerList — empty players object", () => {
     expect(Array.isArray(result)).toBe(true);
   });
 });
+
+describe("getPlayerList — single player", () => {
+  it("returns an array with one entry for a single player", () => {
+    const data = { players: { "SP1": { pts: 3, wins: 1, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)).toHaveLength(1);
+  });
+
+  it("maps addr field correctly for single player", () => {
+    const data = { players: { "SP1": { pts: 3, wins: 1, draws: 0, losses: 0 } } };
+    expect(getPlayerList(data)[0].addr).toBe("SP1");
+  });
+});
