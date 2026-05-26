@@ -609,3 +609,27 @@ Clarinet.test({
     getRank(chain, 2, p1).result.expectOk().expectSome().expectUint(1);
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 7 — Token minting sequence
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "TROPHY-26: first claim mints token with id 1",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get("deployer")!;
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    const p3 = accounts.get("wallet_3")!;
+    const p4 = accounts.get("wallet_4")!;
+    const p5 = accounts.get("wallet_5")!;
+
+    advanceMonth(chain);
+    setWinners(chain, deployer, 0, [p1, p2, p3, p4, p5]);
+    claim(chain, p1, 0);
+
+    getOwner(chain, 1, p1).result.expectOk().expectSome().expectPrincipal(p1.address);
+    chain.callReadOnlyFn(TROPHY, "get-last-token-id", [], deployer.address)
+      .result.expectOk().expectUint(1);
+  },
+});
