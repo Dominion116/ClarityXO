@@ -2,8 +2,8 @@ import React from "react";
 const STEPS = [
   { num: "01", title: "Connect Wallet", time: "~30 sec", desc: "Link your Leather or Xverse wallet. Your STX address becomes your player identity on the Stacks network." },
   { num: "02", title: "Make a Move", time: "~5 sec", desc: "Click a cell. A transaction is broadcast to the Clarity smart contract. The AI opponent responds instantly on-chain." },
-  { num: "03", title: "Earn Points", time: "Instant", desc: "Win = 3 pts · Draw = 1 pt · Loss = 0 pts. Points accumulate weekly. Every result is recorded permanently." },
-  { num: "04", title: "Claim Trophy NFT", time: "Weekly", desc: "Top 5 players each week receive a ClarityXO Trophy NFT, minted directly to their Stacks wallet at week end." },
+  { num: "03", title: "Earn Points", time: "Instant", desc: "Win = 3 pts · Draw = 1 pt · Loss = 0 pts. Points accumulate each month. Every result is recorded permanently." },
+  { num: "04", title: "Claim Trophy NFT", time: "Monthly", desc: "Top 5 players each month receive a ClarityXO Trophy NFT, minted directly to their Stacks wallet at month end." },
 ];
 export default function HowItWorks() {
   return (
@@ -41,7 +41,7 @@ export default function HowItWorks() {
         <span className="lp-hiw-avg-sep" aria-hidden="true">·</span>
         <span className="lp-hiw-avg-item"><span className="lp-hiw-avg-val">instant</span> AI response</span>
         <span className="lp-hiw-avg-sep" aria-hidden="true">·</span>
-        <span className="lp-hiw-avg-item"><span className="lp-hiw-avg-val">weekly</span> NFT mint</span>
+        <span className="lp-hiw-avg-item"><span className="lp-hiw-avg-val">monthly</span> NFT mint</span>
       </div>
       <div className="lp-section-link lp-fade">
         <a className="lp-section-link-a" href="#contract" onClick={(e) => { e.preventDefault(); document.getElementById("contract")?.scrollIntoView({ behavior: "smooth" }); }}>
