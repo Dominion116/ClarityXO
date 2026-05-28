@@ -10,8 +10,8 @@ export default function LeaderboardPreview({ onLaunch }) {
   return (
     <section className="lp-lb-preview" id="leaderboard">
       <div className="lp-section-title lp-fade">Leaderboard Preview</div>
-      <table className="lp-lb-table" aria-label="Weekly leaderboard preview — top 6 players by points">
-        <caption className="sr-only">Weekly leaderboard preview. Top 5 players qualify for Trophy NFT. Rankings reset every Sunday.</caption>
+      <table className="lp-lb-table" aria-label="Monthly leaderboard preview — top 6 players by points">
+        <caption className="sr-only">Monthly leaderboard preview. Top 5 players qualify for Trophy NFT. Rankings reset at month end.</caption>
         <colgroup>
           <col style={{ width: 58 }} />
           <col />
@@ -62,7 +62,7 @@ export default function LeaderboardPreview({ onLaunch }) {
         <span className="lp-lb-legend-sep" aria-hidden="true">·</span>
         <span className="lp-lb-legend-item">Win = 3 pts · Draw = 1 pt · Loss = 0 pts</span>
         <span className="lp-lb-legend-sep" aria-hidden="true">·</span>
-        <span className="lp-lb-legend-item">Resets Sunday 23:59 UTC</span>
+        <span className="lp-lb-legend-item">Resets at month end 23:59 UTC</span>
       </div>
       <div className="lp-lb-cta-row lp-fade">
         <a className="lp-cta-secondary" href="#leaderboard" onClick={(e) => { e.preventDefault(); onLaunch?.(); }}>
