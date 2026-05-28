@@ -71,11 +71,11 @@ export default function ContractSection() {
             {"\n  "}{`;; Broadcasts your move + AI response`}{"\n)\n\n"}
             <span className="code-kw">(define-public</span> (<span className="code-fn">resign-game</span>)
             {"\n  "}{`;; Forfeit current game`}{"\n)\n\n"}
-            <span className="code-kw">(define-read-only</span> (<span className="code-fn">get-board-state</span>))
+            <span className="code-kw">(define-read-only</span> (<span className="code-fn">get-game-board</span>))
             {"\n"}
             <span className="code-kw">(define-read-only</span> (<span className="code-fn">get-game-status</span>))
             {"\n"}
-            <span className="code-kw">(define-read-only</span> (<span className="code-fn">get-moves-count</span>))
+            <span className="code-kw">(define-read-only</span> (<span className="code-fn">get-game-moves</span>))
           </div>
         </div>
       </div>
