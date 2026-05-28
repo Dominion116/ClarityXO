@@ -4,9 +4,9 @@ const ITEMS = [
   { color: "gold", text: "SP1KF…4ABF played [0,2]", result: "Draw", pts: "+1 pt" },
   { color: "r", text: "SP3J8…7CXE played [2,0]", result: "Loss", pts: "+0 pts" },
   { color: "g", text: "TX broadcast: 0x7f2b… confirmed", result: null, pts: null },
-  { color: "gold", text: "NFT Trophy minted → rank #2 · W08", result: null, pts: null },
+  { color: "gold", text: "NFT Trophy minted → rank #2 · M05", result: null, pts: null },
   { color: "g", text: "SP9R1…1MNQ played [0,0]", result: "Win", pts: "+3 pts" },
-  { color: "g", text: "New weekly record: 47 wins", result: null, pts: null },
+  { color: "g", text: "New monthly record: 47 wins", result: null, pts: null },
   { color: "gold", text: "SP2V8…8BPL qualifies for NFT drop", result: null, pts: null },
 ];
 export default function Ticker() {
