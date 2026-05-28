@@ -11,7 +11,7 @@ const ITEMS = [
   },
   {
     q: "How do I claim a Trophy NFT?",
-    a: "You don't need to do anything. If you finish in the top 5 at Sunday 23:59 UTC, the trophy is minted automatically to your Stacks wallet address around Monday 01:00 UTC.",
+    a: "You don't need to do anything. If you finish in the top 5 at the end of the month, the trophy is minted automatically to your Stacks wallet address after the month resets.",
   },
   {
     q: "Are NFTs tradable?",
