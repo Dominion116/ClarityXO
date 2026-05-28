@@ -2,7 +2,7 @@ const TRUST_BADGES = [
   { icon: "⊛", label: "Open Source" },
   { icon: "◈", label: "Stacks Mainnet" },
   { icon: "⌘", label: "Clarity Contract" },
-  { icon: "◎", label: "Weekly NFT Prizes" },
+  { icon: "◎", label: "Monthly NFT Prizes" },
 ];
 
 export default function FinalCTA({ onLaunch }) {
