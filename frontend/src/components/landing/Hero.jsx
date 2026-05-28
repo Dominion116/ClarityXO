@@ -9,7 +9,7 @@ export default function Hero({ onLaunch }) {
         <div className="lp-proof-chips fade-up d2">
           <span className="lp-proof-chip">✓ Deployed on Stacks Mainnet</span>
           <span className="lp-proof-chip">✓ Fully on-chain AI</span>
-          <span className="lp-proof-chip">✓ Weekly NFT prizes</span>
+          <span className="lp-proof-chip">✓ Monthly NFT prizes</span>
         </div>
         <h1 className="lp-hero-h1 fade-up d2">
           Tic-Tac-Toe<br /><span>on-chain.</span><br />Forever.
@@ -19,7 +19,7 @@ export default function Hero({ onLaunch }) {
           Compete for weekly NFT trophies on the Stacks network.
         </p>
         <p className="lp-hero-subcopy fade-up d3">
-          Leaderboard resets every Sunday · Top 5 earn a Trophy NFT · No gas for draws
+          Leaderboard resets every month · Top 5 earn a Trophy NFT · No gas for draws
         </p>
         <p className="lp-hero-wallets fade-up d3">
           Works with <span>Leather</span> and <span>Xverse</span> wallets
@@ -46,7 +46,7 @@ export default function Hero({ onLaunch }) {
           <div className="lp-hero-stat">
             <div className="lp-stat-glyph" aria-hidden="true">◈</div>
             <div className="lp-stat-val gold">5</div>
-            <div className="lp-stat-label">NFT slots/week</div>
+            <div className="lp-stat-label">NFT slots/month</div>
             <div className="lp-stat-hint">top 5 by points</div>
           </div>
         </div>
