@@ -72,12 +72,9 @@ export default function LandingHeader({ onLaunch }) {
         </nav>
       </div>
       <div className="header-right">
-        <div className="lp-badge-group">
-          <div className="badge" role="status" aria-label="Network status: mainnet active">
-            <span className="badge-dot" aria-hidden="true"></span>
-            mainnet
-          </div>
-          <div className="lp-badge-sub" aria-hidden="true">Network: Stacks Mainnet</div>
+        <div className="badge" role="status" aria-label="Network status: Stacks mainnet active">
+          <span className="badge-dot" aria-hidden="true"></span>
+          mainnet
         </div>
         <button className="launch-btn" onClick={onLaunch}>Launch App</button>
         <button

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Section } from "../ui";
 
 const ITEMS = [
   {
@@ -30,8 +31,7 @@ const ITEMS = [
 export default function FAQ() {
   const [open, setOpen] = useState(null);
   return (
-    <section className="lp-faq" id="faq">
-      <div className="lp-section-title lp-fade">FAQ</div>
+    <Section id="faq" index="06" kicker="FAQ" title="Common questions">
       <div className="lp-faq-list">
         {ITEMS.map((item, i) => (
           <div className="lp-faq-item" key={i}>
@@ -51,6 +51,6 @@ export default function FAQ() {
           </div>
         ))}
       </div>
-    </section>
+    </Section>
   );
 }
