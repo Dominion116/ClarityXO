@@ -9,7 +9,7 @@ const ROWS = [
   { rank: 5, medalCls: "mgold", addr: "SP3J…7CXE", pts: 7,  w: 2,  d: 1, l: 4, wr: 28, delta: "+1" },
   { rank: 6, medalCls: "mn",    addr: "SP4L…2RTY", pts: 3,  w: 1,  d: 0, l: 5, wr: 16, delta: "0"  },
 ];
-export default function LeaderboardPreview({ onLaunch }) {
+export default function LeaderboardPreview({ onLaunch, onLeaderboard }) {
   return (
     <Section
       id="leaderboard"
@@ -66,7 +66,7 @@ export default function LeaderboardPreview({ onLaunch }) {
         </tbody>
       </table>
       <div className="lp-lb-cta-row cxo-reveal">
-        <Button variant="secondary" size="sm" onClick={() => onLaunch?.()}>
+        <Button variant="secondary" size="sm" onClick={() => (onLeaderboard ?? onLaunch)?.()}>
           See full leaderboard →
         </Button>
       </div>

@@ -238,7 +238,7 @@ export default function App() {
   return (
     <>
       {activePage === 'landing' && (
-        <Landing onLaunch={() => setActivePage('game')} />
+        <Landing onLaunch={() => setActivePage('game')} onLeaderboard={() => setActivePage('leaderboard')} />
       )}
       {activePage !== 'landing' && (
         <>
