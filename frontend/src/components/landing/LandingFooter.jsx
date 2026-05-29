@@ -1,50 +1,31 @@
-const SOCIALS = [
-  { label: "Farcaster", href: "https://warpcast.com", icon: "⌘" },
-  { label: "Discord", href: "#", icon: "◈" },
-  { label: "GitHub", href: "https://github.com/Dominion116/ClarityXO", icon: "⊛" },
+const LINKS = [
+  { label: "Contract", href: "https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" },
+  { label: "GitHub ↗", href: "https://github.com/Dominion116/ClarityXO" },
+  { label: "Stacks", href: "https://stacks.co" },
+  { label: "Farcaster", href: "https://warpcast.com" },
 ];
 
 export default function LandingFooter() {
   const scrollTop = () => document.getElementById("top")?.scrollIntoView({ behavior: "smooth" });
+
   return (
-    <footer className="lp-footer">
-      <div className="lp-footer-left">
-        <div className="lp-footer-logo">Clarity<span>XO</span></div>
-        <div className="lp-footer-links">
-          <a className="lp-footer-link" href="https://stacks.co" target="_blank" rel="noopener noreferrer">Stacks</a>
-          <a className="lp-footer-link" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">Contract</a>
-          <a className="lp-footer-link" href="https://github.com/Dominion116/ClarityXO" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-          <a className="lp-footer-link" href="https://warpcast.com" target="_blank" rel="noopener noreferrer">Farcaster</a>
-          <span className="lp-footer-link" style={{ cursor: "default" }}>Telegram</span>
-        </div>
+    <footer className="cxo-footer">
+      <div className="cxo-footer-main">
+        <div className="cxo-footer-brand">Clarity<span>XO</span></div>
+        <nav className="cxo-footer-links" aria-label="Footer">
+          {LINKS.map((l) => (
+            <a key={l.label} className="cxo-footer-link" href={l.href} target="_blank" rel="noopener noreferrer">
+              {l.label}
+            </a>
+          ))}
+          <button type="button" className="cxo-footer-link" onClick={scrollTop} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--mono)" }}>
+            ↑ Top
+          </button>
+        </nav>
       </div>
-      <div className="lp-footer-right">
-        Built on Stacks · Clarity · {new Date().getFullYear()}
-        <button className="lp-back-to-top" onClick={scrollTop} aria-label="Back to top">↑ Top</button>
-      </div>
-      <div className="lp-footer-socials">
-        {SOCIALS.map(s => (
-          <a key={s.label} className="lp-footer-social" href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
-            <span className="lp-footer-social-icon" aria-hidden="true">{s.icon}</span>
-            {s.label}
-          </a>
-        ))}
-      </div>
-      <div className="lp-footer-status" aria-label="Build information">
-        <span>v1.0.0</span>
-        <span className="lp-footer-status-sep" aria-hidden="true">·</span>
-        <span>Stacks Mainnet</span>
-        <span className="lp-footer-status-sep" aria-hidden="true">·</span>
-        <span>Clarity v2</span>
-        <span className="lp-footer-status-sep" aria-hidden="true">·</span>
-        <span>Open Source</span>
-      </div>
-      <div className="lp-footer-legal">
-        <span className="lp-footer-legal-item">No financial advice · Play at your own risk</span>
-        <span className="lp-footer-legal-sep" aria-hidden="true">·</span>
-        <a className="lp-footer-legal-link" href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }}>Terms</a>
-        <span className="lp-footer-legal-sep" aria-hidden="true">·</span>
-        <a className="lp-footer-legal-link" href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }}>Privacy</a>
+      <div className="cxo-footer-bar">
+        <span>Built on Stacks · Clarity v2 · {new Date().getFullYear()}</span>
+        <span>v1.0.0 · Open Source · No financial advice</span>
       </div>
     </footer>
   );
