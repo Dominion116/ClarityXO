@@ -1,60 +1,49 @@
+import React from "react";
 import DemoBoard from "./DemoBoard";
+import { Button, Stat, StatGroup } from "../ui";
+
+const TRUST = ["Non-custodial", "No sign-up", "Leather & Xverse"];
+
 export default function Hero({ onLaunch }) {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
   return (
     <section className="lp-hero" id="top">
       <div className="lp-hero-grid" aria-hidden="true"></div>
-      <div className="lp-hero-content">
-        <div className="lp-hero-eyebrow fade-up d1">Stacks Mainnet · Open-Source · Clarity Contract</div>
-        <div className="lp-proof-chips fade-up d2">
-          <span className="lp-proof-chip">✓ Deployed on Stacks Mainnet</span>
-          <span className="lp-proof-chip">✓ Fully on-chain AI</span>
-          <span className="lp-proof-chip">✓ Monthly NFT prizes</span>
-        </div>
-        <h1 className="lp-hero-h1 fade-up d2">
-          Tic-Tac-Toe<br /><span>on-chain.</span><br />Forever.
+
+      <div className="lp-hero-content cxo-reveal">
+        <p className="cxo-hero-eyebrow">Stacks Mainnet · Open Source</p>
+
+        <h1 className="cxo-hero-title">
+          Tic-Tac-Toe,<br />
+          <span>fully on-chain.</span>
         </h1>
-        <p className="lp-hero-sub fade-up d3">
-          Every move is a blockchain transaction. Every win is recorded permanently.
-          Compete for weekly NFT trophies on the Stacks network.
+
+        <p className="cxo-hero-sub">
+          Every move is a Stacks transaction and every result is recorded
+          permanently. Finish the month in the top 5 to earn a Trophy NFT.
         </p>
-        <p className="lp-hero-subcopy fade-up d3">
-          Leaderboard resets every month · Top 5 earn a Trophy NFT · No gas for draws
-        </p>
-        <p className="lp-hero-wallets fade-up d3">
-          Works with <span>Leather</span> and <span>Xverse</span> wallets
-        </p>
-        <div className="lp-hero-ctas fade-up d4">
-          <button className="lp-cta-primary" onClick={onLaunch}>Play Now</button>
-          <button className="lp-cta-secondary" onClick={() => scrollTo("how-it-works")}>How It Works</button>
-          <a className="lp-cta-ghost" href="https://explorer.hiro.so/address/SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y?chain=mainnet" target="_blank" rel="noopener noreferrer">View Contract ↗</a>
+
+        <div className="cxo-hero-ctas">
+          <Button size="lg" onClick={onLaunch}>Play Now</Button>
+          <Button variant="secondary" size="lg" onClick={() => scrollTo("how-it-works")}>
+            How It Works
+          </Button>
         </div>
-        <p className="lp-hero-trust fade-up d4">No sign-up · Non-custodial · Your keys, your trophies</p>
-        <div className="lp-hero-stats fade-up d5">
-          <div className="lp-hero-stat">
-            <div className="lp-stat-glyph" aria-hidden="true">⊞</div>
-            <div className="lp-stat-val red">9</div>
-            <div className="lp-stat-label">Cells on-chain</div>
-            <div className="lp-stat-hint">every move a tx</div>
-          </div>
-          <div className="lp-hero-stat">
-            <div className="lp-stat-glyph" aria-hidden="true">◎</div>
-            <div className="lp-stat-val green">+3</div>
-            <div className="lp-stat-label">pts per win</div>
-            <div className="lp-stat-hint">draw +1 · loss 0</div>
-          </div>
-          <div className="lp-hero-stat">
-            <div className="lp-stat-glyph" aria-hidden="true">◈</div>
-            <div className="lp-stat-val gold">5</div>
-            <div className="lp-stat-label">NFT slots/month</div>
-            <div className="lp-stat-hint">top 5 by points</div>
-          </div>
-        </div>
+
+        <p className="cxo-hero-trust" aria-label="Key guarantees">
+          {TRUST.map((t) => <span key={t}>{t}</span>)}
+        </p>
+
+        <StatGroup aria-label="Game at a glance">
+          <Stat value="9"  label="cells on-chain"   tone="red" />
+          <Stat value="+3" label="points per win"   tone="green" />
+          <Stat value="5"  label="NFT slots / month" tone="gold" />
+        </StatGroup>
       </div>
-      <div className="fade-up d6"><DemoBoard /></div>
-      <div className="lp-scroll-hint fade-up d6" onClick={() => scrollTo("how-it-works")} aria-label="Scroll to Protocol section">
-        <span className="lp-scroll-hint-arrow">↓</span>
-        <span className="lp-scroll-hint-label">scroll</span>
+
+      <div className="cxo-reveal">
+        <DemoBoard />
       </div>
     </section>
   );
