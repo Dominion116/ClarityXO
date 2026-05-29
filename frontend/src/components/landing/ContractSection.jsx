@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { CONFIG } from "../../config";
+import { Section, Button } from "../ui";
 
 function useCopyToast() {
   const [copied, setCopied] = useState(false);
   const copy = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard?.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
@@ -12,54 +13,54 @@ function useCopyToast() {
   return [copied, copy];
 }
 
+const explorerHref = `https://explorer.hiro.so/address/${CONFIG.contractAddress}.${CONFIG.contractName}?chain=mainnet`;
+
 export default function ContractSection() {
   const [copied, copy] = useCopyToast();
   const [nftCopied, copyNft] = useCopyToast();
   const [expanded, setExpanded] = useState(false);
+
   return (
-    <section className="lp-contract-section" id="contract">
-      <div className="lp-section-title lp-fade">Smart Contract</div>
-      <div className="lp-contract-grid">
-        <div className="lp-contract-left">
-          <div className="lp-contract-label">Contract Address · Stacks Mainnet</div>
+    <Section
+      id="contract"
+      index="05"
+      kicker="On-chain"
+      title="Read the contract yourself"
+      lead="The full game and trophy logic is deployed on Stacks mainnet and publicly readable — Clarity is its own audit."
+    >
+      <div className="cxo-contract">
+        <div className="lp-contract-left cxo-reveal" style={{ border: "1px solid var(--border2)", borderRadius: "var(--cxo-radius)" }}>
+          <div className="lp-contract-label">Game Contract · Stacks Mainnet</div>
           <div className="lp-contract-addr-row">
             <div className="lp-contract-addr"><span>{CONFIG.contractAddress}</span><br />.{CONFIG.contractName}</div>
-            <button className="lp-copy-btn" onClick={() => copy(`${CONFIG.contractAddress}.${CONFIG.contractName}`)} aria-label="Copy contract address">
+            <button className="lp-copy-btn" onClick={() => copy(`${CONFIG.contractAddress}.${CONFIG.contractName}`)} aria-label="Copy game contract address">
               {copied ? "✓ Copied" : "Copy"}
             </button>
           </div>
-          {copied && <div className="lp-copy-toast" role="status">Address copied to clipboard</div>}
-          <a className="lp-explorer-btn"
-            href={`https://explorer.hiro.so/address/${CONFIG.contractAddress}.${CONFIG.contractName}?chain=mainnet`}
-            target="_blank" rel="noopener noreferrer">
-            View in Explorer ↗
-          </a>
-          <div className="lp-contract-label">NFT Trophy Contract</div>
+
+          <div className="lp-contract-label">Trophy NFT Contract</div>
           <div className="lp-contract-addr-row">
-            <div className="lp-contract-addr" style={{ fontSize: "10px", color: "var(--muted)" }}>
+            <div className="lp-contract-addr" style={{ fontSize: "10px", color: "var(--text-2)" }}>
               {CONFIG.nftContractAddress}<br />.{CONFIG.nftContractName}
             </div>
             <button className="lp-copy-btn" onClick={() => copyNft(`${CONFIG.nftContractAddress}.${CONFIG.nftContractName}`)} aria-label="Copy NFT contract address">
               {nftCopied ? "✓" : "Copy"}
             </button>
           </div>
-          {nftCopied && <div className="lp-copy-toast" role="status">NFT address copied</div>}
-          <div className="lp-contract-status-row">
-            <span className="lp-contract-status-item">Last tx: <span className="lp-status-val">—</span></span>
-            <span className="lp-contract-status-sep" aria-hidden="true">·</span>
-            <span className="lp-contract-status-item">Block: <span className="lp-status-val">—</span></span>
-            <span className="lp-contract-status-sep" aria-hidden="true">·</span>
-            <span className="lp-contract-status-item">Status: <span className="lp-status-val live-text">Live</span></span>
+
+          <div aria-live="polite" className="sr-only">
+            {copied ? "Game address copied to clipboard" : nftCopied ? "NFT address copied to clipboard" : ""}
           </div>
-          <div className="lp-network-indicators">
-            <div className="lp-net-indicator"><span className="lp-net-dot live"></span>Mainnet Active</div>
-            <div className="lp-net-indicator"><span className="lp-net-dot off"></span>Devnet Off</div>
-          </div>
+
+          <Button as="a" variant="secondary" size="sm" href={explorerHref} target="_blank" rel="noopener noreferrer">
+            View in Explorer ↗
+          </Button>
         </div>
-        <div className="lp-contract-right">
+
+        <div className="lp-contract-right cxo-reveal" style={{ border: "1px solid var(--border2)", borderRadius: "var(--cxo-radius)" }}>
           <div className="lp-contract-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>Public Functions</span>
-            <button className="lp-code-toggle" onClick={() => setExpanded(e => !e)} aria-expanded={expanded}>
+            <button className="lp-code-toggle" onClick={() => setExpanded((e) => !e)} aria-expanded={expanded}>
               {expanded ? "Collapse ↑" : "Expand ↓"}
             </button>
           </div>
@@ -79,6 +80,6 @@ export default function ContractSection() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
