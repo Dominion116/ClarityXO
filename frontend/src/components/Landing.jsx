@@ -1,44 +1,38 @@
 import React, { useEffect } from "react";
-import LandingHeader    from "./landing/LandingHeader";
-import Ticker           from "./landing/Ticker";
-import Hero             from "./landing/Hero";
-import SectionDivider   from "./landing/SectionDivider";
-import HowItWorks       from "./landing/HowItWorks";
-import Features         from "./landing/Features";
-import NFTSection       from "./landing/NFTSection";
+import LandingHeader      from "./landing/LandingHeader";
+import Ticker             from "./landing/Ticker";
+import Hero               from "./landing/Hero";
+import HowItWorks         from "./landing/HowItWorks";
+import Features           from "./landing/Features";
+import NFTSection         from "./landing/NFTSection";
 import LeaderboardPreview from "./landing/LeaderboardPreview";
-import ContractSection  from "./landing/ContractSection";
-import FinalCTA         from "./landing/FinalCTA";
-import LandingFooter    from "./landing/LandingFooter";
-import FAQ              from "./landing/FAQ";
+import ContractSection    from "./landing/ContractSection";
+import FinalCTA           from "./landing/FinalCTA";
+import LandingFooter      from "./landing/LandingFooter";
+import FAQ                from "./landing/FAQ";
 
 export default function Landing({ onLaunch }) {
+  // Single reveal-on-scroll observer for everything tagged .cxo-reveal.
+  // Replaces the per-element inline-style juggling the old version did and
+  // degrades gracefully (no IntersectionObserver → content shown immediately).
   useEffect(() => {
-    const targets = document.querySelectorAll(".lp-step, .lp-feature, .lp-nft-tier, .lp-fade");
+    const els = Array.from(document.querySelectorAll(".cxo-reveal"));
+    if (!("IntersectionObserver" in window) || els.length === 0) {
+      els.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (entry.target.classList.contains("lp-fade")) {
-              entry.target.classList.add("visible");
-            } else {
-              entry.target.style.opacity = "1";
-              entry.target.style.transform = "translateY(0)";
-            }
+            entry.target.classList.add("is-visible");
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
     );
-    targets.forEach((el) => {
-      if (!el.classList.contains("lp-fade")) {
-        el.style.opacity = "0";
-        el.style.transform = "translateY(12px)";
-        el.style.transition = "opacity .5s ease, transform .5s ease";
-      }
-      observer.observe(el);
-    });
+    els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
@@ -49,18 +43,12 @@ export default function Landing({ onLaunch }) {
       <Ticker />
       <main id="main-content">
         <Hero onLaunch={onLaunch} />
-        <SectionDivider label="Protocol" num="01" />
         <HowItWorks />
-        <SectionDivider label="Features" num="02" />
         <Features />
-        <SectionDivider label="Rewards" num="03" />
         <NFTSection />
-        <SectionDivider label="Rankings" num="04" />
         <LeaderboardPreview onLaunch={onLaunch} />
-        <SectionDivider label="Protocol" num="05" />
         <ContractSection />
         <FinalCTA onLaunch={onLaunch} />
-        <SectionDivider label="FAQ" num="06" />
         <FAQ />
       </main>
       <LandingFooter />
