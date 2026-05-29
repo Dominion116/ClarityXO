@@ -49,7 +49,7 @@ export default function Section({
   return (
     <section className={cls} id={id}>
       {(kicker || title) && (
-        <header className="cxo-section-head cxo-reveal">
+        <header className="cxo-section-head">
           {(kicker || index) && (
             <p className="cxo-section-kicker">
               {kicker}
