@@ -6,6 +6,7 @@ import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
 import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
 import './index.css';
+import './styles/refresh.css';
 
 import Landing from "./components/Landing";
 import Game from "./components/Game";
