@@ -1,3 +1,6 @@
+import React from "react";
+import { Section, Button } from "../ui";
+
 const ROWS = [
   { rank: 1, medalCls: "m1",    addr: "SP1P…3ZGM", pts: 21, w: 7,  d: 0, l: 1, wr: 87, delta: "+3" },
   { rank: 2, medalCls: "m2",    addr: "SP1K…4ABF", pts: 16, w: 5,  d: 1, l: 2, wr: 62, delta: "+1" },
@@ -8,8 +11,13 @@ const ROWS = [
 ];
 export default function LeaderboardPreview({ onLaunch }) {
   return (
-    <section className="lp-lb-preview" id="leaderboard">
-      <div className="lp-section-title lp-fade">Leaderboard Preview</div>
+    <Section
+      id="leaderboard"
+      index="04"
+      kicker="Rankings"
+      title="Live monthly leaderboard"
+      lead="Win = 3 pts · Draw = 1 pt · Loss = 0 pts. The top 5 at month end qualify for a Trophy NFT."
+    >
       <table className="lp-lb-table" aria-label="Monthly leaderboard preview — top 6 players by points">
         <caption className="sr-only">Monthly leaderboard preview. Top 5 players qualify for Trophy NFT. Rankings reset at month end.</caption>
         <colgroup>
@@ -57,18 +65,11 @@ export default function LeaderboardPreview({ onLaunch }) {
           ))}
         </tbody>
       </table>
-      <div className="lp-lb-legend" aria-label="Legend">
-        <span className="lp-lb-legend-item nft-indicator">Top 5 qualify for Trophy NFT</span>
-        <span className="lp-lb-legend-sep" aria-hidden="true">·</span>
-        <span className="lp-lb-legend-item">Win = 3 pts · Draw = 1 pt · Loss = 0 pts</span>
-        <span className="lp-lb-legend-sep" aria-hidden="true">·</span>
-        <span className="lp-lb-legend-item">Resets at month end 23:59 UTC</span>
-      </div>
-      <div className="lp-lb-cta-row lp-fade">
-        <a className="lp-cta-secondary" href="#leaderboard" onClick={(e) => { e.preventDefault(); onLaunch?.(); }}>
+      <div className="lp-lb-cta-row cxo-reveal">
+        <Button variant="secondary" size="sm" onClick={() => onLaunch?.()}>
           See full leaderboard →
-        </a>
+        </Button>
       </div>
-    </section>
+    </Section>
   );
 }
