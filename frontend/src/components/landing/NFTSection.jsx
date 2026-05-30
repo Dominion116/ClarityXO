@@ -37,7 +37,7 @@ const RULES = [
   "Standard SIP-009 NFTs, freely tradable",
 ];
 
-const explorerHref = `https://explorer.hiro.so/address/${CONFIG.nftContractAddress}?chain=mainnet`;
+const explorerHref = `https://explorer.hiro.so/address/${CONFIG.nftContractAddress}.${CONFIG.nftContractName}?chain=mainnet`;
 
 export default function NFTSection() {
   const countdown = useMonthCountdown();
