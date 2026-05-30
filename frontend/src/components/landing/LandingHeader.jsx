@@ -6,6 +6,12 @@ export default function LandingHeader({ onLaunch }) {
   const [activeSection, setActiveSection] = useState("top");
   const [shrunk, setShrunk] = useState(false);
   const menuRef = useRef(null);
+  const hamburgerRef = useRef(null);
+
+  const closeMenu = (returnFocus = true) => {
+    setMobileMenuOpen(false);
+    if (returnFocus) hamburgerRef.current?.focus();
+  };
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
@@ -26,6 +32,7 @@ export default function LandingHeader({ onLaunch }) {
         if (sec && sec.getBoundingClientRect().top <= 80) current = id;
       }
       setActiveSection(current);
+      // Close menu on scroll without stealing focus (user is interacting elsewhere)
       setMobileMenuOpen(false);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -35,11 +42,12 @@ export default function LandingHeader({ onLaunch }) {
   useEffect(() => {
     const onOutsideClick = (e) => {
       if (mobileMenuOpen && menuRef.current && !menuRef.current.contains(e.target)) {
+        // Outside click: don't steal focus — user clicked something else intentionally
         setMobileMenuOpen(false);
       }
     };
     const onKeyDown = (e) => {
-      if (e.key === "Escape" && mobileMenuOpen) setMobileMenuOpen(false);
+      if (e.key === "Escape" && mobileMenuOpen) closeMenu(true);
     };
     document.addEventListener("mousedown", onOutsideClick);
     document.addEventListener("keydown", onKeyDown);
@@ -48,12 +56,23 @@ export default function LandingHeader({ onLaunch }) {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [mobileMenuOpen]);
+
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+
   const handleNavKey = (e, id) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); scrollTo(id); }
   };
+
+  const handleMobileNavKey = (e, id) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      closeMenu(true);
+      scrollTo(id);
+    }
+  };
+
   return (
     <>
     <a href="#main-content" className="lp-skip-link">Skip to content</a>
@@ -61,10 +80,11 @@ export default function LandingHeader({ onLaunch }) {
       <div className="header-left">
         <div className="logo">Clarity<span>XO</span></div>
         <div className="lp-oss-pill" title="Open-source Clarity smart contract">OSS</div>
-        <nav className="desktop-nav">
+        <nav className="desktop-nav" aria-label="Primary">
           {[["top","Top"],["how-it-works","Protocol"],["features","Features"],["nft","Rewards"],["leaderboard","Rankings"],["faq","FAQ"]].map(([id,label]) => (
             <a key={id} role="button" tabIndex={0}
               className={`nav-item lp-nav${activeSection === id ? " active" : ""}`}
+              aria-current={activeSection === id ? "true" : undefined}
               onClick={() => scrollTo(id)}
               onKeyDown={(e) => handleNavKey(e, id)}
             >{label}</a>
@@ -78,8 +98,9 @@ export default function LandingHeader({ onLaunch }) {
         </div>
         <button className="launch-btn" onClick={onLaunch}>Launch App</button>
         <button
+          ref={hamburgerRef}
           className="hamburger-btn"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={() => mobileMenuOpen ? closeMenu(false) : setMobileMenuOpen(true)}
           aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-nav-menu"
@@ -92,14 +113,37 @@ export default function LandingHeader({ onLaunch }) {
         <div className="lp-scroll-bar-fill" style={{ width: `${scrollPct}%` }}></div>
       </div>
 
-      <div ref={menuRef} id="mobile-nav-menu" className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`} role="dialog" aria-label="Navigation menu" aria-modal="false">
-        <button className="close-mobile-menu" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">✕</button>
+      {/*
+        role="navigation" is correct here — this is a nav overlay, not a dialog.
+        aria-modal="false" was invalid (aria-modal only belongs on true modal dialogs).
+      */}
+      <div ref={menuRef} id="mobile-nav-menu"
+        className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}
+        role="navigation"
+        aria-label="Mobile navigation"
+      >
+        <button
+          className="close-mobile-menu"
+          onClick={() => closeMenu(true)}
+          aria-label="Close navigation menu"
+        >✕</button>
         <nav className="mobile-nav">
-          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("how-it-works"); }}>Protocol</a>
-          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("features"); }}>Features</a>
-          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("nft"); }}>Rewards</a>
-          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("leaderboard"); }}>Rankings</a>
-          <a className="nav-item lp-nav mobile" onClick={() => { setMobileMenuOpen(false); scrollTo("faq"); }}>FAQ</a>
+          {[
+            ["how-it-works", "Protocol"],
+            ["features",     "Features"],
+            ["nft",          "Rewards"],
+            ["leaderboard",  "Rankings"],
+            ["faq",          "FAQ"],
+          ].map(([id, label]) => (
+            <a
+              key={id}
+              role="button"
+              tabIndex={mobileMenuOpen ? 0 : -1}
+              className="nav-item lp-nav mobile"
+              onClick={() => { closeMenu(true); scrollTo(id); }}
+              onKeyDown={(e) => handleMobileNavKey(e, id)}
+            >{label}</a>
+          ))}
         </nav>
       </div>
     </header>
