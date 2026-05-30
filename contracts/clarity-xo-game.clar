@@ -9,7 +9,7 @@
 ;;     Read-only helpers the NFT contract and frontend rely on
 ;;
 ;;  NOT in this contract:
-;;     NFT minting / claiming (see clarity-xo-trophy.clar)
+;;     NFT minting / claiming (see clarityxotrophyv2.clar)
 ;; 
 
 

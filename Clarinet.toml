@@ -11,8 +11,8 @@ path = "contracts/clarity-xo-game.clar"
 clarity_version = 2
 epoch = 2.5
 
-[contracts.clarity-xo-trophy]
-path = "contracts/clarity-xo-trophy.clar"
+[contracts.clarityxotrophyv2]
+path = "contracts/clarityxotrophyv2.clar"
 clarity_version = 2
 epoch = 2.5
 

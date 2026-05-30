@@ -9,7 +9,7 @@ import { assertEquals } from "https://deno.land/std@0.170.0/testing/asserts.ts";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-const TROPHY = "clarity-xo-trophy";
+const TROPHY = "clarityxotrophyv2";
 
 // Clarinet's simnet starts at burn-block-height = 0.
 // current-month = burn-block-height / 4320 = 0.

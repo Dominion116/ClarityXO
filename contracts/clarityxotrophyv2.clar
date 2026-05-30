@@ -1,9 +1,9 @@
 ;; 
 ;;  ClarityXO  TROPHY NFT CONTRACT
-;;  clarity-xo-trophy.clar
+;;  clarityxotrophyv2.clar
 ;;
 ;;  Responsibilities:
-;;     SIP-009 compliant NFT (clarity-xo-trophy)
+;;     SIP-009 compliant NFT (clarityxotrophyv2)
 ;;     Owner takes a monthly snapshot, whitelists the top-5 players
 ;;      for that month via `set-month-winners`
 ;;     Each whitelisted player claims their own NFT by calling
@@ -21,7 +21,7 @@
 
 (impl-trait .nft-trait.nft-trait)
 
-(define-non-fungible-token clarity-xo-trophy uint)
+(define-non-fungible-token clarityxotrophyv2 uint)
 
 
 ;; 
@@ -85,12 +85,34 @@
   (ok (var-get mint-fee))
 )
 
+(define-read-only (get-base-uri)
+  (ok (var-get base-uri))
+)
+
+(define-read-only (get-contract-owner)
+  (ok contract-owner)
+)
+
 (define-read-only (get-month-winners (month uint))
   (ok (map-get? month-winners month))
 )
 
+(define-read-only (get-month-winners-or-empty (month uint))
+  (ok (default-to (list) (map-get? month-winners month)))
+)
+
 (define-read-only (has-claimed (month uint) (player principal))
   (ok (default-to false (map-get? claimed { month: month, player: player })))
+)
+
+;; Convenience helper to check if a player can claim for a month right now.
+(define-read-only (can-claim (month uint) (player principal))
+  (let (
+    (rank-opt (unwrap-panic (get-player-rank month player)))
+    (already  (map-get? claimed { month: month, player: player }))
+  )
+    (ok (and (< month (current-month)) (is-some rank-opt) (is-none already)))
+  )
 )
 
 (define-read-only (get-trophy-meta (token-id uint))
@@ -195,7 +217,7 @@
           (map-set claimed { month: month, player: player } true)
           (map-set trophy-meta token-id
             { month: month, rank: rank, player: player })
-          (nft-mint? clarity-xo-trophy token-id player)
+          (nft-mint? clarityxotrophyv2 token-id player)
         )
       error err-transfer-failed
     )
@@ -217,7 +239,7 @@
 )
 
 (define-read-only (get-owner (token-id uint))
-  (ok (nft-get-owner? clarity-xo-trophy token-id))
+  (ok (nft-get-owner? clarityxotrophyv2 token-id))
 )
 
 (define-public (transfer
@@ -226,10 +248,10 @@
     (recipient principal))
   (begin
     (asserts! (is-eq tx-sender sender) err-not-token-owner)
-    (asserts! (is-some (nft-get-owner? clarity-xo-trophy token-id)) err-not-token-owner)
+    (asserts! (is-some (nft-get-owner? clarityxotrophyv2 token-id)) err-not-token-owner)
     (asserts!
-      (is-eq (nft-get-owner? clarity-xo-trophy token-id) (some sender))
+      (is-eq (nft-get-owner? clarityxotrophyv2 token-id) (some sender))
       err-not-token-owner)
-    (nft-transfer? clarity-xo-trophy token-id sender recipient)
+    (nft-transfer? clarityxotrophyv2 token-id sender recipient)
   )
 )

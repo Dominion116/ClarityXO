@@ -4,7 +4,7 @@ export const CONFIG = {
   network: "mainnet",
   leaderboardApiBaseUrl: import.meta.env.VITE_LEADERBOARD_API_BASE_URL || "https://clarityxo.onrender.com",
   nftContractAddress: "SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y",
-  nftContractName: "clarity-xo-trophy",
+  nftContractName: "clarityxotrophyv2",
 };
 
 export const CONTRACT_ADDRESS = CONFIG.contractAddress;
