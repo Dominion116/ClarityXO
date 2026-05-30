@@ -4,7 +4,7 @@ import { Section } from "../ui";
 const ITEMS = [
   {
     q: "Do I need to pay to play?",
-    a: "Each move costs a small Stacks transaction fee (typically &lt;0.01 STX). There are no platform fees. Draws cost nothing — only moves that change the board state are broadcast.",
+    a: "Each move costs a small Stacks transaction fee (typically <0.01 STX). There are no platform fees. Draws cost nothing — only moves that change the board state are broadcast.",
   },
   {
     q: "How does the AI opponent work?",
@@ -33,20 +33,18 @@ export default function FAQ() {
   return (
     <Section id="faq" index="06" kicker="FAQ" title="Common questions">
       <div className="lp-faq-list">
-        {ITEMS.map((item, i) => (
-          <div className="lp-faq-item" key={i}>
+        {ITEMS.map((item) => (
+          <div className="lp-faq-item" key={item.q}>
             <button
-              className={`lp-faq-q${open === i ? " open" : ""}`}
-              aria-expanded={open === i}
-              onClick={() => setOpen(open === i ? null : i)}
+              className={`lp-faq-q${open === item.q ? " open" : ""}`}
+              aria-expanded={open === item.q}
+              onClick={() => setOpen(open === item.q ? null : item.q)}
             >
               {item.q}
-              <span className="lp-faq-chevron" aria-hidden="true">{open === i ? "−" : "+"}</span>
+              <span className="lp-faq-chevron" aria-hidden="true">{open === item.q ? "−" : "+"}</span>
             </button>
-            {open === i && (
-              <div className="lp-faq-a open"
-                dangerouslySetInnerHTML={{ __html: item.a }}>
-              </div>
+            {open === item.q && (
+              <div className="lp-faq-a open">{item.a}</div>
             )}
           </div>
         ))}
