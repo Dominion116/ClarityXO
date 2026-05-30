@@ -78,7 +78,12 @@ export default function DemoBoard() {
         </button>
         <button className="lp-board-btn" aria-label="Next step"
           onClick={() => { setPlaying(false); setIdx(i => (i + 1) % STATES.length); }}>›</button>
-        <button className={`lp-board-btn${fast ? " active" : ""}`} onClick={() => setFast(f => !f)} aria-label="Toggle speed">
+        <button
+          className={`lp-board-btn${fast ? " active" : ""}`}
+          onClick={() => setFast(f => !f)}
+          aria-label={fast ? "Switch to normal speed (1×)" : "Switch to fast speed (2×)"}
+          aria-pressed={fast}
+        >
           {fast ? "1×" : "2×"}
         </button>
       </div>
