@@ -21,7 +21,7 @@ export default function Ticker() {
         <span className="lp-ticker-pulse"></span>
         Live
       </div>
-      <div className="lp-ticker-track">
+      <div className="lp-ticker-track" role="list" aria-hidden="true">
         {all.map((item, i) => (
           <div key={i} className="lp-ticker-item" role="listitem">
             <span className={`lp-ticker-dot ${item.color}`}></span>
