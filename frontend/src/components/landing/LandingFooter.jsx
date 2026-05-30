@@ -18,7 +18,7 @@ export default function LandingFooter() {
               {l.label}
             </a>
           ))}
-          <button type="button" className="cxo-footer-link" onClick={scrollTop} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--mono)" }}>
+          <button type="button" className="cxo-footer-link" onClick={scrollTop} aria-label="Back to top" style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--mono)" }}>
             ↑ Top
           </button>
         </nav>
