@@ -5,9 +5,13 @@ import { Section, Button } from "../ui";
 function useCopyToast() {
   const [copied, setCopied] = useState(false);
   const copy = (text) => {
-    navigator.clipboard?.writeText(text).then(() => {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      // Clipboard write denied (permissions or insecure context) — fail silently.
+      // The address remains visible in the DOM for manual selection.
     });
   };
   return [copied, copy];
