@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchLeaderboardFromContract, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
 import { resolveAddressNames } from '../utils/bns';
+import { fetchPlayerProfiles } from '../utils/profile';
 import { CONFIG } from '../config';
 
 const PAGE_SIZE = 10;
@@ -17,6 +18,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [bnsNames, setBnsNames] = useState({});
+  const [profiles, setProfiles] = useState({});
   const isDeployer = walletAddr === CONFIG.contractAddress;
   const claimReady = countdown === "00:00:00";
 
@@ -81,7 +83,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
     setPage(1);
   }, [data?.month, players.length]);
 
-  // Resolve BNS names for top-5 slots + current visible page
+  // Resolve BNS names + Gaia profiles for top-5 slots + current visible page
   useEffect(() => {
     if (!players.length) return;
     const top5 = players.slice(0, 5).map(p => p.addr);
@@ -91,6 +93,9 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
     const unique = [...new Set([...top5, ...pageAddrs])].filter(a => a !== 'anonymous');
     resolveAddressNames(unique).then(resolved => {
       setBnsNames(prev => ({ ...prev, ...resolved }));
+    });
+    fetchPlayerProfiles(unique).then(resolved => {
+      setProfiles(prev => ({ ...prev, ...resolved }));
     });
   }, [players, page]);
 
@@ -333,10 +338,12 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
                     nftZone ? "medal-nft" : "medal-n";
 
             const bnsName = bnsNames[p.addr];
-            const short = p.addr === "anonymous"
+            const profile = profiles[p.addr];
+            const displayName = p.addr === "anonymous"
               ? "anonymous"
-              : bnsName ? bnsName
-              : p.addr.length > 26 ? `${p.addr.slice(0, 13)}…${p.addr.slice(-6)}` : p.addr;
+              : profile?.name ?? bnsName
+              ?? (p.addr.length > 26 ? `${p.addr.slice(0, 13)}…${p.addr.slice(-6)}` : p.addr);
+            const avatarUrl = profile?.avatarUrl ?? null;
 
             return (
               <tr key={p.addr} className={nftZone ? 'nft-eligible' : ''} style={isMe ? { background: 'rgba(255,68,68,0.04)' } : {}}>
@@ -348,7 +355,22 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
                 </td>
                 <td>
                   <div className="lb-addr-cell">
-                    <span className={p.addr === "anonymous" ? "lb-anon" : ""} title={bnsName ? p.addr : undefined}>{short}</span>
+                    <div style={{
+                      width: 20, height: 20, borderRadius: '50%', overflow: 'hidden', flexShrink: 0,
+                      border: '1px solid var(--border2)', background: 'var(--border2)',
+                    }}>
+                      {avatarUrl && (
+                        <img
+                          src={avatarUrl}
+                          alt=""
+                          width={20}
+                          height={20}
+                          style={{ objectFit: 'cover', display: 'block' }}
+                          onError={e => { e.currentTarget.style.display = 'none'; }}
+                        />
+                      )}
+                    </div>
+                    <span className={p.addr === "anonymous" ? "lb-anon" : ""} title={p.addr}>{displayName}</span>
                     {isMe && <span className="lb-you">You</span>}
                   </div>
                 </td>

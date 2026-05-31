@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from '../utils/constants';
 import { resolveAddressName } from '../utils/bns';
+import { fetchPlayerProfile } from '../utils/profile';
 import { CONFIG } from '../config';
 
 export default function Game({
@@ -21,6 +22,7 @@ export default function Game({
 }) {
   const logRef = useRef(null);
   const [bnsName, setBnsName] = useState(null);
+  const [playerProfile, setPlayerProfile] = useState(null);
 
   useEffect(() => {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
@@ -28,8 +30,10 @@ export default function Game({
 
   useEffect(() => {
     setBnsName(null);
+    setPlayerProfile(null);
     if (!walletAddr) return;
     resolveAddressName(walletAddr).then(setBnsName);
+    fetchPlayerProfile(walletAddr).then(setPlayerProfile);
   }, [walletAddr]);
 
   const getStatusInfo = () => {
@@ -52,11 +56,30 @@ export default function Game({
       <div className="eyebrow">Stacks Blockchain · Tic-Tac-Toe</div>
 
       <div className="wallet-bar">
-        <span id="wallet-addr" title={walletAddr || undefined}>
-          {walletAddr
-            ? (bnsName ?? `${walletAddr.slice(0, 16)}…`)
-            : "no wallet connected"}
-        </span>
+        {walletAddr ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <div style={{
+              width: 18, height: 18, borderRadius: '50%', overflow: 'hidden', flexShrink: 0,
+              border: '1px solid var(--border2)', background: 'var(--border2)',
+            }}>
+              {playerProfile?.avatarUrl && (
+                <img
+                  src={playerProfile.avatarUrl}
+                  alt=""
+                  width={18}
+                  height={18}
+                  style={{ objectFit: 'cover', display: 'block' }}
+                  onError={e => { e.currentTarget.style.display = 'none'; }}
+                />
+              )}
+            </div>
+            <span id="wallet-addr" title={walletAddr}>
+              {playerProfile?.name ?? bnsName ?? `${walletAddr.slice(0, 16)}…`}
+            </span>
+          </div>
+        ) : (
+          <span id="wallet-addr">no wallet connected</span>
+        )}
         <div className="wallet-bar-btns">
           {!walletAddr && (
             <button className="ghost-btn" id="btn-connect" onClick={connectWallet}>
