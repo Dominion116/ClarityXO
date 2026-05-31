@@ -239,6 +239,15 @@ export default function App() {
             </div>
             <div className="header-right">
               <div className="badge">{CONFIG.network}</div>
+              {walletAddr ? (
+                <div className="badge" style={{ color: 'var(--green)', borderColor: 'var(--green)' }}>
+                  {`${walletAddr.slice(0, 6)}…${walletAddr.slice(-4)}`}
+                </div>
+              ) : (
+                <button className="ghost-btn" onClick={connectWallet}>
+                  Connect
+                </button>
+              )}
               <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
                 {mobileMenuOpen ? '✕' : '☰'}
               </button>
