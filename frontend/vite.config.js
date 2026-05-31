@@ -8,7 +8,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['@stacks/network', '@stacks/transactions'],
+          'stacks-core':     ['@stacks/transactions', '@stacks/network', '@stacks/common'],
+          'stacks-connect':  ['@stacks/connect', '@stacks/auth'],
+          'stacks-identity': ['@stacks/bns', '@stacks/profile', '@stacks/stacking'],
+          'stacks-data':     ['@stacks/storage', '@stacks/encryption', '@stacks/blockchain-api-client'],
         },
       },
     },

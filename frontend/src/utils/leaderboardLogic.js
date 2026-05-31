@@ -1,4 +1,5 @@
 import { uintCV } from '@stacks/transactions';
+import { request } from '@stacks/connect';
 import { CONFIG } from '../config';
 import { encodeCVArg } from './stacks';
 
@@ -150,18 +151,14 @@ export async function claimNFT(walletAddr, addLog, leaderboardData) {
   addLog(`Claiming NFT Trophy for rank #${myRank + 1} (${pts} pts)…`, "info");
 
   try {
-    if (!window.LeatherProvider) {
-      throw new Error("Leather wallet not found");
-    }
-
-    const response = await window.LeatherProvider.request("stx_callContract", {
+    const response = await request("stx_callContract", {
       contract: `${CONFIG.nftContractAddress}.${CONFIG.nftContractName}`,
       functionName: "claim-trophy",
       functionArgs: [encodeCVArg(uintCV(await getCurrentMonthNumber() - 1))],
       network: CONFIG.network,
     });
 
-    addLog(`NFT Trophy claimed! TX: ${response?.result?.txid?.slice(0,16)}…`, "success");
+    addLog(`NFT Trophy claimed! TX: ${response?.txid?.slice(0,16)}…`, "success");
     return true; // indicates success intent
   } catch (e) {
     addLog(`NFT claim error: ${e.message}`, "error");

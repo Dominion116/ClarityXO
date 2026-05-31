@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { uintCV, principalCV } from "@stacks/transactions";
+import { connect, request } from "@stacks/connect";
 import { CONFIG } from "./config";
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from "./utils/constants";
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
@@ -43,27 +44,14 @@ export default function App() {
     setTimeout(() => setToast(prev => ({ ...prev, show: false })), 2400);
   };
 
-  const requestLeather = useCallback(async (method, params) => {
-    const provider = window.LeatherProvider;
-    if (!provider) throw new Error("Leather wallet not found");
-    return provider.request(method, params);
-  }, []);
-
-  const getLeatherStxAddress = useCallback(async () => {
-    const response = await requestLeather("getAddresses", { network: CONFIG.network });
-    const stxAddress = response?.result?.addresses?.find((entry) => entry.symbol === "STX")?.address;
-    if (!stxAddress) throw new Error("Could not find the active STX address in Leather");
-    return stxAddress;
-  }, [requestLeather]);
-
-  const callLeatherContract = useCallback(async (functionName, functionArgs = []) => {
-    return requestLeather("stx_callContract", {
+  const callContract = useCallback(async (functionName, functionArgs = []) => {
+    return request("stx_callContract", {
       contract: `${CONFIG.contractAddress}.${CONFIG.contractName}`,
       functionName,
       functionArgs,
       network: CONFIG.network,
     });
-  }, [requestLeather]);
+  }, []);
 
   const syncChainState = useCallback(async (overrideWalletAddr = null) => {
     try {
@@ -105,31 +93,30 @@ export default function App() {
     }
     try {
       setProcessing(true);
-      const response = await callLeatherContract("start-game");
+      const response = await callContract("start-game");
       setGameStarted(true);
-      log(`Game started. TX: ${response?.result?.txid?.slice(0, 16)}…`, "success");
+      log(`Game started. TX: ${response?.txid?.slice(0, 16)}…`, "success");
       setTimeout(syncChainState, 6000);
     } catch (e) {
       log(`Start game error: ${e.message}`, "error");
     } finally {
       setProcessing(false);
     }
-  }, [gameStarted, processing, walletAddr, log, syncChainState, callLeatherContract]);
+  }, [gameStarted, processing, walletAddr, log, syncChainState, callContract]);
 
   const connectWallet = useCallback(async () => {
     try {
-      if (!window.LeatherProvider) {
-        log("No Stacks wallet detected. Install Leather (Hiro) wallet.", "error");
-        return;
-      }
-      const addr = await getLeatherStxAddress();
-      setWalletAddr(addr);
-      window.localStorage.setItem(WALLET_STORAGE_KEY, addr);
-      log(`Wallet connected: ${addr.slice(0, 12)}…`, "success");
+      const result = await connect();
+      const stxAddr = result.addresses.find(a => a.symbol === "STX")?.address
+                      ?? result.addresses[0]?.address;
+      if (!stxAddr) throw new Error("No STX address returned");
+      setWalletAddr(stxAddr);
+      window.localStorage.setItem(WALLET_STORAGE_KEY, stxAddr);
+      log(`Wallet connected: ${stxAddr.slice(0, 12)}…`, "success");
     } catch (e) {
       log(`Wallet error: ${e.message}`, "error");
     }
-  }, [log, getLeatherStxAddress]);
+  }, [log]);
 
   useEffect(() => {
     if (!walletAddr) return;
@@ -198,8 +185,8 @@ export default function App() {
     }
     try {
       setProcessing(true);
-      const response = await callLeatherContract("make-move", [encodeCVArg(uintCV(row)), encodeCVArg(uintCV(col))]);
-      log(`TX broadcast: ${response?.result?.txid?.slice(0, 16)}…`, "success");
+      const response = await callContract("make-move", [encodeCVArg(uintCV(row)), encodeCVArg(uintCV(col))]);
+      log(`TX broadcast: ${response?.txid?.slice(0, 16)}…`, "success");
       if (outcomeToRecord) await recordResult(walletAddr, outcomeToRecord);
       setTimeout(syncChainState, 6000);
     } catch (e) {
@@ -207,7 +194,7 @@ export default function App() {
     } finally {
       setProcessing(false);
     }
-  }, [board, processing, status, gameStarted, walletAddr, log, syncChainState, callLeatherContract]);
+  }, [board, processing, status, gameStarted, walletAddr, log, syncChainState, callContract]);
 
   const resetLocal = useCallback(async () => {
     setBoard(Array(9).fill(EMPTY));
@@ -225,15 +212,15 @@ export default function App() {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
     try {
       setProcessing(true);
-      const response = await callLeatherContract("resign-game");
-      log(`Resigned. TX: ${response?.result?.txid?.slice(0, 16)}…`, "success");
+      const response = await callContract("resign-game");
+      log(`Resigned. TX: ${response?.txid?.slice(0, 16)}…`, "success");
       setStatus(STATUS_O_WON);
     } catch (e) {
       log(`Resign error: ${e.message}`, "error");
     } finally {
       setProcessing(false);
     }
-  }, [walletAddr, log, callLeatherContract]);
+  }, [walletAddr, log, callContract]);
 
   return (
     <>
