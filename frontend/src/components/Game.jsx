@@ -1,5 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from '../utils/constants';
+import { resolveAddressName } from '../utils/bns';
 import { CONFIG } from '../config';
 
 export default function Game({
@@ -19,10 +20,17 @@ export default function Game({
   resign
 }) {
   const logRef = useRef(null);
+  const [bnsName, setBnsName] = useState(null);
 
   useEffect(() => {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [logs]);
+
+  useEffect(() => {
+    setBnsName(null);
+    if (!walletAddr) return;
+    resolveAddressName(walletAddr).then(setBnsName);
+  }, [walletAddr]);
 
   const getStatusInfo = () => {
     if (processing) return { label: "broadcasting…", color: "var(--muted)", dotActive: false };
@@ -44,7 +52,11 @@ export default function Game({
       <div className="eyebrow">Stacks Blockchain · Tic-Tac-Toe</div>
 
       <div className="wallet-bar">
-        <span id="wallet-addr">{walletAddr ? `${walletAddr.slice(0, 16)}…` : "no wallet connected"}</span>
+        <span id="wallet-addr" title={walletAddr || undefined}>
+          {walletAddr
+            ? (bnsName ?? `${walletAddr.slice(0, 16)}…`)
+            : "no wallet connected"}
+        </span>
         <div className="wallet-bar-btns">
           {!walletAddr && (
             <button className="ghost-btn" id="btn-connect" onClick={connectWallet}>

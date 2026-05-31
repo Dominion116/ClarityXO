@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchLeaderboardFromContract, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
+import { resolveAddressNames } from '../utils/bns';
 import { CONFIG } from '../config';
 
 const PAGE_SIZE = 10;
@@ -15,6 +16,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [countdown, setCountdown] = useState("—");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [bnsNames, setBnsNames] = useState({});
   const isDeployer = walletAddr === CONFIG.contractAddress;
   const claimReady = countdown === "00:00:00";
 
@@ -78,6 +80,19 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   useEffect(() => {
     setPage(1);
   }, [data?.month, players.length]);
+
+  // Resolve BNS names for top-5 slots + current visible page
+  useEffect(() => {
+    if (!players.length) return;
+    const top5 = players.slice(0, 5).map(p => p.addr);
+    const currentPage = Math.max(1, page);
+    const startIndex = (currentPage - 1) * PAGE_SIZE;
+    const pageAddrs = players.slice(startIndex, startIndex + PAGE_SIZE).map(p => p.addr);
+    const unique = [...new Set([...top5, ...pageAddrs])].filter(a => a !== 'anonymous');
+    resolveAddressNames(unique).then(resolved => {
+      setBnsNames(prev => ({ ...prev, ...resolved }));
+    });
+  }, [players, page]);
 
   const handleClear = () => {
     if (clearLeaderboardData(walletAddr)) refresh();
@@ -198,12 +213,15 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const nftSlots = [0, 1, 2, 3, 4].map(i => {
     const p = players[i];
     if (p) {
-      const short = p.addr === "anonymous" ? "anon" : `${p.addr.slice(0, 8)}…${p.addr.slice(-4)}`;
+      const bnsName = bnsNames[p.addr];
+      const display = p.addr === "anonymous" ? "anon"
+        : bnsName ? bnsName
+        : `${p.addr.slice(0, 8)}…${p.addr.slice(-4)}`;
       const isYou = walletAddr && p.addr === walletAddr;
       return (
         <div key={i} className={`nft-slot filled ${isYou ? 'you-slot' : ''}`}>
           <span className="nft-slot-rank">#{i + 1}</span>
-          <span className="nft-slot-addr">{short} ({p.pts}pt)</span>
+          <span className="nft-slot-addr" title={p.addr}>{display} ({p.pts}pt)</span>
         </div>
       );
     }
@@ -314,8 +332,10 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
                   rank === 3 ? "medal-3" :
                     nftZone ? "medal-nft" : "medal-n";
 
+            const bnsName = bnsNames[p.addr];
             const short = p.addr === "anonymous"
               ? "anonymous"
+              : bnsName ? bnsName
               : p.addr.length > 26 ? `${p.addr.slice(0, 13)}…${p.addr.slice(-6)}` : p.addr;
 
             return (
@@ -328,7 +348,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
                 </td>
                 <td>
                   <div className="lb-addr-cell">
-                    <span className={p.addr === "anonymous" ? "lb-anon" : ""}>{short}</span>
+                    <span className={p.addr === "anonymous" ? "lb-anon" : ""} title={bnsName ? p.addr : undefined}>{short}</span>
                     {isMe && <span className="lb-you">You</span>}
                   </div>
                 </td>
