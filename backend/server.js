@@ -13,6 +13,9 @@ const MONGODB_COLLECTION = process.env.MONGODB_COLLECTION || 'leaderboard_months
 const MONGODB_GAMES_COLLECTION = process.env.MONGODB_GAMES_COLLECTION || 'game_results';
 const GAME_CONTRACT_ADDRESS = process.env.GAME_CONTRACT_ADDRESS || 'SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y';
 const GAME_CONTRACT_NAME = process.env.GAME_CONTRACT_NAME || 'clarity-xo-game';
+const TROPHY_CONTRACT_ADDRESS = process.env.TROPHY_CONTRACT_ADDRESS || 'SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y';
+const TROPHY_CONTRACT_NAME = process.env.TROPHY_CONTRACT_NAME || 'clarityxotrophyv2';
+const NFT_IMAGE_URL = process.env.NFT_IMAGE_URL || 'https://res.cloudinary.com/dhhq7xc6g/image/upload/q_auto/f_auto/v1780223954/ChatGPT_Image_May_31_2026_11_38_58_AM_dnswup.png';
 const STACKS_API_BASE = process.env.STACKS_API_BASE || 'https://api.hiro.so';
 
 const normalizeOrigin = (value) => String(value || '').trim().replace(/\/+$/, '');
@@ -237,6 +240,17 @@ function parseGameState(resultText) {
     month: Number(fields.month?.value || 0),
     player: normalizePrincipalValue(fields.player),
   };
+}
+
+async function callTrophyReadOnly(functionName, args = []) {
+  const url = `${STACKS_API_BASE}/v2/contracts/call-read/${TROPHY_CONTRACT_ADDRESS}/${TROPHY_CONTRACT_NAME}/${functionName}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sender: TROPHY_CONTRACT_ADDRESS, arguments: args }),
+  });
+  if (!response.ok) throw new Error(`Trophy read-only call failed: ${response.status}`);
+  return response.json();
 }
 
 async function callReadOnly(functionName, args = []) {
@@ -560,6 +574,44 @@ app.delete('/api/leaderboard', async (req, res) => {
     res.json({ ok: true, month: monthKey });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Open CORS — NFT marketplaces and wallets need to read this without restrictions
+app.get('/nft/:id', cors(), async (req, res) => {
+  const tokenId = parseInt(req.params.id, 10);
+  if (isNaN(tokenId) || tokenId < 1) {
+    return res.status(400).json({ error: 'Invalid token ID' });
+  }
+
+  try {
+    const raw = await callTrophyReadOnly('get-trophy-meta', [encodeUintArg(tokenId)]);
+    const decoded = raw?.result ? cvToJSON(deserializeCV(raw.result)) : null;
+
+    // Unwrap (ok (some { month, rank, player }))
+    const inner = decoded?.value?.value?.value || null;
+    const month = inner?.month?.value ? String(inner.month.value) : null;
+    const rank  = inner?.rank?.value  ? String(inner.rank.value)  : null;
+
+    return res.json({
+      name: `ClarityXO Trophy #${tokenId}`,
+      description: month && rank
+        ? `Top-5 monthly champion — Month ${month}. Ranked #${rank}.`
+        : 'Top-5 monthly champion — ClarityXO.',
+      image: NFT_IMAGE_URL,
+      ...(month && rank ? {
+        attributes: [
+          { trait_type: 'Month', value: month },
+          { trait_type: 'Rank',  value: rank },
+        ],
+      } : {}),
+    });
+  } catch {
+    return res.json({
+      name: `ClarityXO Trophy #${tokenId}`,
+      description: 'Top-5 monthly champion — ClarityXO.',
+      image: NFT_IMAGE_URL,
+    });
   }
 });
 
