@@ -11,7 +11,7 @@ import FinalCTA           from "./landing/FinalCTA";
 import LandingFooter      from "./landing/LandingFooter";
 import FAQ                from "./landing/FAQ";
 
-export default function Landing({ onLaunch, onLeaderboard }) {
+export default function Landing({ onLaunch, onLeaderboard, navigate }) {
   // Single reveal-on-scroll observer for everything tagged .cxo-reveal.
   // Replaces the per-element inline-style juggling the old version did and
   // degrades gracefully (no IntersectionObserver → content shown immediately).
@@ -51,7 +51,7 @@ export default function Landing({ onLaunch, onLeaderboard }) {
         <FinalCTA onLaunch={onLaunch} />
         <FAQ />
       </main>
-      <LandingFooter />
+      <LandingFooter navigate={navigate} />
     </div>
   );
 }
