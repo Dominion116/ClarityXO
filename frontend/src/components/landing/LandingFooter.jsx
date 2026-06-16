@@ -5,7 +5,7 @@ const LINKS = [
   { label: "Farcaster", href: "https://warpcast.com" },
 ];
 
-export default function LandingFooter() {
+export default function LandingFooter({ navigate }) {
   const scrollTop = () => document.getElementById("top")?.scrollIntoView({ behavior: "smooth" });
 
   return (
