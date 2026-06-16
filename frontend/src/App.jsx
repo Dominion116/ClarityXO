@@ -233,6 +233,12 @@ export default function App() {
           navigate={setActivePage}
         />
       )}
+      {activePage === 'terms' && (
+        <TermsOfService navigate={setActivePage} />
+      )}
+      {activePage === 'privacy' && (
+        <PrivacyPolicy navigate={setActivePage} />
+      )}
       {activePage !== 'landing' && (
         <>
           <header>
