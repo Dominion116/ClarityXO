@@ -27,6 +27,29 @@ export default function LandingFooter({ navigate }) {
         <span>Built on Stacks · Clarity v2 · {new Date().getFullYear()}</span>
         <span>v1.0.0 · Open Source · No financial advice</span>
       </div>
+      <div className="lp-footer-legal">
+        <span>© {new Date().getFullYear()} ClarityXO</span>
+        <span className="lp-footer-legal-sep">·</span>
+        <button
+          type="button"
+          className="lp-footer-legal-link"
+          onClick={() => navigate?.("terms")}
+          style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--mono)", fontSize: "inherit", letterSpacing: "inherit", textTransform: "inherit" }}
+        >
+          Terms of Service
+        </button>
+        <span className="lp-footer-legal-sep">·</span>
+        <button
+          type="button"
+          className="lp-footer-legal-link"
+          onClick={() => navigate?.("privacy")}
+          style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--mono)", fontSize: "inherit", letterSpacing: "inherit", textTransform: "inherit" }}
+        >
+          Privacy Policy
+        </button>
+        <span className="lp-footer-legal-sep">·</span>
+        <span>No financial advice</span>
+      </div>
     </footer>
   );
 }
