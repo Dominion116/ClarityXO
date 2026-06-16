@@ -239,7 +239,7 @@ export default function App() {
       {activePage === 'privacy' && (
         <PrivacyPolicy navigate={setActivePage} />
       )}
-      {activePage !== 'landing' && (
+      {(activePage === 'game' || activePage === 'leaderboard') && (
         <>
           <header>
             <div className="header-left">
