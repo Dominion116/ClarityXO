@@ -12,6 +12,8 @@ import './styles/refresh.css';
 import Landing from "./components/Landing";
 import Game from "./components/Game";
 import Leaderboard from "./components/Leaderboard";
+import TermsOfService from "./components/TermsOfService";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
