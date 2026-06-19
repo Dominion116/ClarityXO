@@ -540,3 +540,32 @@ describe("chooseAiMoveHard — blocks opponent two-in-a-row", () => {
     expect(chooseAiMoveHard([X,O,E, X,E,E, E,E,E])).toBe(6);
   });
 });
+
+describe("chooseAiMoveHard — unbeatable: X never wins", () => {
+  const runGame = (xMoves) => {
+    const board = Array(9).fill(E);
+    for (let turn = 0; turn < 9; turn++) {
+      if (checkWinner(board) !== E || board.every(c => c !== E)) break;
+      if (turn % 2 === 0) {
+        const idx = xMoves[turn / 2];
+        if (board[idx] === E) board[idx] = X;
+      } else {
+        const idx = chooseAiMoveHard(board);
+        if (idx !== -1) board[idx] = O;
+      }
+    }
+    return checkWinner(board);
+  };
+
+  it("does not lose when X opens corner then opposite corner", () => {
+    expect(runGame([0, 8, 2])).not.toBe(X);
+  });
+
+  it("does not lose when X opens center then corner", () => {
+    expect(runGame([4, 0, 8])).not.toBe(X);
+  });
+
+  it("does not lose when X opens corner then adjacent edge", () => {
+    expect(runGame([0, 1, 6])).not.toBe(X);
+  });
+});
