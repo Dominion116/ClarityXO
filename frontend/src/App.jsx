@@ -36,6 +36,7 @@ export default function App() {
   const [newCells, setNewCells] = useState(new Set());
   const [winLine, setWinLine] = useState(null);
   const [toast, setToast] = useState({ show: false, pts: 0, reason: "" });
+  const [difficulty, setDifficulty] = useState('medium');
 
   const log = useCallback((msg, type = "info") => {
     setLogs(prev => [...prev.slice(-50), { msg, type, ts: Date.now() }]);
