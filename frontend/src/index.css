@@ -279,6 +279,8 @@ svg.mark { overflow: visible; }
   transition: color .15s, background .15s;
 }
 .difficulty-btn:last-child { border-right: none; }
+.difficulty-btn:hover:not(:disabled) { color: var(--text); }
+.difficulty-btn:disabled { cursor: default; }
 
 .contract-info {
   width: 100%; padding: 10px 16px; font-size: 9px; letter-spacing: .15em;
