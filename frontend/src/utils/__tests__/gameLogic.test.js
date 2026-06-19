@@ -569,3 +569,19 @@ describe("chooseAiMoveHard — unbeatable: X never wins", () => {
     expect(runGame([0, 1, 6])).not.toBe(X);
   });
 });
+
+// ── chooseAiMove — medium default dispatch ────────────────────────────────────
+
+describe("chooseAiMove — defaults to medium with no difficulty arg", () => {
+  it("picks center on an empty board when no difficulty is passed", () => {
+    expect(chooseAiMove([E,E,E, E,E,E, E,E,E])).toBe(4);
+  });
+
+  it("takes an immediate winning move without a difficulty arg", () => {
+    expect(chooseAiMove([X,E,E, O,O,E, E,E,X])).toBe(5);
+  });
+
+  it("blocks X threat on an otherwise open board without a difficulty arg", () => {
+    expect(chooseAiMove([X,X,E, E,O,E, E,E,E])).toBe(2);
+  });
+});
