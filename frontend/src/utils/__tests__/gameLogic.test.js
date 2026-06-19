@@ -514,3 +514,19 @@ describe("chooseAiMoveEasy — edge cases", () => {
     expect(chooseAiMoveEasy([X,O,X, O,X,O, X,O,E])).toBe(8);
   });
 });
+
+// ── chooseAiMoveHard — winning moves ─────────────────────────────────────────
+
+describe("chooseAiMoveHard — takes immediate winning move", () => {
+  it("completes row 1 for O when O has indices 3 and 4", () => {
+    expect(chooseAiMoveHard([X,E,E, O,O,E, E,E,X])).toBe(5);
+  });
+
+  it("completes column 2 for O when O has indices 2 and 5", () => {
+    expect(chooseAiMoveHard([E,E,O, E,E,O, E,E,E])).toBe(8);
+  });
+
+  it("completes main diagonal for O when O has indices 0 and 4", () => {
+    expect(chooseAiMoveHard([O,X,E, E,O,E, E,E,E])).toBe(8);
+  });
+});
