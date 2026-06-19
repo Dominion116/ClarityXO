@@ -315,6 +315,16 @@ svg.mark { overflow: visible; }
 .history-coord { color: var(--muted); }
 .history-player { font-size: 11px; min-width: 12px; }
 .history-entry.active { background: var(--ghost); }
+.history-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 6px; }
+.history-controls { display: flex; gap: 4px; }
+.replay-btn {
+  background: none; border: 1px solid var(--border2); color: var(--muted);
+  font-family: var(--mono); font-size: 9px; letter-spacing: .1em; padding: 2px 7px;
+  cursor: pointer; transition: color .15s, border-color .15s;
+}
+.replay-btn:hover:not(:disabled) { color: var(--text); border-color: var(--text); }
+.replay-btn:disabled { opacity: .3; cursor: default; }
+.replay-live { color: var(--gold); border-color: var(--gold-dim); }
 
 /* ── POINTS TOAST ─────────────────────────────────── */
 #points-toast {
