@@ -30,6 +30,13 @@ export function findWinningMove(board, player) {
   return -1;
 }
 
+export function chooseAiMoveEasy(board) {
+  const empty = [];
+  for (let i = 0; i < 9; i++) if (board[i] === EMPTY) empty.push(i);
+  if (empty.length === 0) return -1;
+  return empty[Math.floor(Math.random() * empty.length)];
+}
+
 export function chooseAiMove(board) {
   const win = findWinningMove(board, PLAYER_O);
   if (win !== -1) return win;
