@@ -288,6 +288,8 @@ export default function App() {
               logs={logs}
               newCells={newCells}
               winLine={winLine}
+              difficulty={difficulty}
+              onDifficultyChange={setDifficulty}
               syncChainState={syncChainState}
               connectWallet={connectWallet}
               startGame={startGame}
