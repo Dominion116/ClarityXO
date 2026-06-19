@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from '../utils/constants';
 import { resolveAddressName } from '../utils/bns';
 import { fetchPlayerProfile } from '../utils/profile';
+import { formatTime } from '../utils/gameLogic';
 import { CONFIG } from '../config';
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
@@ -15,6 +16,7 @@ export default function Game({
   logs,
   newCells,
   winLine,
+  gameTime,
   difficulty,
   onDifficultyChange,
   syncChainState,
@@ -102,6 +104,7 @@ export default function Game({
           <span id="status-label" style={{ color: statusInfo.color }}>{statusInfo.label}</span>
         </div>
         <span className="move-count">move <span id="move-count">{moveCount}</span></span>
+        <span className="game-timer" id="game-timer">{formatTime(gameTime)}</span>
       </div>
 
       <div className="board" id="board">
