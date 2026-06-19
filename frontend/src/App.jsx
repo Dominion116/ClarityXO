@@ -143,6 +143,7 @@ export default function App() {
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
     if (board[idx] !== EMPTY) return;
+    startTimer();
     const row = Math.floor(idx / 3);
     const col = idx % 3;
     const nextBoard = [...board];
@@ -211,7 +212,7 @@ export default function App() {
     } finally {
       setProcessing(false);
     }
-  }, [board, processing, status, gameStarted, walletAddr, difficulty, log, syncChainState, callContract]);
+  }, [board, processing, status, gameStarted, walletAddr, difficulty, startTimer, log, syncChainState, callContract]);
 
   const resetLocal = useCallback(async () => {
     setBoard(Array(9).fill(EMPTY));
