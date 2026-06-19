@@ -139,6 +139,19 @@ export default function Game({
         <div className="info-cell" id="info-empty">Cells left: {board.filter(c => c === EMPTY).length}</div>
       </div>
 
+      <div className="difficulty-row">
+        {DIFFICULTIES.map(d => (
+          <button
+            key={d}
+            className={`difficulty-btn ${d} ${difficulty === d ? 'active' : ''}`}
+            onClick={() => onDifficultyChange(d)}
+            disabled={processing}
+          >
+            {d}
+          </button>
+        ))}
+      </div>
+
       <div className="btn-row">
         <button className="btn btn-primary" id="btn-new" onClick={resetLocal} disabled={processing || !walletAddr}>New Game</button>
         <button className="btn btn-secondary" id="btn-resign" onClick={resign} disabled={processing || !walletAddr}>Resign</button>
