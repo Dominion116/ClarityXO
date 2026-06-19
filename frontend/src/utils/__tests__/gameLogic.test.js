@@ -8,6 +8,7 @@ import {
   chooseAiMoveEasy,
   chooseAiMoveHard,
   getWinningLine,
+  formatTime,
 } from "../gameLogic.js";
 import { EMPTY, PLAYER_X, PLAYER_O } from "../constants.js";
 
@@ -615,5 +616,29 @@ describe("chooseAiMove — hard difficulty dispatch", () => {
 
   it("blocks X two-in-a-row with 'hard' when O has no immediate win", () => {
     expect(chooseAiMove([X,X,E, E,O,E, E,E,E], 'hard')).toBe(2);
+  });
+});
+
+// ── formatTime — basic formatting ─────────────────────────────────────────────
+
+describe("formatTime — basic mm:ss formatting", () => {
+  it("formats 0 seconds as 00:00", () => {
+    expect(formatTime(0)).toBe("00:00");
+  });
+
+  it("formats 59 seconds as 00:59", () => {
+    expect(formatTime(59)).toBe("00:59");
+  });
+
+  it("formats 60 seconds as 01:00", () => {
+    expect(formatTime(60)).toBe("01:00");
+  });
+
+  it("formats 90 seconds as 01:30", () => {
+    expect(formatTime(90)).toBe("01:30");
+  });
+
+  it("formats 3661 seconds as 61:01", () => {
+    expect(formatTime(3661)).toBe("61:01");
   });
 });
