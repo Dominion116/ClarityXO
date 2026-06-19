@@ -642,3 +642,17 @@ describe("formatTime — basic mm:ss formatting", () => {
     expect(formatTime(3661)).toBe("61:01");
   });
 });
+
+describe("formatTime — edge cases", () => {
+  it("pads single-digit seconds with a leading zero", () => {
+    expect(formatTime(61)).toBe("01:01");
+  });
+
+  it("pads single-digit minutes with a leading zero", () => {
+    expect(formatTime(9 * 60 + 5)).toBe("09:05");
+  });
+
+  it("returns 00:01 for exactly one second", () => {
+    expect(formatTime(1)).toBe("00:01");
+  });
+});
