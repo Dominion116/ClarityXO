@@ -54,6 +54,21 @@ export default function App() {
     }
   }, []);
 
+  const stepBack = useCallback(() => {
+    setHistoryStep(prev => {
+      const current = prev ?? moveHistory.length;
+      return Math.max(0, current - 1);
+    });
+  }, [moveHistory.length]);
+
+  const stepForward = useCallback(() => {
+    setHistoryStep(prev => {
+      if (prev === null) return null;
+      const next = prev + 1;
+      return next >= moveHistory.length ? null : next;
+    });
+  }, [moveHistory.length]);
+
   const log = useCallback((msg, type = "info") => {
     setLogs(prev => [...prev.slice(-50), { msg, type, ts: Date.now() }]);
   }, []);
