@@ -66,6 +66,20 @@ function minimax(board, isMaximizing, depth = 0) {
   }
 }
 
+export function chooseAiMoveHard(board) {
+  let bestVal = -Infinity;
+  let bestMove = -1;
+  for (let i = 0; i < 9; i++) {
+    if (board[i] === EMPTY) {
+      board[i] = PLAYER_O;
+      const val = minimax(board, false);
+      board[i] = EMPTY;
+      if (val > bestVal) { bestVal = val; bestMove = i; }
+    }
+  }
+  return bestMove;
+}
+
 export function chooseAiMove(board) {
   const win = findWinningMove(board, PLAYER_O);
   if (win !== -1) return win;
