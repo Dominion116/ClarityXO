@@ -40,6 +40,18 @@ export default function App() {
   const [gameTime, setGameTime] = useState(0);
   const timerRef = useRef(null);
 
+  const startTimer = useCallback(() => {
+    if (timerRef.current) return;
+    timerRef.current = setInterval(() => setGameTime(t => t + 1), 1000);
+  }, []);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
   const log = useCallback((msg, type = "info") => {
     setLogs(prev => [...prev.slice(-50), { msg, type, ts: Date.now() }]);
   }, []);
