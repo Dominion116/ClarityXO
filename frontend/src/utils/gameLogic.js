@@ -37,6 +37,35 @@ export function chooseAiMoveEasy(board) {
   return empty[Math.floor(Math.random() * empty.length)];
 }
 
+function minimax(board, isMaximizing, depth) {
+  const winner = checkWinner(board);
+  if (winner === PLAYER_O) return 10;
+  if (winner === PLAYER_X) return -10;
+  if (board.every(c => c !== EMPTY)) return 0;
+
+  if (isMaximizing) {
+    let best = -Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === EMPTY) {
+        board[i] = PLAYER_O;
+        best = Math.max(best, minimax(board, false, depth));
+        board[i] = EMPTY;
+      }
+    }
+    return best;
+  } else {
+    let best = Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === EMPTY) {
+        board[i] = PLAYER_X;
+        best = Math.min(best, minimax(board, true, depth));
+        board[i] = EMPTY;
+      }
+    }
+    return best;
+  }
+}
+
 export function chooseAiMove(board) {
   const win = findWinningMove(board, PLAYER_O);
   if (win !== -1) return win;
