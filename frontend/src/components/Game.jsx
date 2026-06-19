@@ -17,6 +17,7 @@ export default function Game({
   newCells,
   winLine,
   gameTime,
+  moveHistory,
   difficulty,
   onDifficultyChange,
   syncChainState,
@@ -173,6 +174,20 @@ export default function Game({
           ))}
         </div>
       </div>
+
+      {moveHistory.length > 0 && (
+        <div className="history-wrap">
+          <div className="history-title">Move History</div>
+          <div className="history-list" id="history-list">
+            {moveHistory.map((entry, i) => (
+              <div key={i} className="history-entry">
+                <span className={`history-player mark-${entry.player.toLowerCase()}`}>{entry.player}</span>
+                <span className="history-coord">{entry.coord}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="footer">ClarityXO · Stacks · <span className="yr">{new Date().getFullYear()}</span></div>
     </div>
