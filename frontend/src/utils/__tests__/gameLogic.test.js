@@ -482,3 +482,25 @@ describe("getWinningLine — null when no three-in-a-row", () => {
     expect(getWinningLine([X,E,O, E,E,E, O,E,X])).toBeNull();
   });
 });
+
+// ── chooseAiMoveEasy — valid cell selection ───────────────────────────────────
+
+describe("chooseAiMoveEasy — returns a valid empty cell index", () => {
+  it("returns an index between 0 and 8 on an empty board", () => {
+    const move = chooseAiMoveEasy([E,E,E, E,E,E, E,E,E]);
+    expect(move).toBeGreaterThanOrEqual(0);
+    expect(move).toBeLessThanOrEqual(8);
+  });
+
+  it("returned index is empty on the given board", () => {
+    const board = [X,O,X, O,X,O, E,E,E];
+    const move = chooseAiMoveEasy(board);
+    expect(board[move]).toBe(E);
+  });
+
+  it("only selects from cells 6, 7, or 8 when those are the only empty ones", () => {
+    const board = [X,O,X, O,X,O, E,E,E];
+    const move = chooseAiMoveEasy(board);
+    expect([6, 7, 8]).toContain(move);
+  });
+});
