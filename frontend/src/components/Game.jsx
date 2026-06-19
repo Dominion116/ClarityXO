@@ -181,7 +181,16 @@ export default function Game({
 
       {moveHistory.length > 0 && (
         <div className="history-wrap">
-          <div className="history-title">Move History</div>
+          <div className="history-header">
+            <span className="history-title">Move History</span>
+            <div className="history-controls">
+              <button className="replay-btn" onClick={onStepBack} disabled={historyStep === 0}>‹</button>
+              <button className="replay-btn" onClick={onStepForward} disabled={historyStep === null}>›</button>
+              {historyStep !== null && (
+                <button className="replay-btn replay-live" onClick={onExitReplay}>live</button>
+              )}
+            </div>
+          </div>
           <div className="history-list" id="history-list">
             {moveHistory.map((entry, i) => (
               <div key={i} className="history-entry">
