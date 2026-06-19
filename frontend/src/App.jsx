@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { uintCV, principalCV } from "@stacks/transactions";
 import { connect, request } from "@stacks/connect";
 import { CONFIG } from "./config";
@@ -37,6 +37,8 @@ export default function App() {
   const [winLine, setWinLine] = useState(null);
   const [toast, setToast] = useState({ show: false, pts: 0, reason: "" });
   const [difficulty, setDifficulty] = useState('medium');
+  const [gameTime, setGameTime] = useState(0);
+  const timerRef = useRef(null);
 
   const log = useCallback((msg, type = "info") => {
     setLogs(prev => [...prev.slice(-50), { msg, type, ts: Date.now() }]);
