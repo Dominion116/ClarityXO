@@ -314,6 +314,7 @@ svg.mark { overflow: visible; }
 }
 .history-coord { color: var(--muted); }
 .history-player { font-size: 11px; min-width: 12px; }
+.history-entry.active { background: var(--ghost); }
 
 /* ── POINTS TOAST ─────────────────────────────────── */
 #points-toast {

@@ -195,7 +195,7 @@ export default function Game({
           </div>
           <div className="history-list" id="history-list">
             {moveHistory.map((entry, i) => (
-              <div key={i} className="history-entry">
+              <div key={i} className={`history-entry${historyStep === i ? ' active' : ''}`}>
                 <span className={`history-player mark-${entry.player.toLowerCase()}`}>{entry.player}</span>
                 <span className="history-coord">{entry.coord}</span>
               </div>
