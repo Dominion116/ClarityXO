@@ -140,7 +140,7 @@ export default function App() {
     else if (nextBoard.filter(c => c === EMPTY).length === 0) statusAfterX = STATUS_DRAW;
     const newSet = new Set([idx]);
     if (statusAfterX === STATUS_ACTIVE) {
-      aiIdx = chooseAiMove(nextBoard);
+      aiIdx = chooseAiMove(nextBoard, difficulty);
       if (aiIdx !== -1) {
         nextBoard[aiIdx] = PLAYER_O;
         newSet.add(aiIdx);
@@ -197,7 +197,7 @@ export default function App() {
     } finally {
       setProcessing(false);
     }
-  }, [board, processing, status, gameStarted, walletAddr, log, syncChainState, callContract]);
+  }, [board, processing, status, gameStarted, walletAddr, difficulty, log, syncChainState, callContract]);
 
   const resetLocal = useCallback(async () => {
     setBoard(Array(9).fill(EMPTY));
