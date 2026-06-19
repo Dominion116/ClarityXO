@@ -80,18 +80,21 @@ export function chooseAiMoveHard(board) {
   return bestMove;
 }
 
-export function chooseAiMove(board) {
+export function chooseAiMove(board, difficulty = 'medium') {
+  if (difficulty === 'easy') return chooseAiMoveEasy(board);
+  if (difficulty === 'hard') return chooseAiMoveHard(board);
+
   const win = findWinningMove(board, PLAYER_O);
   if (win !== -1) return win;
-  
+
   const block = findWinningMove(board, PLAYER_X);
   if (block !== -1) return block;
-  
+
   if (board[4] === EMPTY) return 4;
-  
+
   for (const c of [0,2,6,8]) if (board[c] === EMPTY) return c;
   for (const e of [1,3,5,7]) if (board[e] === EMPTY) return e;
-  
+
   return -1;
 }
 
