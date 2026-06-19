@@ -208,6 +208,7 @@ header {
 .dot { width: 6px; height: 6px; background: var(--dim); display: inline-block; transition: background .2s; }
 .dot.active { background: var(--green); animation: pulse 1.8s ease-in-out infinite; }
 .move-count { font-size: 10px; color: var(--dim); }
+.game-timer { font-size: 10px; color: var(--muted); letter-spacing: .1em; }
 
 .board {
   width: 100%; border: 1px solid var(--border2);
