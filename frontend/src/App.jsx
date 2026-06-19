@@ -169,6 +169,7 @@ export default function App() {
     setNewCells(newSet);
     let outcomeToRecord = null;
     if (statusAfterX !== STATUS_ACTIVE) {
+      stopTimer();
       setStatus(statusAfterX);
       setWinLine(getWinningLine(nextBoard));
       let earned = 0;
@@ -212,9 +213,11 @@ export default function App() {
     } finally {
       setProcessing(false);
     }
-  }, [board, processing, status, gameStarted, walletAddr, difficulty, startTimer, log, syncChainState, callContract]);
+  }, [board, processing, status, gameStarted, walletAddr, difficulty, startTimer, stopTimer, log, syncChainState, callContract]);
 
   const resetLocal = useCallback(async () => {
+    stopTimer();
+    setGameTime(0);
     setBoard(Array(9).fill(EMPTY));
     setStatus(STATUS_ACTIVE);
     setMoveCount(0);
@@ -224,7 +227,7 @@ export default function App() {
     setGameId(null);
     log("Board reset locally. Starting new game on-chain...", "info");
     if (walletAddr) setTimeout(() => startGame(), 500);
-  }, [log, walletAddr, startGame]);
+  }, [log, walletAddr, startGame, stopTimer]);
 
   const resign = useCallback(async () => {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
