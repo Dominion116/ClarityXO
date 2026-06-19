@@ -37,10 +37,10 @@ export function chooseAiMoveEasy(board) {
   return empty[Math.floor(Math.random() * empty.length)];
 }
 
-function minimax(board, isMaximizing, depth) {
+function minimax(board, isMaximizing, depth = 0) {
   const winner = checkWinner(board);
-  if (winner === PLAYER_O) return 10;
-  if (winner === PLAYER_X) return -10;
+  if (winner === PLAYER_O) return 10 - depth;
+  if (winner === PLAYER_X) return depth - 10;
   if (board.every(c => c !== EMPTY)) return 0;
 
   if (isMaximizing) {
@@ -48,7 +48,7 @@ function minimax(board, isMaximizing, depth) {
     for (let i = 0; i < 9; i++) {
       if (board[i] === EMPTY) {
         board[i] = PLAYER_O;
-        best = Math.max(best, minimax(board, false, depth));
+        best = Math.max(best, minimax(board, false, depth + 1));
         board[i] = EMPTY;
       }
     }
@@ -58,7 +58,7 @@ function minimax(board, isMaximizing, depth) {
     for (let i = 0; i < 9; i++) {
       if (board[i] === EMPTY) {
         board[i] = PLAYER_X;
-        best = Math.min(best, minimax(board, true, depth));
+        best = Math.min(best, minimax(board, true, depth + 1));
         board[i] = EMPTY;
       }
     }
