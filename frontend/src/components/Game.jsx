@@ -15,6 +15,8 @@ export default function Game({
   logs,
   newCells,
   winLine,
+  difficulty,
+  onDifficultyChange,
   syncChainState,
   connectWallet,
   startGame,
