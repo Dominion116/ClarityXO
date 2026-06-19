@@ -595,3 +595,15 @@ describe("chooseAiMove — explicit medium difficulty", () => {
     expect(chooseAiMove([X,E,E, O,O,E, E,E,X], 'medium')).toBe(5);
   });
 });
+
+describe("chooseAiMove — easy difficulty dispatch", () => {
+  it("returns a valid empty cell index with 'easy'", () => {
+    const move = chooseAiMove([E,E,E, E,E,E, E,E,E], 'easy');
+    expect(move).toBeGreaterThanOrEqual(0);
+    expect(move).toBeLessThanOrEqual(8);
+  });
+
+  it("returns -1 on a full board with 'easy'", () => {
+    expect(chooseAiMove([X,O,X, O,X,O, O,X,O], 'easy')).toBe(-1);
+  });
+});
