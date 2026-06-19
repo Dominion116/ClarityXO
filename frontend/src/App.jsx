@@ -39,6 +39,7 @@ export default function App() {
   const [difficulty, setDifficulty] = useState('medium');
   const [gameTime, setGameTime] = useState(0);
   const timerRef = useRef(null);
+  const [moveHistory, setMoveHistory] = useState([]);
 
   const startTimer = useCallback(() => {
     if (timerRef.current) return;
