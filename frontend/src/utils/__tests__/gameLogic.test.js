@@ -5,6 +5,8 @@ import {
   wouldWin,
   findWinningMove,
   chooseAiMove,
+  chooseAiMoveEasy,
+  chooseAiMoveHard,
   getWinningLine,
 } from "../gameLogic.js";
 import { EMPTY, PLAYER_X, PLAYER_O } from "../constants.js";
