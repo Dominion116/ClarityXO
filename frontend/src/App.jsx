@@ -40,6 +40,7 @@ export default function App() {
   const [gameTime, setGameTime] = useState(0);
   const timerRef = useRef(null);
   const [moveHistory, setMoveHistory] = useState([]);
+  const [historyStep, setHistoryStep] = useState(null);
 
   const startTimer = useCallback(() => {
     if (timerRef.current) return;
@@ -224,6 +225,7 @@ export default function App() {
     stopTimer();
     setGameTime(0);
     setMoveHistory([]);
+    setHistoryStep(null);
     setBoard(Array(9).fill(EMPTY));
     setStatus(STATUS_ACTIVE);
     setMoveCount(0);
