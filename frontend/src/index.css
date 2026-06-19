@@ -313,6 +313,7 @@ svg.mark { overflow: visible; }
   border-bottom: 1px solid var(--bg);
 }
 .history-coord { color: var(--muted); }
+.history-player { font-size: 11px; min-width: 12px; }
 
 /* ── POINTS TOAST ─────────────────────────────────── */
 #points-toast {
