@@ -98,6 +98,12 @@ export function chooseAiMove(board, difficulty = 'medium') {
   return -1;
 }
 
+export function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
 export function getWinningLine(board) {
   const wins = [
     [0,1,2],[3,4,5],[6,7,8],
