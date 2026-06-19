@@ -149,6 +149,8 @@ export default function App() {
     const col = idx % 3;
     const nextBoard = [...board];
     nextBoard[idx] = PLAYER_X;
+    const coord = (i) => `[${Math.floor(i/3)},${i%3}]`;
+    const newEntries = [{ player: 'X', idx, coord: coord(idx), boardAfter: [...nextBoard] }];
     let aiIdx = -1;
     let statusAfterX = STATUS_ACTIVE;
     const winnerAfterX = checkWinner(nextBoard);
@@ -159,6 +161,7 @@ export default function App() {
       aiIdx = chooseAiMove(nextBoard, difficulty);
       if (aiIdx !== -1) {
         nextBoard[aiIdx] = PLAYER_O;
+        newEntries.push({ player: 'O', idx: aiIdx, coord: coord(aiIdx), boardAfter: [...nextBoard] });
         newSet.add(aiIdx);
         const winnerAfterO = checkWinner(nextBoard);
         if (winnerAfterO === PLAYER_O) statusAfterX = STATUS_O_WON;
@@ -168,6 +171,7 @@ export default function App() {
     setBoard(nextBoard);
     setMoveCount(prev => prev + (aiIdx !== -1 ? 2 : 1));
     setNewCells(newSet);
+    setMoveHistory(prev => [...prev, ...newEntries]);
     let outcomeToRecord = null;
     if (statusAfterX !== STATUS_ACTIVE) {
       stopTimer();
