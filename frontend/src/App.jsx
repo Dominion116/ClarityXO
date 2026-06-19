@@ -313,6 +313,7 @@ export default function App() {
               newCells={newCells}
               winLine={winLine}
               gameTime={gameTime}
+              moveHistory={moveHistory}
               difficulty={difficulty}
               onDifficultyChange={setDifficulty}
               syncChainState={syncChainState}
