@@ -607,3 +607,13 @@ describe("chooseAiMove — easy difficulty dispatch", () => {
     expect(chooseAiMove([X,O,X, O,X,O, O,X,O], 'easy')).toBe(-1);
   });
 });
+
+describe("chooseAiMove — hard difficulty dispatch", () => {
+  it("takes an immediate winning move with 'hard'", () => {
+    expect(chooseAiMove([X,E,E, O,O,E, E,E,X], 'hard')).toBe(5);
+  });
+
+  it("blocks X two-in-a-row with 'hard' when O has no immediate win", () => {
+    expect(chooseAiMove([X,X,E, E,O,E, E,E,E], 'hard')).toBe(2);
+  });
+});
