@@ -530,3 +530,13 @@ describe("chooseAiMoveHard — takes immediate winning move", () => {
     expect(chooseAiMoveHard([O,X,E, E,O,E, E,E,E])).toBe(8);
   });
 });
+
+describe("chooseAiMoveHard — blocks opponent two-in-a-row", () => {
+  it("blocks X completing row 0 at index 2", () => {
+    expect(chooseAiMoveHard([X,X,E, E,O,E, E,E,E])).toBe(2);
+  });
+
+  it("blocks X completing column 0 at index 6", () => {
+    expect(chooseAiMoveHard([X,O,E, X,E,E, E,E,E])).toBe(6);
+  });
+});
