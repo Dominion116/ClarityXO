@@ -306,6 +306,7 @@ export default function App() {
               logs={logs}
               newCells={newCells}
               winLine={winLine}
+              gameTime={gameTime}
               difficulty={difficulty}
               onDifficultyChange={setDifficulty}
               syncChainState={syncChainState}
