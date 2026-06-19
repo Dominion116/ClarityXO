@@ -223,6 +223,7 @@ export default function App() {
   const resetLocal = useCallback(async () => {
     stopTimer();
     setGameTime(0);
+    setMoveHistory([]);
     setBoard(Array(9).fill(EMPTY));
     setStatus(STATUS_ACTIVE);
     setMoveCount(0);
