@@ -504,3 +504,13 @@ describe("chooseAiMoveEasy — returns a valid empty cell index", () => {
     expect([6, 7, 8]).toContain(move);
   });
 });
+
+describe("chooseAiMoveEasy — edge cases", () => {
+  it("returns -1 when the board is completely full", () => {
+    expect(chooseAiMoveEasy([X,O,X, O,X,O, O,X,O])).toBe(-1);
+  });
+
+  it("returns the only available index when one cell remains", () => {
+    expect(chooseAiMoveEasy([X,O,X, O,X,O, X,O,E])).toBe(8);
+  });
+});
