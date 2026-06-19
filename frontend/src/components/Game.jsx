@@ -57,6 +57,8 @@ export default function Game({
 
   const statusInfo = getStatusInfo();
   const gameOver = status !== STATUS_ACTIVE;
+  const isReplaying = historyStep !== null;
+  const displayBoard = isReplaying ? moveHistory[historyStep].boardAfter : board;
 
   const handleCellClick = (idx) => {
     makeMove(idx);
@@ -114,17 +116,17 @@ export default function Game({
 
       <div className="board" id="board">
         {processing && <div className="board-overlay" id="board-overlay">waiting…</div>}
-        {board.map((cell, idx) => {
-          const isWinCell = winLine && winLine.includes(idx);
-          const drawAnimate = newCells.has(idx);
+        {displayBoard.map((cell, idx) => {
+          const isWinCell = !isReplaying && winLine && winLine.includes(idx);
+          const drawAnimate = !isReplaying && newCells.has(idx);
 
           let cellClass = "cell";
           if (cell !== EMPTY) cellClass += " occupied";
-          if (gameOver) cellClass += " game-over";
+          if (gameOver || isReplaying) cellClass += " game-over";
           if (isWinCell) cellClass += " win-cell";
 
           return (
-            <div key={idx} className={cellClass} onClick={() => handleCellClick(idx)}>
+            <div key={idx} className={cellClass} onClick={() => !isReplaying && handleCellClick(idx)}>
               {cell === PLAYER_X && (
                 <svg className="mark" width="40" height="40" viewBox="-20 -20 40 40">
                   <line x1="-14" y1="-14" x2="14" y2="14" className={`x-line1 ${drawAnimate ? 'animate' : 'static'}`} />
@@ -144,7 +146,7 @@ export default function Game({
       <div className="info-row">
         <div className="info-cell"><span className="mark-x">X</span> · You</div>
         <div className="info-cell"><span className="mark-o">O</span> · Computer</div>
-        <div className="info-cell" id="info-empty">Cells left: {board.filter(c => c === EMPTY).length}</div>
+        <div className="info-cell" id="info-empty">Cells left: {displayBoard.filter(c => c === EMPTY).length}</div>
       </div>
 
       <div className="difficulty-row">
