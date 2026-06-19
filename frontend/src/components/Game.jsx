@@ -4,6 +4,8 @@ import { resolveAddressName } from '../utils/bns';
 import { fetchPlayerProfile } from '../utils/profile';
 import { CONFIG } from '../config';
 
+const DIFFICULTIES = ['easy', 'medium', 'hard'];
+
 export default function Game({
   board,
   status,
