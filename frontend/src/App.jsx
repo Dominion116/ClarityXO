@@ -331,6 +331,10 @@ export default function App() {
               winLine={winLine}
               gameTime={gameTime}
               moveHistory={moveHistory}
+              historyStep={historyStep}
+              onStepBack={stepBack}
+              onStepForward={stepForward}
+              onExitReplay={() => setHistoryStep(null)}
               difficulty={difficulty}
               onDifficultyChange={setDifficulty}
               syncChainState={syncChainState}
