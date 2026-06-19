@@ -585,3 +585,13 @@ describe("chooseAiMove — defaults to medium with no difficulty arg", () => {
     expect(chooseAiMove([X,X,E, E,O,E, E,E,E])).toBe(2);
   });
 });
+
+describe("chooseAiMove — explicit medium difficulty", () => {
+  it("picks center with 'medium' on an empty board", () => {
+    expect(chooseAiMove([E,E,E, E,E,E, E,E,E], 'medium')).toBe(4);
+  });
+
+  it("takes winning move with 'medium' when O has two-in-a-row", () => {
+    expect(chooseAiMove([X,E,E, O,O,E, E,E,X], 'medium')).toBe(5);
+  });
+});
