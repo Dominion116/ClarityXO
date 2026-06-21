@@ -151,10 +151,15 @@ export async function claimNFT(walletAddr, addLog, leaderboardData) {
   addLog(`Claiming NFT Trophy for rank #${myRank + 1} (${pts} pts)…`, "info");
 
   try {
+    const currentMonth = await getCurrentMonthNumber();
+    if (currentMonth === 0) {
+      addLog("Could not fetch chain state. Please try again.", "error");
+      return false;
+    }
     const response = await request("stx_callContract", {
       contract: `${CONFIG.nftContractAddress}.${CONFIG.nftContractName}`,
       functionName: "claim-trophy",
-      functionArgs: [encodeCVArg(uintCV(await getCurrentMonthNumber() - 1))],
+      functionArgs: [encodeCVArg(uintCV(currentMonth - 1))],
       network: CONFIG.network,
     });
 
