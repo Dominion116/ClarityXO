@@ -141,6 +141,7 @@ export default function App() {
   const connectWallet = useCallback(async () => {
     try {
       const result = await connect();
+      if (!result?.addresses?.length) throw new Error("No addresses returned from wallet");
       const stxAddr = result.addresses.find(a => a.symbol === "STX")?.address
                       ?? result.addresses[0]?.address;
       if (!stxAddr) throw new Error("No STX address returned");
