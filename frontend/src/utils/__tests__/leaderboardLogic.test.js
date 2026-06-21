@@ -427,8 +427,8 @@ describe("getPlayerList — all players with equal pts sorted by wins desc", () 
       },
     };
     const list = getPlayerList(data);
-    expect(list[0].address).toBe("SP1");
-    expect(list[1].address).toBe("SP2");
+    expect(list[0].addr).toBe("SP1");
+    expect(list[1].addr).toBe("SP2");
   });
 
   it("three players all equal pts and wins: fewer losses ranks first", () => {
@@ -440,7 +440,7 @@ describe("getPlayerList — all players with equal pts sorted by wins desc", () 
       },
     };
     const list = getPlayerList(data);
-    expect(list[0].address).toBe("SP2");
+    expect(list[0].addr).toBe("SP2");
   });
 });
 
@@ -494,18 +494,18 @@ describe("formatCountdown — boundary seconds", () => {
   });
 });
 
-describe("getPlayerList — address field is set from object key", () => {
-  it("address on returned player matches the key used in players object", () => {
+describe("getPlayerList — addr field is set from object key", () => {
+  it("addr on returned player matches the key used in players object", () => {
     const data = {
       players: {
         "SP_ALICE": { pts: 5, wins: 1, draws: 1, losses: 0 },
       },
     };
     const list = getPlayerList(data);
-    expect(list[0].address).toBe("SP_ALICE");
+    expect(list[0].addr).toBe("SP_ALICE");
   });
 
-  it("two players have distinct address fields from their keys", () => {
+  it("two players have distinct addr fields from their keys", () => {
     const data = {
       players: {
         "SP_BOB":   { pts: 9, wins: 3, draws: 0, losses: 0 },
@@ -513,8 +513,8 @@ describe("getPlayerList — address field is set from object key", () => {
       },
     };
     const list = getPlayerList(data);
-    expect(list[0].address).toBe("SP_BOB");
-    expect(list[1].address).toBe("SP_CAROL");
+    expect(list[0].addr).toBe("SP_BOB");
+    expect(list[1].addr).toBe("SP_CAROL");
   });
 });
 
@@ -527,7 +527,7 @@ describe("getPlayerList — single player is always rank 1", () => {
     };
     const list = getPlayerList(data);
     expect(list).toHaveLength(1);
-    expect(list[0].address).toBe("SP_ONLY");
+    expect(list[0].addr).toBe("SP_ONLY");
   });
 
   it("single player with high stats is still the only entry", () => {
