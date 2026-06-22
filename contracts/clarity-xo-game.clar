@@ -167,6 +167,10 @@
   })
 )
 
+(define-read-only (get-challenge (challenger principal))
+  (ok (map-get? pvp-challenges challenger))
+)
+
 
 ;; 
 ;;  PRIVATE  board helpers
