@@ -68,6 +68,16 @@
 ;; One active game per player
 (define-map player-active-game principal uint)
 
+;;
+;;  PVP CHALLENGE STATE
+;;
+
+;; Open challenge: challenger principal -> { opponent, created-at }
+(define-map pvp-challenges
+  principal
+  { opponent: principal, created-at: uint }
+)
+
 
 ;; 
 ;;  MONTHLY LEADERBOARD
