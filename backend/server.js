@@ -428,7 +428,8 @@ async function syncLeaderboardFromChain() {
       }
 
       const outcome = state.status === 1 ? 'win' : state.status === 2 ? 'loss' : 'draw';
-      const pts = outcome === 'win' ? 3 : outcome === 'draw' ? 1 : 0;
+      const gameMode = state.isPvp ? 'pvp' : 'ai';
+      const pts = outcome === 'win' ? (gameMode === 'pvp' ? 5 : 3) : outcome === 'draw' ? 1 : 0;
 
       newGames.push({
         gameId,
@@ -438,6 +439,7 @@ async function syncLeaderboardFromChain() {
         moves: state.moves,
         status: state.status,
         outcome,
+        gameMode,
         pts,
         updatedAt: new Date(),
       });
