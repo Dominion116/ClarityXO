@@ -84,6 +84,9 @@
 ;; Whose turn it is in a PvP game: PLAYER_X (u1) or PLAYER_O (u2)
 (define-map pvp-game-turn uint uint)
 
+;; Flag distinguishing PvP games from AI games
+(define-map pvp-game-mode uint bool)
+
 
 ;; 
 ;;  MONTHLY LEADERBOARD
