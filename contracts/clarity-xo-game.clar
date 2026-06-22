@@ -44,9 +44,10 @@
 (define-constant STATUS_DRAW   u3)
 
 ;; Points
-(define-constant PTS_WIN  u3)
-(define-constant PTS_DRAW u1)
-(define-constant PTS_LOSS u0)
+(define-constant PTS_WIN     u3)
+(define-constant PTS_PVP_WIN u5)
+(define-constant PTS_DRAW    u1)
+(define-constant PTS_LOSS    u0)
 
 ;; ~1 block per 10 min  ~4320 blocks per month (30 days)
 (define-constant BLOCKS_PER_MONTH u4320)
