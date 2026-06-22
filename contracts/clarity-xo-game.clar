@@ -81,6 +81,9 @@
 ;; PvP game: game-id -> O player (challenger is always X via game-players)
 (define-map pvp-game-opponent uint principal)
 
+;; Whose turn it is in a PvP game: PLAYER_X (u1) or PLAYER_O (u2)
+(define-map pvp-game-turn uint uint)
+
 
 ;; 
 ;;  MONTHLY LEADERBOARD
