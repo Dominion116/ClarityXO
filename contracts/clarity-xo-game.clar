@@ -180,6 +180,10 @@
   })
 )
 
+(define-read-only (get-pending-challenge (challenger principal))
+  (ok (map-get? pvp-challenges challenger))
+)
+
 
 ;; 
 ;;  PRIVATE  board helpers
