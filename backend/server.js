@@ -538,7 +538,8 @@ app.post('/api/leaderboard/result', async (req, res) => {
     return res.status(400).json({ error: 'outcome must be win|draw|loss' });
   }
 
-  const ptsMap = { win: 3, draw: 1, loss: 0 };
+  const { gameMode } = req.body || {};
+  const ptsMap = { win: gameMode === 'pvp' ? 5 : 3, draw: 1, loss: 0 };
   const outcomeFieldMap = { win: 'wins', draw: 'draws', loss: 'losses' };
   const monthKey = month || await getLatestMonthKey() || await getCurrentChainMonthKey();
   const incField = outcomeFieldMap[outcome];
