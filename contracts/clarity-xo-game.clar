@@ -20,13 +20,17 @@
 (define-constant contract-owner tx-sender)
 
 ;; Errors
-(define-constant err-not-authorized   (err u100))
-(define-constant err-game-finished    (err u101))
-(define-constant err-invalid-move     (err u102))
-(define-constant err-not-your-turn    (err u103))
-(define-constant err-cell-occupied    (err u104))
-(define-constant err-no-active-game   (err u105))
-(define-constant err-game-in-progress (err u106))
+(define-constant err-not-authorized       (err u100))
+(define-constant err-game-finished        (err u101))
+(define-constant err-invalid-move         (err u102))
+(define-constant err-not-your-turn        (err u103))
+(define-constant err-cell-occupied        (err u104))
+(define-constant err-no-active-game       (err u105))
+(define-constant err-game-in-progress     (err u106))
+(define-constant err-no-pending-challenge     (err u107))
+(define-constant err-challenge-already-exists (err u108))
+(define-constant err-cannot-challenge-self    (err u109))
+(define-constant err-not-pvp-game             (err u110))
 
 ;; Cell values
 (define-constant EMPTY    u0)
