@@ -171,6 +171,15 @@
   (ok (map-get? pvp-challenges challenger))
 )
 
+(define-read-only (get-pvp-game-state (game-id uint))
+  (ok {
+    x-player: (map-get? game-players game-id),
+    o-player:  (map-get? pvp-game-opponent game-id),
+    turn:      (default-to PLAYER_X (map-get? pvp-game-turn game-id)),
+    is-pvp:    (default-to false (map-get? pvp-game-mode game-id)),
+  })
+)
+
 
 ;; 
 ;;  PRIVATE  board helpers
