@@ -638,6 +638,27 @@ app.get('/api/pvp/challenges/:player', async (req, res) => {
   }
 });
 
+app.get('/api/pvp/game/:gameId', async (req, res) => {
+  const gameId = parseInt(req.params.gameId, 10);
+  if (isNaN(gameId) || gameId < 1) {
+    return res.status(400).json({ error: 'Invalid game ID' });
+  }
+  try {
+    const [fullStateRaw, pvpStateRaw] = await Promise.all([
+      callReadOnly('get-full-game-state', [encodeUintArg(gameId)]),
+      callReadOnly('get-pvp-game-state',  [encodeUintArg(gameId)]),
+    ]);
+    res.json({
+      ok: true,
+      gameId,
+      fullState: fullStateRaw?.result || null,
+      pvpState:  pvpStateRaw?.result  || null,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/sync', async (_req, res) => {
   try {
     const result = await syncLeaderboardFromChainDebounced();
