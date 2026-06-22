@@ -297,6 +297,11 @@ async function getGamesCollection() {
   return db.collection(MONGODB_GAMES_COLLECTION);
 }
 
+async function getPvPChallengesCollection() {
+  const db = await getDatabase();
+  return db.collection('pvp_challenges');
+}
+
 async function getLatestStoredGameId() {
   const collection = await getGamesCollection();
   const doc = await collection.findOne({}, { sort: { gameId: -1 } });
