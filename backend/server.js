@@ -623,6 +623,21 @@ app.get('/nft/:id', cors(), async (req, res) => {
   }
 });
 
+app.get('/api/pvp/challenges/:player', async (req, res) => {
+  const { player } = req.params;
+  if (!player || typeof player !== 'string') {
+    return res.status(400).json({ error: 'player address is required' });
+  }
+  try {
+    const { cvToHex, principalCV } = await import('@stacks/transactions');
+    const playerArg = cvToHex(principalCV(player));
+    const raw = await callReadOnly('get-challenge', [playerArg]);
+    res.json({ ok: true, player, result: raw?.result || null });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/sync', async (_req, res) => {
   try {
     const result = await syncLeaderboardFromChainDebounced();
