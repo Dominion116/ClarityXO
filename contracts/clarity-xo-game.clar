@@ -360,6 +360,47 @@
 
 
 ;;
+;;  PUBLIC  accept-challenge
+;;  Creates the shared PvP game, sets both players active, removes the
+;;  pending challenge entry.  Challenger becomes X; acceptor becomes O.
+;;
+
+(define-public (accept-challenge (challenger principal))
+  (let (
+    (acceptor  tx-sender)
+    (chal-opt  (map-get? pvp-challenges challenger))
+  )
+    (asserts! (is-some chal-opt) err-no-pending-challenge)
+    (let (
+      (chal    (unwrap-panic chal-opt))
+      (game-id (var-get next-game-id))
+    )
+      (asserts! (is-eq acceptor (get opponent chal))                  err-not-authorized)
+      (asserts! (is-none (map-get? player-active-game acceptor))     err-game-in-progress)
+      (asserts! (is-none (map-get? player-active-game challenger))   err-game-in-progress)
+
+      (map-set game-boards   game-id (list u0 u0 u0 u0 u0 u0 u0 u0 u0))
+      (map-set game-statuses game-id STATUS_ACTIVE)
+      (map-set game-players  game-id challenger)
+      (map-set game-moves    game-id u0)
+      (map-set game-month    game-id (current-month))
+
+      (map-set pvp-game-opponent game-id acceptor)
+      (map-set pvp-game-turn     game-id PLAYER_X)
+      (map-set pvp-game-mode     game-id true)
+
+      (map-set player-active-game challenger game-id)
+      (map-set player-active-game acceptor   game-id)
+
+      (map-delete pvp-challenges challenger)
+      (var-set next-game-id (+ game-id u1))
+      (ok game-id)
+    )
+  )
+)
+
+
+;;
 ;;  PUBLIC  start-game
 ;;
 
