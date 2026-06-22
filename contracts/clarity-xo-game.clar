@@ -401,6 +401,26 @@
 
 
 ;;
+;;  PUBLIC  decline-challenge
+;;  Called by the intended opponent to reject an incoming challenge.
+;;
+
+(define-public (decline-challenge (challenger principal))
+  (let (
+    (decliner  tx-sender)
+    (chal-opt  (map-get? pvp-challenges challenger))
+  )
+    (asserts! (is-some chal-opt) err-no-pending-challenge)
+    (let ((chal (unwrap-panic chal-opt)))
+      (asserts! (is-eq decliner (get opponent chal)) err-not-authorized)
+      (map-delete pvp-challenges challenger)
+      (ok challenger)
+    )
+  )
+)
+
+
+;;
 ;;  PUBLIC  start-game
 ;;
 
