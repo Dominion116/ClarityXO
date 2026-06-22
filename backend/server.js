@@ -641,6 +641,7 @@ async function start() {
     const db = await getDatabase();
     await db.collection(MONGODB_COLLECTION).createIndex({ month: 1 }, { unique: true });
     await db.collection(MONGODB_GAMES_COLLECTION).createIndex({ gameId: 1 }, { unique: true });
+    await db.collection('pvp_challenges').createIndex({ challenger: 1 }, { unique: true });
 
     app.listen(PORT, () => {
       console.log(`Leaderboard backend listening on :${PORT}`);
