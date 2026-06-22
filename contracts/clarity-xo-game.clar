@@ -421,6 +421,20 @@
 
 
 ;;
+;;  PUBLIC  cancel-challenge
+;;  Called by the challenger to withdraw their own open challenge.
+;;
+
+(define-public (cancel-challenge)
+  (let ((challenger tx-sender))
+    (asserts! (is-some (map-get? pvp-challenges challenger)) err-no-pending-challenge)
+    (map-delete pvp-challenges challenger)
+    (ok challenger)
+  )
+)
+
+
+;;
 ;;  PUBLIC  start-game
 ;;
 
