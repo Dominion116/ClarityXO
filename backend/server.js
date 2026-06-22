@@ -659,6 +659,40 @@ app.get('/api/pvp/game/:gameId', async (req, res) => {
   }
 });
 
+app.post('/api/pvp/result', async (req, res) => {
+  const { walletAddr, outcome, month } = req.body || {};
+  const validOutcomes = new Set(['win', 'draw', 'loss']);
+  if (!walletAddr || typeof walletAddr !== 'string') {
+    return res.status(400).json({ error: 'walletAddr is required' });
+  }
+  if (!validOutcomes.has(outcome)) {
+    return res.status(400).json({ error: 'outcome must be win|draw|loss' });
+  }
+  const ptsMap = { win: 5, draw: 1, loss: 0 };
+  const outcomeFieldMap = { win: 'wins', draw: 'draws', loss: 'losses' };
+  const monthKey = month || await getLatestMonthKey() || await getCurrentChainMonthKey();
+  const incField = outcomeFieldMap[outcome];
+  try {
+    const collection = await getMonthCollection();
+    await collection.updateOne(
+      { month: monthKey },
+      {
+        $setOnInsert: { month: monthKey },
+        $inc: {
+          [`players.${walletAddr}.pts`]: ptsMap[outcome],
+          [`players.${walletAddr}.${incField}`]: 1,
+        },
+      },
+      { upsert: true }
+    );
+    const updatedMonth = await collection.findOne({ month: monthKey });
+    const stats = updatedMonth?.players?.[walletAddr] || { pts: 0, wins: 0, draws: 0, losses: 0 };
+    return res.json({ ok: true, earned: ptsMap[outcome], month: monthKey, stats, gameMode: 'pvp' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/sync', async (_req, res) => {
   try {
     const result = await syncLeaderboardFromChainDebounced();
