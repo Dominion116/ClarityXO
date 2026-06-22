@@ -78,6 +78,9 @@
   { opponent: principal, created-at: uint }
 )
 
+;; PvP game: game-id -> O player (challenger is always X via game-players)
+(define-map pvp-game-opponent uint principal)
+
 
 ;; 
 ;;  MONTHLY LEADERBOARD
