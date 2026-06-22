@@ -128,6 +128,64 @@ const swaggerSpec = {
         },
       },
     },
+    '/api/pvp/challenges/{player}': {
+      get: {
+        summary: 'Get open PvP challenge by challenger address',
+        parameters: [
+          {
+            name: 'player',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', example: 'SP2C2YB2M7WZ8Q4P8A9VQYQMW9C03R9X62H2W8A1K' },
+          },
+        ],
+        responses: {
+          200: { description: 'Challenge lookup result (Clarity CV)' },
+          400: { description: 'Invalid player address' },
+        },
+      },
+    },
+    '/api/pvp/game/{gameId}': {
+      get: {
+        summary: 'Get full board state plus PvP metadata for a game',
+        parameters: [
+          {
+            name: 'gameId',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', example: 42 },
+          },
+        ],
+        responses: {
+          200: { description: 'Combined fullState and pvpState CVs' },
+          400: { description: 'Invalid game ID' },
+        },
+      },
+    },
+    '/api/pvp/result': {
+      post: {
+        summary: 'Record a PvP game result (win = 5 pts)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['walletAddr', 'outcome'],
+                properties: {
+                  walletAddr: { type: 'string' },
+                  outcome: { type: 'string', enum: ['win', 'draw', 'loss'] },
+                  month: { type: 'string', example: '2026-06' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'PvP result stored with 5-point win multiplier' },
+        },
+      },
+    },
   },
 };
 
