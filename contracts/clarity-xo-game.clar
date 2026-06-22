@@ -342,6 +342,24 @@
 
 
 ;;
+;;  PUBLIC  create-challenge
+;;  Challenger sends an invitation to a specific opponent address.
+;;  Challenger must have no active game and no open challenge.
+;;
+
+(define-public (create-challenge (opponent principal))
+  (let ((challenger tx-sender))
+    (asserts! (not (is-eq challenger opponent))             err-cannot-challenge-self)
+    (asserts! (is-none (map-get? player-active-game challenger)) err-game-in-progress)
+    (asserts! (is-none (map-get? pvp-challenges challenger))     err-challenge-already-exists)
+    (map-set pvp-challenges challenger
+      { opponent: opponent, created-at: burn-block-height })
+    (ok challenger)
+  )
+)
+
+
+;;
 ;;  PUBLIC  start-game
 ;;
 
