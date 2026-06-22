@@ -435,6 +435,89 @@
 
 
 ;;
+;;  PUBLIC  make-pvp-move
+;;  Either player submits their move. Validates turn order, updates board,
+;;  checks for win / draw, awards points, and flips the turn.
+;;  Returns { game-id, status, your-marker }.
+;;
+
+(define-public (make-pvp-move (row uint) (col uint))
+  (let (
+    (mover   tx-sender)
+    (gid-opt (map-get? player-active-game mover))
+  )
+    (asserts! (is-some gid-opt) err-no-active-game)
+    (let (
+      (game-id (unwrap-panic gid-opt))
+      (is-pvp  (default-to false (map-get? pvp-game-mode game-id)))
+    )
+      (asserts! is-pvp err-not-pvp-game)
+      (let (
+        (x-player     (unwrap-panic (map-get? game-players game-id)))
+        (o-player     (unwrap-panic (map-get? pvp-game-opponent game-id)))
+        (cur-turn     (default-to PLAYER_X (map-get? pvp-game-turn game-id)))
+        (board        (default-to (list u0 u0 u0 u0 u0 u0 u0 u0 u0)
+                                  (map-get? game-boards game-id)))
+        (status       (default-to STATUS_ACTIVE (map-get? game-statuses game-id)))
+        (moves        (default-to u0 (map-get? game-moves game-id)))
+        (idx          (get-index row col))
+        (mover-marker (if (is-eq mover x-player) PLAYER_X PLAYER_O))
+      )
+        (asserts! (is-eq status STATUS_ACTIVE)              err-game-finished)
+        (asserts! (and (< row u3) (< col u3))               err-invalid-move)
+        (asserts! (is-eq (get-cell-at board idx) EMPTY)     err-cell-occupied)
+        (asserts! (is-eq mover-marker cur-turn)             err-not-your-turn)
+        (asserts! (or (is-eq mover x-player)
+                      (is-eq mover o-player))               err-not-authorized)
+
+        (let (
+          (new-board  (set-cell-in board idx mover-marker))
+          (new-moves  (+ moves u1))
+          (winner     (check-winner-on new-board))
+        )
+          (if (is-eq winner mover-marker)
+            ;; Mover wins
+            (let (
+              (loser      (if (is-eq mover x-player) o-player x-player))
+              (new-status (if (is-eq mover-marker PLAYER_X) STATUS_X_WON STATUS_O_WON))
+            )
+              (map-set game-boards   game-id new-board)
+              (map-set game-moves    game-id new-moves)
+              (map-set game-statuses game-id new-status)
+              (map-delete player-active-game x-player)
+              (map-delete player-active-game o-player)
+              (record-pvp-result mover loser false)
+              (ok { game-id: game-id, status: new-status, your-marker: mover-marker })
+            )
+            (if (is-eq new-moves u9)
+              ;; Draw
+              (begin
+                (map-set game-boards   game-id new-board)
+                (map-set game-moves    game-id new-moves)
+                (map-set game-statuses game-id STATUS_DRAW)
+                (map-delete player-active-game x-player)
+                (map-delete player-active-game o-player)
+                (record-pvp-result x-player o-player true)
+                (ok { game-id: game-id, status: STATUS_DRAW, your-marker: mover-marker })
+              )
+              ;; Game continues — flip turn
+              (begin
+                (map-set game-boards   game-id new-board)
+                (map-set game-moves    game-id new-moves)
+                (map-set pvp-game-turn game-id
+                  (if (is-eq cur-turn PLAYER_X) PLAYER_O PLAYER_X))
+                (ok { game-id: game-id, status: STATUS_ACTIVE, your-marker: mover-marker })
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+
+;;
 ;;  PUBLIC  start-game
 ;;
 
