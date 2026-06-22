@@ -320,9 +320,30 @@
 )
 
 
-;; 
+;;
+;;  PRIVATE  record PvP result for both players
+;;
+
+(define-private (record-pvp-result
+    (winner  principal)
+    (loser   principal)
+    (is-draw bool))
+  (if is-draw
+    (begin
+      (record-points winner PTS_DRAW "draw")
+      (record-points loser  PTS_DRAW "draw")
+    )
+    (begin
+      (record-points winner PTS_PVP_WIN "win")
+      (record-points loser  PTS_LOSS    "loss")
+    )
+  )
+)
+
+
+;;
 ;;  PUBLIC  start-game
-;; 
+;;
 
 (define-public (start-game)
   (let (
