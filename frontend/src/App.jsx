@@ -453,6 +453,23 @@ export default function App() {
               navigate={setActivePage}
             />
           )}
+
+          {activePage === 'pvp' && (
+            <PvPLobby
+              walletAddr={walletAddr}
+              processing={processing}
+              gameMode={gameMode}
+              pvpOpponent={pvpOpponent}
+              pvpOutboundChallenge={pvpOutboundChallenge}
+              connectWallet={connectWallet}
+              createPvPChallenge={createPvPChallenge}
+              acceptPvPChallenge={acceptPvPChallenge}
+              declinePvPChallenge={declinePvPChallenge}
+              cancelPvPChallenge={cancelPvPChallenge}
+              navigate={setActivePage}
+              addLog={log}
+            />
+          )}
         </>
       )}
     </>
