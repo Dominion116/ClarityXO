@@ -54,9 +54,13 @@ export default function Game({
 
   const getStatusInfo = () => {
     if (processing) return { label: "broadcasting…", color: "var(--muted)", dotActive: false };
-    if (status === STATUS_X_WON) return { label: "you win", color: "var(--green)", dotActive: false };
-    if (status === STATUS_O_WON) return { label: "computer wins", color: "var(--red)", dotActive: false };
+    if (status === STATUS_X_WON) return { label: gameMode === GAME_MODE_PVP ? "X wins" : "you win", color: "var(--green)", dotActive: false };
+    if (status === STATUS_O_WON) return { label: gameMode === GAME_MODE_PVP ? "O wins" : "computer wins", color: "var(--red)", dotActive: false };
     if (status === STATUS_DRAW) return { label: "draw", color: "var(--text)", dotActive: false };
+    if (gameMode === GAME_MODE_PVP) {
+      const isMyTurn = (pvpTurn === PLAYER_X && walletAddr) || pvpTurn === PLAYER_X;
+      return { label: pvpTurn === PLAYER_X ? "X's turn" : "O's turn", color: "var(--muted)", dotActive: true };
+    }
     return { label: "your move", color: "var(--muted)", dotActive: true };
   };
 
