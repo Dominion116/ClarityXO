@@ -319,6 +319,27 @@ export default function App() {
     }
   }, [walletAddr, log]);
 
+  const makePvPMoveHandler = useCallback(async (idx) => {
+    if (processing || status !== STATUS_ACTIVE) return;
+    if (board[idx] !== EMPTY) return;
+    if (!walletAddr) { log("Connect wallet to play.", "error"); return; }
+    const row = Math.floor(idx / 3);
+    const col = idx % 3;
+    startTimer();
+    try {
+      setProcessing(true);
+      const response = await makePvPMove(row, col);
+      log(`PvP move at [${row},${col}] TX: ${response?.txid?.slice(0, 16)}…`, "success");
+      setTimeout(async () => {
+        await syncChainState();
+      }, 6000);
+    } catch (e) {
+      log(`PvP move error: ${e.message}`, "error");
+    } finally {
+      setProcessing(false);
+    }
+  }, [board, processing, status, walletAddr, startTimer, log, syncChainState]);
+
   const resign = useCallback(async () => {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
     try {
