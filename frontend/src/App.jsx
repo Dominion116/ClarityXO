@@ -411,6 +411,7 @@ export default function App() {
             <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
               <nav className="mobile-nav">
                 <div className={`nav-item mobile ${activePage === 'game' ? 'active' : ''}`} onClick={() => { setActivePage('game'); setMobileMenuOpen(false); }}>Game</div>
+                <div className={`nav-item mobile ${activePage === 'pvp' ? 'active' : ''}`} onClick={() => { setActivePage('pvp'); setMobileMenuOpen(false); }}>PvP Lobby</div>
                 <div className={`nav-item mobile ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => { setActivePage('leaderboard'); setMobileMenuOpen(false); }}>Leaderboard</div>
               </nav>
             </div>
