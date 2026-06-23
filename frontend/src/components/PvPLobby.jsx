@@ -74,6 +74,18 @@ export default function PvPLobby({
         </div>
       )}
 
+      {walletAddr && gameMode === GAME_MODE_PVP && pvpOpponent && (
+        <div className="pvp-card pvp-card-active">
+          <div className="pvp-card-title">Game In Progress</div>
+          <p className="pvp-card-desc">
+            You are playing against <strong>{pvpOpponent.slice(0, 14)}…</strong>
+          </p>
+          <button className="btn btn-primary" onClick={() => navigate('game')}>
+            Go to Game
+          </button>
+        </div>
+      )}
+
       {walletAddr && incomingChallenges.length > 0 && (
         <div className="pvp-card pvp-card-incoming">
           <div className="pvp-card-title">Incoming Challenges</div>
