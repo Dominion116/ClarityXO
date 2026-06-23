@@ -292,6 +292,33 @@ export default function App() {
     }
   }, [walletAddr, log, syncChainState]);
 
+  const declinePvPChallenge = useCallback(async (challengerAddr) => {
+    if (!walletAddr) return;
+    try {
+      setProcessing(true);
+      await declineChallenge(challengerAddr);
+      log(`Declined challenge from ${challengerAddr.slice(0, 12)}…`, "info");
+    } catch (e) {
+      log(`Decline error: ${e.message}`, "error");
+    } finally {
+      setProcessing(false);
+    }
+  }, [walletAddr, log]);
+
+  const cancelPvPChallenge = useCallback(async () => {
+    if (!walletAddr) return;
+    try {
+      setProcessing(true);
+      await cancelChallenge();
+      setPvpOutboundChallenge(null);
+      log("Challenge cancelled.", "info");
+    } catch (e) {
+      log(`Cancel error: ${e.message}`, "error");
+    } finally {
+      setProcessing(false);
+    }
+  }, [walletAddr, log]);
+
   const resign = useCallback(async () => {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
     try {
