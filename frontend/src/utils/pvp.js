@@ -49,6 +49,19 @@ export async function makePvPMove(row, col) {
   ]);
 }
 
+export async function recordPvPResult(walletAddr, outcome, month) {
+  const apiBase = CONFIG.leaderboardApiBaseUrl;
+  const body = { walletAddr, outcome };
+  if (month) body.month = month;
+  const res = await fetch(`${apiBase}/api/pvp/result`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`recordPvPResult failed: ${res.status}`);
+  return res.json();
+}
+
 export async function fetchIncomingChallenge(playerAddr, knownChallengers = []) {
   const results = await Promise.all(
     knownChallengers.map(async (addr) => {
