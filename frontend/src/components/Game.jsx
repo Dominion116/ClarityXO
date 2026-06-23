@@ -4,6 +4,7 @@ import { resolveAddressName } from '../utils/bns';
 import { fetchPlayerProfile } from '../utils/profile';
 import { formatTime } from '../utils/gameLogic';
 import { CONFIG } from '../config';
+import { GAME_MODE_PVP, PLAYER_X } from '../utils/constants';
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
 
@@ -29,7 +30,11 @@ export default function Game({
   startGame,
   makeMove,
   resetLocal,
-  resign
+  resign,
+  gameMode,
+  pvpOpponent,
+  pvpTurn,
+  makePvPMoveHandler,
 }) {
   const logRef = useRef(null);
   const [bnsName, setBnsName] = useState(null);
@@ -104,6 +109,13 @@ export default function Game({
           </button>
         </div>
       </div>
+
+      {gameMode === GAME_MODE_PVP && pvpOpponent && (
+        <div className="pvp-opponent-bar">
+          <span className="pvp-opponent-label">vs</span>
+          <span className="pvp-opponent-addr">{pvpOpponent.slice(0, 14)}…</span>
+        </div>
+      )}
 
       <div className="status-bar">
         <div className="status-left">
