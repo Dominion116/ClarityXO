@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from '../utils/constants';
+import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW, GAME_MODE_PVP } from '../utils/constants';
 import { resolveAddressName } from '../utils/bns';
 import { fetchPlayerProfile } from '../utils/profile';
 import { formatTime } from '../utils/gameLogic';
 import { CONFIG } from '../config';
-import { GAME_MODE_PVP, PLAYER_X } from '../utils/constants';
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
 
