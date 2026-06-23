@@ -33,3 +33,11 @@ export async function declineChallenge(challengerAddr) {
 export async function cancelChallenge() {
   return callPvPContract('cancel-challenge', []);
 }
+
+export async function fetchPendingChallenge(challengerAddr) {
+  const apiBase = CONFIG.leaderboardApiBaseUrl;
+  const res = await fetch(`${apiBase}/api/pvp/challenges/${encodeURIComponent(challengerAddr)}`);
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data?.result ?? null;
+}
