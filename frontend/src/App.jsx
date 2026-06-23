@@ -274,6 +274,24 @@ export default function App() {
     }
   }, [walletAddr, log]);
 
+  const acceptPvPChallenge = useCallback(async (challengerAddr) => {
+    if (!walletAddr) { log("Connect wallet to accept a challenge.", "error"); return; }
+    try {
+      setProcessing(true);
+      const response = await acceptChallenge(challengerAddr);
+      setGameMode(GAME_MODE_PVP);
+      setPvpOpponent(challengerAddr);
+      setPvpTurn(PLAYER_X);
+      setGameStarted(true);
+      log(`Accepted challenge from ${challengerAddr.slice(0, 12)}… TX: ${response?.txid?.slice(0, 16)}…`, "success");
+      setTimeout(syncChainState, 6000);
+    } catch (e) {
+      log(`Accept challenge error: ${e.message}`, "error");
+    } finally {
+      setProcessing(false);
+    }
+  }, [walletAddr, log, syncChainState]);
+
   const resign = useCallback(async () => {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
     try {
