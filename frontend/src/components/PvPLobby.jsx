@@ -41,6 +41,27 @@ export default function PvPLobby({
         </div>
       )}
 
+      {walletAddr && pvpOutboundChallenge && (
+        <div className="pvp-card pvp-card-pending">
+          <div className="pvp-card-title">Challenge Sent</div>
+          <p className="pvp-card-desc">
+            Waiting for <strong>{pvpOutboundChallenge.slice(0, 14)}…</strong> to accept.
+          </p>
+          <div className="pvp-pending-dot-row">
+            <span className="pvp-pending-dot" />
+            <span className="pvp-pending-dot" />
+            <span className="pvp-pending-dot" />
+          </div>
+          <button
+            className="btn btn-secondary"
+            disabled={processing}
+            onClick={cancelPvPChallenge}
+          >
+            {processing ? 'Cancelling…' : 'Cancel Challenge'}
+          </button>
+        </div>
+      )}
+
       {walletAddr && !pvpOutboundChallenge && gameMode !== GAME_MODE_PVP && (
         <div className="pvp-card">
           <div className="pvp-card-title">Send a Challenge</div>
