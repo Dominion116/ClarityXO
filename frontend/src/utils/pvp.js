@@ -23,3 +23,13 @@ export async function acceptChallenge(challengerAddr) {
     encodeCVArg(principalCV(challengerAddr)),
   ]);
 }
+
+export async function declineChallenge(challengerAddr) {
+  return callPvPContract('decline-challenge', [
+    encodeCVArg(principalCV(challengerAddr)),
+  ]);
+}
+
+export async function cancelChallenge() {
+  return callPvPContract('cancel-challenge', []);
+}
