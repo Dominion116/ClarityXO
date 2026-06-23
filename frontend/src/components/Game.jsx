@@ -70,7 +70,11 @@ export default function Game({
   const displayBoard = isReplaying ? moveHistory[historyStep].boardAfter : board;
 
   const handleCellClick = (idx) => {
-    makeMove(idx);
+    if (gameMode === GAME_MODE_PVP && makePvPMoveHandler) {
+      makePvPMoveHandler(idx);
+    } else {
+      makeMove(idx);
+    }
   };
 
   return (
