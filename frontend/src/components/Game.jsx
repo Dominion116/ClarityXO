@@ -169,8 +169,8 @@ export default function Game({
       </div>
 
       <div className="info-row">
-        <div className="info-cell"><span className="mark-x">X</span> · You</div>
-        <div className="info-cell"><span className="mark-o">O</span> · Computer</div>
+        <div className="info-cell"><span className="mark-x">X</span> · {gameMode === GAME_MODE_PVP ? 'Challenger' : 'You'}</div>
+        <div className="info-cell"><span className="mark-o">O</span> · {gameMode === GAME_MODE_PVP ? 'Opponent' : 'Computer'}</div>
         <div className="info-cell" id="info-empty">Cells left: {displayBoard.filter(c => c === EMPTY).length}</div>
       </div>
 
