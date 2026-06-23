@@ -17,3 +17,9 @@ export async function createChallenge(opponentAddr) {
     encodeCVArg(principalCV(opponentAddr)),
   ]);
 }
+
+export async function acceptChallenge(challengerAddr) {
+  return callPvPContract('accept-challenge', [
+    encodeCVArg(principalCV(challengerAddr)),
+  ]);
+}
