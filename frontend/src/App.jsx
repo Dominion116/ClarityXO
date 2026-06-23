@@ -260,6 +260,20 @@ export default function App() {
     if (walletAddr) setTimeout(() => startGame(), 500);
   }, [log, walletAddr, startGame, stopTimer]);
 
+  const createPvPChallenge = useCallback(async (opponentAddr) => {
+    if (!walletAddr) { log("Connect wallet to challenge someone.", "error"); return; }
+    try {
+      setProcessing(true);
+      const response = await createChallenge(opponentAddr);
+      setPvpOutboundChallenge(opponentAddr);
+      log(`Challenge sent to ${opponentAddr.slice(0, 12)}… TX: ${response?.txid?.slice(0, 16)}…`, "success");
+    } catch (e) {
+      log(`Challenge error: ${e.message}`, "error");
+    } finally {
+      setProcessing(false);
+    }
+  }, [walletAddr, log]);
+
   const resign = useCallback(async () => {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
     try {
