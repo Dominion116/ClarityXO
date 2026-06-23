@@ -6,6 +6,8 @@ import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, S
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
 import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
+import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge } from "./utils/pvp";
+import { GAME_MODE_AI, GAME_MODE_PVP } from "./utils/constants";
 import './index.css';
 import './styles/refresh.css';
 
@@ -41,6 +43,11 @@ export default function App() {
   const timerRef = useRef(null);
   const [moveHistory, setMoveHistory] = useState([]);
   const [historyStep, setHistoryStep] = useState(null);
+
+  const [gameMode, setGameMode] = useState(GAME_MODE_AI);
+  const [pvpOpponent, setPvpOpponent] = useState(null);
+  const [pvpTurn, setPvpTurn] = useState(PLAYER_X);
+  const [pvpOutboundChallenge, setPvpOutboundChallenge] = useState(null);
 
   const startTimer = useCallback(() => {
     if (timerRef.current) return;
