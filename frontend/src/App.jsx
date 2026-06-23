@@ -340,6 +340,17 @@ export default function App() {
     }
   }, [board, processing, status, walletAddr, startTimer, log, syncChainState]);
 
+  const syncPvPState = useCallback(async () => {
+    if (!gameId || gameMode !== GAME_MODE_PVP) return;
+    try {
+      const data = await syncPvPGameState(gameId);
+      if (!data) return;
+      await syncChainState();
+    } catch (e) {
+      log(`PvP sync error: ${e.message}`, "error");
+    }
+  }, [gameId, gameMode, syncChainState, log]);
+
   const resign = useCallback(async () => {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
     try {
