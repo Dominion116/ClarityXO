@@ -75,7 +75,12 @@ export default function Game({
 
   return (
     <div className="page active" id="page-game">
-      <div className="eyebrow">Stacks Blockchain · Tic-Tac-Toe</div>
+      <div className="eyebrow">
+        Stacks Blockchain · Tic-Tac-Toe
+        {gameMode === GAME_MODE_PVP && (
+          <span className="pvp-mode-badge">PvP</span>
+        )}
+      </div>
 
       <div className="wallet-bar">
         {walletAddr ? (
