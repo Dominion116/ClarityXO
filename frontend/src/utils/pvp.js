@@ -62,6 +62,13 @@ export async function recordPvPResult(walletAddr, outcome, month) {
   return res.json();
 }
 
+export async function syncPvPGameState(gameId) {
+  const apiBase = CONFIG.leaderboardApiBaseUrl;
+  const res = await fetch(`${apiBase}/api/pvp/game/${gameId}`);
+  if (!res.ok) return null;
+  return res.json();
+}
+
 export async function fetchIncomingChallenge(playerAddr, knownChallengers = []) {
   const results = await Promise.all(
     knownChallengers.map(async (addr) => {
