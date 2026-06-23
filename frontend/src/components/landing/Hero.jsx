@@ -21,7 +21,8 @@ export default function Hero({ onLaunch }) {
 
         <p className="cxo-hero-sub">
           Every move is a Stacks transaction and every result is recorded
-          permanently. Finish the month in the top 5 to earn a Trophy NFT.
+          permanently. Play solo against the AI or challenge another wallet
+          holder in PvP mode. Finish the month in the top 5 to earn a Trophy NFT.
         </p>
 
         <div className="cxo-hero-ctas">
@@ -36,8 +37,8 @@ export default function Hero({ onLaunch }) {
         </p>
 
         <StatGroup aria-label="Game at a glance">
-          <Stat value="9"  label="cells on-chain"   tone="red" />
-          <Stat value="+3" label="points per win"   tone="green" />
+          <Stat value="9"  label="cells on-chain"    tone="red" />
+          <Stat value="+5" label="pts · PvP win"    tone="green" />
           <Stat value="5"  label="NFT slots / month" tone="gold" />
         </StatGroup>
       </div>
