@@ -42,6 +42,13 @@ export async function fetchPendingChallenge(challengerAddr) {
   return data?.result ?? null;
 }
 
+export async function makePvPMove(row, col) {
+  return callPvPContract('make-pvp-move', [
+    encodeCVArg(uintCV(row)),
+    encodeCVArg(uintCV(col)),
+  ]);
+}
+
 export async function fetchIncomingChallenge(playerAddr, knownChallengers = []) {
   const results = await Promise.all(
     knownChallengers.map(async (addr) => {
