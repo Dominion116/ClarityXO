@@ -14,13 +14,14 @@ import './styles/refresh.css';
 import Landing from "./components/Landing";
 import Game from "./components/Game";
 import Leaderboard from "./components/Leaderboard";
+import PvPLobby from "./components/PvPLobby";
 import TermsOfService from "./components/TermsOfService";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
 
-  // "landing" | "game" | "leaderboard"
+  // "landing" | "game" | "leaderboard" | "pvp"
   const [activePage, setActivePage] = useState("landing");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -380,7 +381,7 @@ export default function App() {
       {activePage === 'privacy' && (
         <PrivacyPolicy navigate={setActivePage} />
       )}
-      {(activePage === 'game' || activePage === 'leaderboard') && (
+      {(activePage === 'game' || activePage === 'leaderboard' || activePage === 'pvp') && (
         <>
           <header>
             <div className="header-left">
