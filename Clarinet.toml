@@ -6,8 +6,8 @@ telemetry = false
 cache_dir = "./.cache"
 requirements = []
 
-[contracts.clarity-xo-game]
-path = "contracts/clarity-xo-game.clar"
+[contracts.clarity-xo-game-v2]
+path = "contracts/clarity-xo-game-v2.clar"
 clarity_version = 2
 epoch = 2.5
 

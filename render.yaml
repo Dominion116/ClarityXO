@@ -25,4 +25,4 @@ services:
       - key: GAME_CONTRACT_ADDRESS
         value: SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y
       - key: GAME_CONTRACT_NAME
-        value: clarity-xo-game
+        value: clarity-xo-game-v2

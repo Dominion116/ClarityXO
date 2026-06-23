@@ -1,6 +1,6 @@
 ;; 
 ;;  ClarityXO  GAME CONTRACT
-;;  clarity-xo-game.clar
+;;  clarity-xo-game-v2.clar
 ;;
 ;;  Responsibilities:
 ;;     Multi-session tic-tac-toe (one active game per player at a time)

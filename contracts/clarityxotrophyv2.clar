@@ -10,7 +10,7 @@
 ;;      `claim-trophy`, paying a small STX mint fee to the owner
 ;;     One trophy per player per month  no double claims
 ;;
-;;  Deploy AFTER clarity-xo-game.clar.
+;;  Deploy AFTER clarity-xo-game-v2.clar.
 ;;  Replace GAME_CONTRACT_PRINCIPAL below with the deployed address.
 ;; 
 
