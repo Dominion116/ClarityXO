@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { GAME_MODE_PVP } from '../utils/constants';
 import { fetchPendingChallenge } from '../utils/pvp';
 
@@ -19,11 +19,23 @@ export default function PvPLobby({
   const [challengeInput, setChallengeInput] = useState('');
   const [inputError, setInputError] = useState('');
   const [outboundStatus, setOutboundStatus] = useState(null);
+  const [incomingChallenges, setIncomingChallenges] = useState([]);
 
   useEffect(() => {
     if (!pvpOutboundChallenge) { setOutboundStatus(null); return; }
     setOutboundStatus('pending');
   }, [pvpOutboundChallenge]);
+
+  const handleAccept = useCallback(async (challengerAddr) => {
+    await acceptPvPChallenge(challengerAddr);
+    setIncomingChallenges((prev) => prev.filter((c) => c.challenger !== challengerAddr));
+    navigate('game');
+  }, [acceptPvPChallenge, navigate]);
+
+  const handleDecline = useCallback(async (challengerAddr) => {
+    await declinePvPChallenge(challengerAddr);
+    setIncomingChallenges((prev) => prev.filter((c) => c.challenger !== challengerAddr));
+  }, [declinePvPChallenge]);
 
   return (
     <div className="page active pvp-lobby" id="page-pvp">
@@ -59,6 +71,21 @@ export default function PvPLobby({
           >
             {processing ? 'Cancelling…' : 'Cancel Challenge'}
           </button>
+        </div>
+      )}
+
+      {walletAddr && incomingChallenges.length > 0 && (
+        <div className="pvp-card pvp-card-incoming">
+          <div className="pvp-card-title">Incoming Challenges</div>
+          {incomingChallenges.map((c) => (
+            <div key={c.challenger} className="pvp-incoming-row">
+              <span className="pvp-challenger-addr">{c.challenger.slice(0, 14)}…</span>
+              <div className="pvp-incoming-btns">
+                <button className="btn btn-primary" disabled={processing} onClick={() => handleAccept(c.challenger)}>Accept</button>
+                <button className="btn btn-secondary" disabled={processing} onClick={() => handleDecline(c.challenger)}>Decline</button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
