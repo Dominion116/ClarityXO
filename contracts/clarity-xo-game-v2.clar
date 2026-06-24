@@ -517,7 +517,7 @@
                 (record-pvp-result x-player o-player true)
                 (ok { game-id: game-id, status: STATUS_DRAW, your-marker: mover-marker })
               )
-              ;; Game continues — flip turn
+              ;; Game continues - flip turn
               (begin
                 (map-set game-boards   game-id new-board)
                 (map-set game-moves    game-id new-moves)
