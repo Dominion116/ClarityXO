@@ -14,4 +14,18 @@ plan:
       path: contracts/clarity-xo-game-v2.clar
       anchor-block-only: true
       clarity-version: 2
+    - transaction-type: contract-publish
+      contract-name: nft-trait
+      expected-sender: SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y
+      cost: 6020
+      path: contracts/nft-trait.clar
+      anchor-block-only: true
+      clarity-version: 2
+    - transaction-type: contract-publish
+      contract-name: clarityxotrophyv2
+      expected-sender: SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y
+      cost: 70710
+      path: contracts/clarityxotrophyv2.clar
+      anchor-block-only: true
+      clarity-version: 2
     epoch: '2.5'
