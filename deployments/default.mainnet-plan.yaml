@@ -9,10 +9,10 @@ plan:
     - id: 0
       transactions:
         - contract-publish:
-            contract-name: clarityxotrophyv2
+            contract-name: clarity-xo-game-v2
             expected-sender: SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y
             cost: 64570
-            path: contracts/clarityxotrophyv2.clar
+            path: contracts/clarity-xo-game-v2.clar
             anchor-block-only: true
             clarity-version: 2
       epoch: "2.5"
