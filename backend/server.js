@@ -573,6 +573,24 @@ app.get('/health', (_req, res) => {
 });
 
 /**
+ * GET /api/leaderboard/months
+ * Returns list of months that have leaderboard data, sorted newest-first.
+ */
+app.get('/api/leaderboard/months', async (_req, res) => {
+  try {
+    const collection = await getMonthCollection();
+    const docs = await collection.find({}, { projection: { month: 1 } }).toArray();
+    const months = docs
+      .map((d) => d.month)
+      .filter(Boolean)
+      .sort((a, b) => String(b).localeCompare(String(a)));
+    res.json({ months });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * GET /api/leaderboard
  * Pure DB read — never triggers chain sync. Fast and reliable.
  */
