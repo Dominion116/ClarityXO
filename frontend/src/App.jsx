@@ -17,6 +17,7 @@ import Game from "./components/Game";
 import Leaderboard from "./components/Leaderboard";
 import PvPLobby from "./components/PvPLobby";
 import NFTGallery from "./components/NFTGallery";
+import SpectatorLobby from "./components/SpectatorLobby";
 import TermsOfService from "./components/TermsOfService";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import { useTheme } from "./hooks/useTheme";
@@ -412,7 +413,7 @@ export default function App() {
       {activePage === 'privacy' && (
         <PrivacyPolicy navigate={setActivePage} />
       )}
-      {(activePage === 'game' || activePage === 'leaderboard' || activePage === 'pvp' || activePage === 'gallery') && (
+      {(activePage === 'game' || activePage === 'leaderboard' || activePage === 'pvp' || activePage === 'gallery' || activePage === 'spectate') && (
         <>
           <header>
             <div className="header-left">
@@ -534,6 +535,10 @@ export default function App() {
               walletAddr={walletAddr}
               navigate={setActivePage}
             />
+          )}
+
+          {activePage === 'spectate' && (
+            <SpectatorLobby navigate={setActivePage} />
           )}
         </>
       )}
