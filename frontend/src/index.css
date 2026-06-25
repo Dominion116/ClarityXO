@@ -192,6 +192,16 @@ header {
 }
 .wallet-bar-btns { display: flex; gap: 8px; }
 
+/* ── TX Status Badge ───────────────────────────────── */
+.tx-status-badge {
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  font-family: var(--mono); animation: fadeInBadge .2s ease;
+}
+@keyframes fadeInBadge {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Mute Toggle ───────────────────────────────────── */
 .mute-btn { padding: 6px 10px !important; font-size: 13px !important; letter-spacing: 0 !important; }
 
