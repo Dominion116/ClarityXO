@@ -410,7 +410,7 @@ export default function App() {
       {activePage === 'privacy' && (
         <PrivacyPolicy navigate={setActivePage} />
       )}
-      {(activePage === 'game' || activePage === 'leaderboard' || activePage === 'pvp') && (
+      {(activePage === 'game' || activePage === 'leaderboard' || activePage === 'pvp' || activePage === 'gallery') && (
         <>
           <header>
             <div className="header-left">
@@ -419,6 +419,7 @@ export default function App() {
                 <div className={`nav-item ${activePage === 'game' ? 'active' : ''}`} onClick={() => setActivePage('game')}>Game</div>
                 <div className={`nav-item ${activePage === 'pvp' ? 'active' : ''}`} onClick={() => setActivePage('pvp')}>PvP</div>
                 <div className={`nav-item ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => setActivePage('leaderboard')}>Leaderboard</div>
+                <div className={`nav-item ${activePage === 'gallery' ? 'active' : ''}`} onClick={() => setActivePage('gallery')}>Trophies</div>
               </nav>
             </div>
             <div className="header-right">
@@ -459,6 +460,7 @@ export default function App() {
                 <div className={`nav-item mobile ${activePage === 'game' ? 'active' : ''}`} onClick={() => { setActivePage('game'); setMobileMenuOpen(false); }}>Game</div>
                 <div className={`nav-item mobile ${activePage === 'pvp' ? 'active' : ''}`} onClick={() => { setActivePage('pvp'); setMobileMenuOpen(false); }}>PvP Lobby</div>
                 <div className={`nav-item mobile ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => { setActivePage('leaderboard'); setMobileMenuOpen(false); }}>Leaderboard</div>
+                <div className={`nav-item mobile ${activePage === 'gallery' ? 'active' : ''}`} onClick={() => { setActivePage('gallery'); setMobileMenuOpen(false); }}>Trophies</div>
               </nav>
             </div>
           </header>
@@ -521,6 +523,13 @@ export default function App() {
               cancelPvPChallenge={cancelPvPChallenge}
               navigate={setActivePage}
               addLog={log}
+            />
+          )}
+
+          {activePage === 'gallery' && (
+            <NFTGallery
+              walletAddr={walletAddr}
+              navigate={setActivePage}
             />
           )}
         </>
