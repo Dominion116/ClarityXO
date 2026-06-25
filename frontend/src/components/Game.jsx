@@ -6,6 +6,7 @@ import { formatTime } from '../utils/gameLogic';
 import { CONFIG } from '../config';
 import StatsStrip from './StatsStrip';
 import { usePlayerStats } from '../hooks/usePlayerStats';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
 
