@@ -15,6 +15,7 @@ import Landing from "./components/Landing";
 import Game from "./components/Game";
 import Leaderboard from "./components/Leaderboard";
 import PvPLobby from "./components/PvPLobby";
+import NFTGallery from "./components/NFTGallery";
 import TermsOfService from "./components/TermsOfService";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import { useTheme } from "./hooks/useTheme";
