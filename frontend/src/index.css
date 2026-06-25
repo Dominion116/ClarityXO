@@ -191,6 +191,25 @@ header {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
 .wallet-bar-btns { display: flex; gap: 8px; }
+
+/* ── Stats Strip ────────────────────────────────────── */
+.stats-strip {
+  width: 100%; display: flex; align-items: center;
+  border: 1px solid var(--border); border-top: none; border-bottom: none;
+  background: var(--surface);
+}
+.stats-strip-item {
+  flex: 1; padding: 8px 16px; border-right: 1px solid var(--border);
+}
+.stats-strip-item:last-child { border-right: none; }
+.stats-strip-label {
+  font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
+}
+.stats-strip-val {
+  font-size: 16px; letter-spacing: -.02em; font-weight: 300; color: var(--text);
+}
+.stats-strip-val.green { color: var(--green); }
+.stats-strip-val.gold  { color: var(--gold); }
 .ghost-btn {
   padding: 6px 14px;
   font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
