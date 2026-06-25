@@ -298,6 +298,10 @@ header {
 .profile-achievement-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .profile-actions { padding: 14px 20px; }
 
+/* ── Rematch Button ────────────────────────────────── */
+.rematch-btn { color: var(--gold) !important; border-color: var(--gold) !important; }
+.rematch-btn:hover { background: rgba(200,168,75,.08) !important; }
+
 /* ── NFT Gallery ───────────────────────────────────── */
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; width: 100%; }
 .gallery-loading { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; width: 100%; }
