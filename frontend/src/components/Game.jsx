@@ -148,6 +148,7 @@ export default function Game({
             {isMuted ? '🔇' : '🔊'}
           </button>
         </div>
+        <TxStatusBadge txStatus={txStatus} />
       </div>
 
       {walletAddr && (
