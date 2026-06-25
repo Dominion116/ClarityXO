@@ -838,6 +838,23 @@ app.post('/api/pvp/result', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/player/:address/stats
+ * Returns all-time stats and streak for a player.
+ */
+app.get('/api/player/:address/stats', async (req, res) => {
+  const { address } = req.params;
+  if (!address || typeof address !== 'string') {
+    return res.status(400).json({ error: 'address is required' });
+  }
+  try {
+    const stats = await aggregatePlayerStats(address);
+    res.json({ ok: true, address, ...stats });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/sync', async (_req, res) => {
   try {
     const result = await syncLeaderboardFromChainDebounced();
