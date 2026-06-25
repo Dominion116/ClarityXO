@@ -583,6 +583,65 @@ app.get('/health', (_req, res) => {
 });
 
 /**
+ * Aggregate all-time stats and streak for a player across all monthly records.
+ * Returns { allTimeWins, allTimeDraws, allTimeLosses, allTimeGames, allTimePts,
+ *           currentStreak, bestStreak }
+ */
+async function aggregatePlayerStats(address) {
+  const collection = await getMonthCollection();
+  const docs = await collection.find(
+    { [`players.${address}`]: { $exists: true } },
+    { projection: { month: 1, [`players.${address}`]: 1 } }
+  ).sort({ month: 1 }).toArray();
+
+  let allTimeWins = 0;
+  let allTimeDraws = 0;
+  let allTimeLosses = 0;
+  let allTimePts = 0;
+  let currentStreak = 0;
+  let bestStreak = 0;
+
+  for (const doc of docs) {
+    const s = doc.players?.[address] || {};
+    const wins    = Number(s.wins   || 0);
+    const draws   = Number(s.draws  || 0);
+    const losses  = Number(s.losses || 0);
+    const pts     = Number(s.pts    || 0);
+    allTimeWins    += wins;
+    allTimeDraws   += draws;
+    allTimeLosses  += losses;
+    allTimePts     += pts;
+  }
+
+  // Compute streak from per-game records (ordered by gameId)
+  const gamesCollection = await getGamesCollection();
+  const games = await gamesCollection
+    .find({ player: address, status: { $in: [1, 2, 3] } })
+    .sort({ gameId: 1 })
+    .toArray();
+
+  for (const game of games) {
+    if (game.outcome === 'win') {
+      currentStreak += 1;
+      if (currentStreak > bestStreak) bestStreak = currentStreak;
+    } else if (game.outcome === 'loss') {
+      currentStreak = 0;
+    }
+    // draw does not reset streak
+  }
+
+  return {
+    allTimeWins,
+    allTimeDraws,
+    allTimeLosses,
+    allTimeGames: allTimeWins + allTimeDraws + allTimeLosses,
+    allTimePts,
+    currentStreak,
+    bestStreak,
+  };
+}
+
+/**
  * GET /api/leaderboard/months
  * Returns list of months that have leaderboard data, sorted newest-first.
  */
