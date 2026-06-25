@@ -263,8 +263,8 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
         </div>
       )}
 
-      {/* NFT Prize Banner */}
-      <div className="nft-banner" id="nft-banner">
+      {/* NFT Prize Banner — hidden when viewing a historical season */}
+      <div className="nft-banner" id="nft-banner" style={isViewingHistory ? { display: 'none' } : {}}>
         <div className="nft-banner-inner">
           <div className="nft-banner-left">
             <div className="nft-icon">◈</div>
