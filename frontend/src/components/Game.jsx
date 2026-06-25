@@ -40,6 +40,7 @@ export default function Game({
   const logRef = useRef(null);
   const [bnsName, setBnsName] = useState(null);
   const [playerProfile, setPlayerProfile] = useState(null);
+  const { stats: playerStats, loading: statsLoading } = usePlayerStats(walletAddr);
 
   useEffect(() => {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
