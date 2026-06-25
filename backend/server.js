@@ -898,6 +898,35 @@ app.get('/api/player/:address/stats', async (req, res) => {
 });
 
 /**
+ * GET /api/nfts/:address
+ * Returns claimed NFT trophies for a player address.
+ * Queries the MongoDB nft_claims collection built by the sync process.
+ */
+app.get('/api/nfts/:address', async (req, res) => {
+  const { address } = req.params;
+  if (!address || typeof address !== 'string') {
+    return res.status(400).json({ error: 'address is required' });
+  }
+  try {
+    const db = await getDatabase();
+    const claimsCollection = db.collection('nft_claims');
+    const claims = await claimsCollection
+      .find({ player: address })
+      .sort({ month: 1 })
+      .toArray();
+    const trophies = claims.map((c) => ({
+      tokenId: c.tokenId || null,
+      month: c.month,
+      rank: c.rank || null,
+      claimedAt: c.claimedAt || null,
+    }));
+    res.json({ ok: true, address, trophies, count: trophies.length });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * GET /api/player/:address/achievements
  * Returns all unlocked achievements for a player.
  */
