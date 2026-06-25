@@ -50,6 +50,10 @@ export default function App() {
   const [pvpTurn, setPvpTurn] = useState(PLAYER_X);
   const [pvpOutboundChallenge, setPvpOutboundChallenge] = useState(null);
 
+  // null | "pending" | "confirmed" | "dropped"
+  const [txStatus, setTxStatus] = useState(null);
+  const txStatusTimerRef = useRef(null);
+
   const startTimer = useCallback(() => {
     if (timerRef.current) return;
     timerRef.current = setInterval(() => setGameTime(t => t + 1), 1000);
