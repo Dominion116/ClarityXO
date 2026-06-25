@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { fetchLeaderboardFromContract, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
+import { fetchLeaderboardFromContract, fetchAvailableMonths, getPlayerList, clearLeaderboardData, claimNFT, getMonthEnd, formatCountdown } from '../utils/leaderboardLogic';
 import { resolveAddressNames } from '../utils/bns';
 import { fetchPlayerProfiles } from '../utils/profile';
 import { CONFIG } from '../config';
