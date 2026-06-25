@@ -67,9 +67,10 @@ export async function fetchAvailableMonths() {
   }
 }
 
-export async function fetchLeaderboardFromContract() {
+export async function fetchLeaderboardFromContract(month = null) {
   try {
-    const res = await fetch(apiUrl('/api/leaderboard'), { cache: 'no-store' });
+    const query = month ? `?month=${encodeURIComponent(month)}` : '';
+    const res = await fetch(apiUrl(`/api/leaderboard${query}`), { cache: 'no-store' });
     if (!res.ok) throw new Error(`Leaderboard API error: ${res.status}`);
     const payload = await res.json();
     return { month: payload.month || 'latest', players: payload.players || {}, _source: payload.source || 'backend' };
