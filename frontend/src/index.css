@@ -298,6 +298,33 @@ header {
 .profile-achievement-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .profile-actions { padding: 14px 20px; }
 
+/* ── NFT Gallery ───────────────────────────────────── */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; width: 100%; }
+.gallery-loading { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; width: 100%; }
+.gallery-empty {
+  width: 100%; padding: 60px 24px; text-align: center;
+  border: 1px solid var(--border); border-top: none;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.gallery-empty-icon { font-size: 40px; color: var(--muted); }
+.gallery-empty-title { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--text); }
+.gallery-empty-body { font-size: 9px; letter-spacing: .1em; color: var(--muted); max-width: 260px; line-height: 1.6; }
+.trophy-card {
+  padding: 20px 16px; border: 1px solid var(--border2); border-right: none; border-bottom: none;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: border-color .15s;
+}
+.trophy-card:hover { border-color: var(--gold); }
+.trophy-card.trophy-gold   .trophy-icon { color: var(--gold); }
+.trophy-card.trophy-silver .trophy-icon { color: var(--silver); }
+.trophy-card.trophy-bronze .trophy-icon { color: var(--bronze); }
+.trophy-card.trophy-other  .trophy-icon { color: var(--muted); }
+.trophy-icon { font-size: 24px; }
+.trophy-rank { font-size: 11px; letter-spacing: .1em; color: var(--text); }
+.trophy-month { font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
+.trophy-date  { font-size: 8px; letter-spacing: .1em; color: var(--dim); }
+.trophy-id    { font-size: 8px; letter-spacing: .1em; color: var(--dim); }
+
 /* ── Achievement Badge ─────────────────────────────── */
 .achievement-badge {
   display: inline-flex; align-items: center; gap: 5px;
