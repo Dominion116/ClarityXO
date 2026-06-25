@@ -48,6 +48,16 @@ const swaggerSpec = {
     { url: process.env.PUBLIC_API_URL || 'https://clarityxo.onrender.com' },
   ],
   paths: {
+    '/api/leaderboard/months': {
+      get: {
+        summary: 'List all months with leaderboard data',
+        responses: {
+          200: {
+            description: 'Array of month strings sorted newest-first',
+          },
+        },
+      },
+    },
     '/health': {
       get: {
         summary: 'Health check',
