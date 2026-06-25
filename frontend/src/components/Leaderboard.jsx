@@ -28,14 +28,14 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   // Prevent overlapping fetch calls
   const fetchingRef = useRef(false);
 
-  const loadLeaderboard = useCallback(async () => {
+  const loadLeaderboard = useCallback(async (month = null) => {
     // Skip if already fetching
     if (fetchingRef.current) return;
     fetchingRef.current = true;
 
     try {
       setLoading(true);
-      const contractData = await fetchLeaderboardFromContract();
+      const contractData = await fetchLeaderboardFromContract(month);
       setData(contractData);
       setPlayers(getPlayerList(contractData));
     } catch (e) {
