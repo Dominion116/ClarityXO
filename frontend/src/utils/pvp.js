@@ -69,6 +69,10 @@ export async function syncPvPGameState(gameId) {
   return res.json();
 }
 
+export async function createRematch(opponentAddr) {
+  return createChallenge(opponentAddr);
+}
+
 export async function fetchIncomingChallenge(playerAddr, knownChallengers = []) {
   const results = await Promise.all(
     knownChallengers.map(async (addr) => {
