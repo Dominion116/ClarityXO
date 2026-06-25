@@ -467,7 +467,9 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       {/* Actions */}
       <div className="lb-actions">
         <button className="lb-action-btn" onClick={refresh}>↻ Refresh</button>
-        <button className="lb-action-btn" onClick={handleClaim} disabled={!claimReady}>◈ Claim NFT (Top 5)</button>
+        {!isViewingHistory && (
+          <button className="lb-action-btn" onClick={handleClaim} disabled={!claimReady}>◈ Claim NFT (Top 5)</button>
+        )}
         {isDeployer && <button className="lb-action-btn danger" onClick={handleClear}>Clear Data</button>}
       </div>
 
