@@ -422,6 +422,15 @@ export default function App() {
             </div>
             <div className="header-right">
               <button
+                className="ghost-btn"
+                onClick={tutorialRestart}
+                title="Show tutorial"
+                aria-label="Show tutorial"
+                style={{ padding: '5px 9px', fontSize: 13 }}
+              >
+                ?
+              </button>
+              <button
                 className="ghost-btn theme-toggle-btn"
                 onClick={toggleTheme}
                 title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
