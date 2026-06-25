@@ -477,7 +477,10 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       </div>
 
       <div className="footer">
-        Points reset monthly · NFT minted on Stacks · <span className="yr">{new Date().getFullYear()}</span>
+        {isViewingHistory
+          ? `Season archive · ${selectedMonth} · NFT minted on Stacks`
+          : `Points reset monthly · NFT minted on Stacks · ${new Date().getFullYear()}`
+        }
       </div>
     </div>
   );
