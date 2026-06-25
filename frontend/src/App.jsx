@@ -17,6 +17,7 @@ import Leaderboard from "./components/Leaderboard";
 import PvPLobby from "./components/PvPLobby";
 import TermsOfService from "./components/TermsOfService";
 import PrivacyPolicy from "./components/PrivacyPolicy";
+import { useTheme } from "./hooks/useTheme";
 
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
