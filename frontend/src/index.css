@@ -195,6 +195,23 @@ header {
 /* ── Mute Toggle ───────────────────────────────────── */
 .mute-btn { padding: 6px 10px !important; font-size: 13px !important; letter-spacing: 0 !important; }
 
+/* ── Share Button ──────────────────────────────────── */
+.share-btn-wrap { position: relative; display: inline-block; }
+.share-btn { color: var(--text) !important; }
+.share-menu {
+  position: absolute; top: calc(100% + 4px); right: 0; z-index: 200;
+  background: var(--surface); border: 1px solid var(--border2);
+  display: flex; flex-direction: column; min-width: 160px;
+}
+.share-menu-item {
+  background: none; border: none; border-bottom: 1px solid var(--border);
+  color: var(--text); font-family: var(--mono); font-size: 9px;
+  letter-spacing: .15em; text-transform: uppercase; text-align: left;
+  padding: 9px 12px; cursor: pointer;
+}
+.share-menu-item:last-child { border-bottom: none; }
+.share-menu-item:hover { background: var(--border); }
+
 /* ── Stats Strip ────────────────────────────────────── */
 .stats-strip {
   width: 100%; display: flex; align-items: center;
