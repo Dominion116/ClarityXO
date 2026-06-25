@@ -460,7 +460,10 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
 
       {players.length === 0 && (
         <div className="lb-empty" id="lb-empty">
-          No games recorded this month.<br />Play a game to claim your spot.
+          {isViewingHistory
+            ? `No data recorded for ${selectedMonth}.`
+            : 'No games recorded this month. Play a game to claim your spot.'
+          }
         </div>
       )}
 
