@@ -18,6 +18,8 @@ import PvPLobby from "./components/PvPLobby";
 import TermsOfService from "./components/TermsOfService";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import { useTheme } from "./hooks/useTheme";
+import Tutorial from "./components/Tutorial";
+import { useTutorial } from "./hooks/useTutorial";
 
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
