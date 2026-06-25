@@ -955,6 +955,31 @@ app.get('/api/player/:address/achievements', async (req, res) => {
 });
 
 /**
+ * GET /api/pvp/live
+ * Returns recently-active PvP game IDs (status=0 = ACTIVE in game_results).
+ */
+app.get('/api/pvp/live', async (_req, res) => {
+  try {
+    const gamesCollection = await getGamesCollection();
+    const cutoff = new Date(Date.now() - 60 * 60 * 1000); // last hour
+    const docs = await gamesCollection
+      .find({ status: 0, updatedAt: { $gte: cutoff } })
+      .sort({ updatedAt: -1 })
+      .limit(20)
+      .toArray();
+    const games = docs.map((d) => ({
+      gameId: d.gameId,
+      player: d.player,
+      moves: d.moves || 0,
+      updatedAt: d.updatedAt,
+    }));
+    res.json({ ok: true, games });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * POST /api/rematch
  * Record a rematch intent so the opponent can be notified on their next poll.
  */
