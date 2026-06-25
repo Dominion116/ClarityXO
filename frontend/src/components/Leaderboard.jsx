@@ -25,6 +25,17 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const claimReady = countdown === "00:00:00";
   const isViewingHistory = selectedMonth !== null;
 
+  // Sync selectedMonth to/from URL search param for deep linking
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlMonth = params.get('month');
+    if (urlMonth && urlMonth !== selectedMonth) {
+      setSelectedMonth(urlMonth);
+      loadLeaderboard(urlMonth);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Prevent overlapping fetch calls
   const fetchingRef = useRef(false);
 
@@ -57,6 +68,15 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
     setSelectedMonth(next);
     setPage(1);
     loadLeaderboard(next);
+
+    // Update URL param for deep linking
+    const url = new URL(window.location.href);
+    if (next) {
+      url.searchParams.set('month', next);
+    } else {
+      url.searchParams.delete('month');
+    }
+    window.history.replaceState(null, '', url.toString());
   };
 
   useEffect(() => {
