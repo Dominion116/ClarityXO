@@ -253,6 +253,16 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
 
   return (
     <div className="page active" id="page-leaderboard">
+      {/* Season Archive Banner */}
+      {isViewingHistory && (
+        <div className="lb-archive-banner">
+          <span>Viewing archived season — {selectedMonth}</span>
+          <button className="lb-archive-back" onClick={() => handleMonthChange('__current__')}>
+            ← Current Month
+          </button>
+        </div>
+      )}
+
       {/* NFT Prize Banner */}
       <div className="nft-banner" id="nft-banner">
         <div className="nft-banner-inner">
