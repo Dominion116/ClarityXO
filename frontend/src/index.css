@@ -213,6 +213,14 @@ header {
 }
 .wallet-bar-btns { display: flex; gap: 8px; }
 
+/* ── Theme Toggle ──────────────────────────────────── */
+.theme-toggle-btn {
+  padding: 5px 9px !important; font-size: 14px !important;
+  letter-spacing: 0 !important; line-height: 1 !important;
+  transition: transform .15s;
+}
+.theme-toggle-btn:hover { transform: rotate(20deg); }
+
 /* ── TX Status Badge ───────────────────────────────── */
 .tx-status-badge {
   font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
