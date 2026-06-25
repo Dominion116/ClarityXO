@@ -54,6 +54,14 @@ export default function App() {
   const [txStatus, setTxStatus] = useState(null);
   const txStatusTimerRef = useRef(null);
 
+  const setTxStatusWithAutoClear = useCallback((status, clearAfterMs = 4000) => {
+    if (txStatusTimerRef.current) clearTimeout(txStatusTimerRef.current);
+    setTxStatus(status);
+    if (status === 'confirmed' || status === 'dropped') {
+      txStatusTimerRef.current = setTimeout(() => setTxStatus(null), clearAfterMs);
+    }
+  }, []);
+
   const startTimer = useCallback(() => {
     if (timerRef.current) return;
     timerRef.current = setInterval(() => setGameTime(t => t + 1), 1000);
