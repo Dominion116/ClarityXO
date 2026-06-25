@@ -897,6 +897,34 @@ app.get('/api/player/:address/stats', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/player/:address/achievements
+ * Returns all unlocked achievements for a player.
+ */
+app.get('/api/player/:address/achievements', async (req, res) => {
+  const { address } = req.params;
+  if (!address || typeof address !== 'string') {
+    return res.status(400).json({ error: 'address is required' });
+  }
+  try {
+    await syncPlayerAchievements(address);
+    const achievementsCollection = await getAchievementsCollection();
+    const docs = await achievementsCollection
+      .find({ address })
+      .sort({ unlockedAt: 1 })
+      .toArray();
+    const unlockedIds = docs.map((d) => d.achievementId);
+    const unlocked = ACHIEVEMENT_DEFINITIONS.filter((a) => unlockedIds.includes(a.id)).map((a) => ({
+      ...a,
+      unlockedAt: docs.find((d) => d.achievementId === a.id)?.unlockedAt || null,
+    }));
+    const locked = ACHIEVEMENT_DEFINITIONS.filter((a) => !unlockedIds.includes(a.id));
+    res.json({ ok: true, address, unlocked, locked });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/sync', async (_req, res) => {
   try {
     const result = await syncLeaderboardFromChainDebounced();
