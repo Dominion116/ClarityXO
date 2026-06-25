@@ -107,7 +107,7 @@ export default function App() {
     });
   }, []);
 
-  const syncChainState = useCallback(async (overrideWalletAddr = null) => {
+  const syncChainState = useCallback(async (overrideWalletAddr = null, boardSnapshot = null) => {
     try {
       const activeWalletAddr = overrideWalletAddr || walletAddr;
       if (!activeWalletAddr) {
@@ -119,6 +119,7 @@ export default function App() {
       if (activeGameId === 0) {
         log("No active game found.", "info");
         setGameId(null);
+        if (boardSnapshot) setTxStatusWithAutoClear('dropped');
         return;
       }
       setGameId(activeGameId);
@@ -132,12 +133,19 @@ export default function App() {
         setStatus(chainStatus);
         setMoveCount(chainMoves);
         if (chainStatus !== STATUS_ACTIVE) setWinLine(getWinningLine(chainBoard));
+
+        if (boardSnapshot) {
+          const advanced = chainBoard.some((cell, i) => cell !== boardSnapshot[i]);
+          setTxStatusWithAutoClear(advanced ? 'confirmed' : 'dropped');
+        }
+
         log("Chain state synced.", "success");
       }
     } catch (e) {
       log(`Sync failed: ${e.message}`, "error");
+      if (boardSnapshot) setTxStatusWithAutoClear('dropped');
     }
-  }, [log, walletAddr]);
+  }, [log, walletAddr, setTxStatusWithAutoClear]);
 
   const startGame = useCallback(async () => {
     if (gameStarted || processing) return;
