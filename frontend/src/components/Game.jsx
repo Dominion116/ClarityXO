@@ -136,6 +136,14 @@ export default function Game({
           <button className="ghost-btn" id="btn-sync" onClick={syncChainState}>
             Sync Chain
           </button>
+          <button
+            className="ghost-btn mute-btn"
+            onClick={toggleMute}
+            title={isMuted ? 'Unmute sounds' : 'Mute sounds'}
+            aria-label={isMuted ? 'Unmute sounds' : 'Mute sounds'}
+          >
+            {isMuted ? '🔇' : '🔊'}
+          </button>
         </div>
       </div>
 
