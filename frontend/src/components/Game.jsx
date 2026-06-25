@@ -50,6 +50,16 @@ export default function Game({
   }, [logs]);
 
   useEffect(() => {
+    const prev = prevStatusRef.current;
+    prevStatusRef.current = status;
+    if (prev === STATUS_ACTIVE && status !== STATUS_ACTIVE) {
+      if (status === STATUS_X_WON) playWin();
+      else if (status === STATUS_O_WON) playLoss();
+      else if (status === STATUS_DRAW) playDraw();
+    }
+  }, [status, playWin, playLoss, playDraw]);
+
+  useEffect(() => {
     setBnsName(null);
     setPlayerProfile(null);
     if (!walletAddr) return;
