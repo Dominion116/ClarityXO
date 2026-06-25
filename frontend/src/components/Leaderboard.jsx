@@ -53,8 +53,11 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   };
 
   useEffect(() => {
-    // Load once on mount
-    loadLeaderboard();
+    // Load once on mount (current month)
+    loadLeaderboard(null);
+
+    // Fetch available months for season archive picker
+    fetchAvailableMonths().then(setAvailableMonths);
 
     // Countdown timer
     setCountdown(formatCountdown(getMonthEnd() - Date.now()));
@@ -63,15 +66,15 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       setCountdown(formatCountdown(ms));
     }, 1000);
 
-    // Auto-refresh every 60s
+    // Auto-refresh every 60s (only for current month view)
     const refreshInterval = setInterval(() => {
-      loadLeaderboard();
+      if (!isViewingHistory) loadLeaderboard(null);
     }, 60000);
 
     // Refresh when a game result is recorded (custom event from game page)
     const handleGameResultRecorded = () => {
       // Small delay so the backend POST has time to commit
-      setTimeout(() => loadLeaderboard(), 500);
+      if (!isViewingHistory) setTimeout(() => loadLeaderboard(null), 500);
     };
     window.addEventListener('gameResultRecorded', handleGameResultRecorded);
 
@@ -80,7 +83,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       clearInterval(refreshInterval);
       window.removeEventListener('gameResultRecorded', handleGameResultRecorded);
     };
-  }, [loadLeaderboard]);
+  }, [loadLeaderboard, isViewingHistory]);
 
   useEffect(() => {
     setPage(1);
