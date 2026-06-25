@@ -218,7 +218,14 @@ export default function Game({
 
       <div className="btn-row">
         <button className="btn btn-primary" id="btn-new" onClick={resetLocal} disabled={processing || !walletAddr}>New Game</button>
-        <button className="btn btn-secondary" id="btn-resign" onClick={resign} disabled={processing || !walletAddr}>Resign</button>
+        <button className="btn btn-secondary" id="btn-resign" onClick={resign} disabled={processing || !walletAddr || gameOver}>Resign</button>
+        {gameOver && (
+          <ShareButton
+            outcome={status === STATUS_X_WON ? 'win' : status === STATUS_O_WON ? 'loss' : 'draw'}
+            bnsName={bnsName}
+            gameMode={gameMode}
+          />
+        )}
       </div>
 
       <div className="contract-info" id="contract-info">
