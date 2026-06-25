@@ -856,6 +856,30 @@ app.post('/api/pvp/result', async (req, res) => {
   }
 });
 
+async function getAchievementsCollection() {
+  const db = await getDatabase();
+  return db.collection('achievements');
+}
+
+async function syncPlayerAchievements(address) {
+  const stats = await aggregatePlayerStats(address);
+  const gamesCollection = await getGamesCollection();
+  const games = await gamesCollection.find({ player: address }).toArray();
+  const earnedIds = checkAchievements(stats, games);
+
+  const achievementsCollection = await getAchievementsCollection();
+  for (const id of earnedIds) {
+    await achievementsCollection.updateOne(
+      { address, achievementId: id },
+      {
+        $setOnInsert: { address, achievementId: id, unlockedAt: new Date() },
+      },
+      { upsert: true }
+    );
+  }
+  return earnedIds;
+}
+
 /**
  * GET /api/player/:address/stats
  * Returns all-time stats and streak for a player.
