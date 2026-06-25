@@ -765,6 +765,8 @@ svg.mark { overflow: visible; }
 .lb-addr-cell { display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: .06em; overflow: hidden; }
 .lb-you  { font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); border: 1px solid var(--red); padding: 1px 5px; flex-shrink: 0; }
 .lb-anon { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-addr-link { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-addr-link:hover { color: var(--red); text-decoration: underline; }
 
 .pts-col  { color: var(--gold); font-size: 13px; font-weight: 500; }
 .win-col  { color: var(--green); }
