@@ -432,7 +432,14 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
                         />
                       )}
                     </div>
-                    <span className={p.addr === "anonymous" ? "lb-anon" : ""} title={p.addr}>{displayName}</span>
+                    <span
+                      className={p.addr === "anonymous" ? "lb-anon" : "lb-addr-link"}
+                      title={p.addr}
+                      onClick={p.addr !== "anonymous" ? () => setProfileAddress(p.addr) : undefined}
+                      style={p.addr !== "anonymous" ? { cursor: 'pointer' } : {}}
+                    >
+                      {displayName}
+                    </span>
                     {isMe && <span className="lb-you">You</span>}
                   </div>
                 </td>
