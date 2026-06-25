@@ -138,6 +138,23 @@ const swaggerSpec = {
         },
       },
     },
+    '/api/player/{address}/stats': {
+      get: {
+        summary: 'Get all-time stats and streak for a player',
+        parameters: [
+          {
+            name: 'address',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', example: 'SP2C2YB2M7WZ8Q4P8A9VQYQMW9C03R9X62H2W8A1K' },
+          },
+        ],
+        responses: {
+          200: { description: 'allTimeWins, allTimeDraws, allTimeLosses, currentStreak, bestStreak' },
+          400: { description: 'Invalid address' },
+        },
+      },
+    },
     '/api/pvp/challenges/{player}': {
       get: {
         summary: 'Get open PvP challenge by challenger address',
