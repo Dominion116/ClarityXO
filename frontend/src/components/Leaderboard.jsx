@@ -19,8 +19,11 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [page, setPage] = useState(1);
   const [bnsNames, setBnsNames] = useState({});
   const [profiles, setProfiles] = useState({});
+  const [availableMonths, setAvailableMonths] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(null);
   const isDeployer = walletAddr === CONFIG.contractAddress;
   const claimReady = countdown === "00:00:00";
+  const isViewingHistory = selectedMonth !== null;
 
   // Prevent overlapping fetch calls
   const fetchingRef = useRef(false);
