@@ -6,7 +6,8 @@ import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, S
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
 import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
-import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge } from "./utils/pvp";
+import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge, createRematch } from "./utils/pvp";
+import { useRematch } from "./hooks/useRematch";
 import { GAME_MODE_AI, GAME_MODE_PVP } from "./utils/constants";
 import './index.css';
 import './styles/refresh.css';
@@ -25,6 +26,7 @@ import { useTutorial } from "./hooks/useTutorial";
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
   const { theme, toggleTheme } = useTheme();
+  const { rematchState, sendRematch, clearRematch } = useRematch(walletAddr);
   const { isActive: tutorialActive, step: tutorialStep, currentStep: tutorialCurrentStep, totalSteps: tutorialTotalSteps, next: tutorialNext, prev: tutorialPrev, skip: tutorialSkip, restart: tutorialRestart } = useTutorial();
 
   // "landing" | "game" | "leaderboard" | "pvp"
@@ -498,6 +500,7 @@ export default function App() {
               pvpTurn={pvpTurn}
               makePvPMoveHandler={makePvPMoveHandler}
               txStatus={txStatus}
+              onRematch={sendRematch}
             />
           )}
 
