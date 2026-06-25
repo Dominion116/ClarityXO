@@ -42,6 +42,8 @@ export default function Game({
   const [bnsName, setBnsName] = useState(null);
   const [playerProfile, setPlayerProfile] = useState(null);
   const { stats: playerStats, loading: statsLoading } = usePlayerStats(walletAddr);
+  const { isMuted, toggleMute, playClick, playWin, playLoss, playDraw } = useSoundEffects();
+  const prevStatusRef = useRef(status);
 
   useEffect(() => {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
