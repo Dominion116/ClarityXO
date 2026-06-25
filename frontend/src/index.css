@@ -44,6 +44,9 @@ html { overflow-x: hidden; color-scheme: dark; }
 }
 [data-theme="light"] ::-webkit-scrollbar-track { background: var(--bg); }
 [data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--ghost); }
+[data-theme="light"] .ghost-btn { background: var(--surface); }
+[data-theme="light"] .skeleton-box { background: var(--ghost); }
+[data-theme="light"] select, [data-theme="light"] option { background: var(--surface); color: var(--text); }
 
 body, #root {
   width: 100vw;
