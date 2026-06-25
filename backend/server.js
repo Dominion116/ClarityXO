@@ -954,6 +954,51 @@ app.get('/api/player/:address/achievements', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/rematch
+ * Record a rematch intent so the opponent can be notified on their next poll.
+ */
+app.post('/api/rematch', async (req, res) => {
+  const { challenger, opponent, previousGameId } = req.body || {};
+  if (!challenger || !opponent) {
+    return res.status(400).json({ error: 'challenger and opponent are required' });
+  }
+  try {
+    const db = await getDatabase();
+    const rematches = db.collection('rematches');
+    await rematches.updateOne(
+      { challenger, opponent },
+      {
+        $set: { challenger, opponent, previousGameId: previousGameId || null, createdAt: new Date() },
+      },
+      { upsert: true }
+    );
+    res.json({ ok: true, challenger, opponent });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/rematch/pending/:address
+ * Check if there is an incoming rematch offer for a player.
+ */
+app.get('/api/rematch/pending/:address', async (req, res) => {
+  const { address } = req.params;
+  if (!address) return res.status(400).json({ error: 'address required' });
+  try {
+    const db = await getDatabase();
+    const rematches = db.collection('rematches');
+    const offer = await rematches.findOne(
+      { opponent: address },
+      { sort: { createdAt: -1 } }
+    );
+    res.json({ ok: true, offer: offer || null });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/sync', async (_req, res) => {
   try {
     const result = await syncLeaderboardFromChainDebounced();
