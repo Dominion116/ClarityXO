@@ -280,10 +280,27 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
       <div className="lb-header">
         <div className="lb-header-left">
           <div className="lb-title">Leaderboard</div>
-          <div className="lb-week" id="lb-month-label">Month {data.month}</div>
+          <div className="lb-week" id="lb-month-label">
+            {isViewingHistory ? `Archive — ${selectedMonth}` : `Month ${data.month}`}
+          </div>
         </div>
-        <div className="lb-meta" id="lb-last-updated">
-          Updated {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        <div className="lb-header-right">
+          {availableMonths.length > 0 && (
+            <select
+              className="lb-month-picker"
+              value={selectedMonth || '__current__'}
+              onChange={(e) => handleMonthChange(e.target.value)}
+              aria-label="Select month"
+            >
+              <option value="__current__">Current Month</option>
+              {availableMonths.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          )}
+          <div className="lb-meta" id="lb-last-updated">
+            Updated {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          </div>
         </div>
       </div>
 
