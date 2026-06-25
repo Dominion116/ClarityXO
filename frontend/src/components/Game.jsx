@@ -4,6 +4,8 @@ import { resolveAddressName } from '../utils/bns';
 import { fetchPlayerProfile } from '../utils/profile';
 import { formatTime } from '../utils/gameLogic';
 import { CONFIG } from '../config';
+import StatsStrip from './StatsStrip';
+import { usePlayerStats } from '../hooks/usePlayerStats';
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
 
