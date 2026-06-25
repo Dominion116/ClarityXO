@@ -210,24 +210,29 @@ export default function Game({
       </div>
 
       {gameMode !== GAME_MODE_PVP && (
-        <div className="difficulty-row">
-          <span className="difficulty-label">Difficulty:</span>
-          {DIFFICULTIES.map(d => (
-            <button
-              key={d}
-              className={`difficulty-btn ${d} ${difficulty === d ? 'active' : ''}`}
-              onClick={() => onDifficultyChange(d)}
-              disabled={processing || (status === STATUS_ACTIVE && moveCount > 0)}
-              title={
-                d === 'easy' ? 'Random moves — great for beginners' :
-                d === 'medium' ? 'Smart AI — wins and blocks threats' :
-                'Minimax AI — plays perfectly every time'
-              }
-            >
-              {d}
-            </button>
-          ))}
-        </div>
+        <>
+          <div className="difficulty-row">
+            <span className="difficulty-label">Difficulty:</span>
+            {DIFFICULTIES.map(d => (
+              <button
+                key={d}
+                className={`difficulty-btn ${d} ${difficulty === d ? 'active' : ''}`}
+                onClick={() => onDifficultyChange(d)}
+                disabled={processing || (status === STATUS_ACTIVE && moveCount > 0)}
+                title={
+                  d === 'easy' ? 'Random moves — great for beginners' :
+                  d === 'medium' ? 'Smart AI — wins and blocks threats' :
+                  'Minimax AI — plays perfectly every time'
+                }
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+          {difficulty === 'hard' && status === STATUS_ACTIVE && moveCount === 0 && (
+            <div className="difficulty-hint">You chose Hard — the AI plays perfectly. Good luck.</div>
+          )}
+        </>
       )}
 
       <div className="btn-row">
