@@ -515,6 +515,17 @@ export default function App() {
           )}
         </>
       )}
+
+      {tutorialActive && (
+        <Tutorial
+          step={tutorialStep}
+          currentStep={tutorialCurrentStep}
+          totalSteps={tutorialTotalSteps}
+          onNext={tutorialNext}
+          onPrev={tutorialPrev}
+          onSkip={tutorialSkip}
+        />
+      )}
     </>
   );
 }
