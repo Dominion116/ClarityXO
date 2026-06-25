@@ -125,6 +125,10 @@ export default function Game({
         </div>
       </div>
 
+      {walletAddr && (
+        <StatsStrip stats={playerStats} loading={statsLoading} />
+      )}
+
       {gameMode === GAME_MODE_PVP && pvpOpponent && (
         <div className="pvp-opponent-bar">
           <span className="pvp-opponent-label">vs</span>
