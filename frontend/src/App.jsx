@@ -468,6 +468,11 @@ export default function App() {
               makeMove={makeMove}
               resetLocal={resetLocal}
               resign={resign}
+              gameMode={gameMode}
+              pvpOpponent={pvpOpponent}
+              pvpTurn={pvpTurn}
+              makePvPMoveHandler={makePvPMoveHandler}
+              txStatus={txStatus}
             />
           )}
 
