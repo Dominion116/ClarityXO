@@ -6,6 +6,7 @@ import { formatTime } from '../utils/gameLogic';
 import { CONFIG } from '../config';
 import StatsStrip from './StatsStrip';
 import ShareButton from './ShareButton';
+import TxStatusBadge from './TxStatusBadge';
 import { usePlayerStats } from '../hooks/usePlayerStats';
 import { useSoundEffects } from '../hooks/useSoundEffects';
 
@@ -38,6 +39,7 @@ export default function Game({
   pvpOpponent,
   pvpTurn,
   makePvPMoveHandler,
+  txStatus,
 }) {
   const logRef = useRef(null);
   const [bnsName, setBnsName] = useState(null);
