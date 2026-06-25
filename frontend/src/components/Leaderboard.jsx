@@ -49,7 +49,14 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   }, []);
 
   const refresh = async () => {
-    await loadLeaderboard();
+    await loadLeaderboard(selectedMonth);
+  };
+
+  const handleMonthChange = (month) => {
+    const next = month === '__current__' ? null : month;
+    setSelectedMonth(next);
+    setPage(1);
+    loadLeaderboard(next);
   };
 
   useEffect(() => {
