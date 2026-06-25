@@ -24,6 +24,7 @@ import { useTutorial } from "./hooks/useTutorial";
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
   const { theme, toggleTheme } = useTheme();
+  const { isActive: tutorialActive, step: tutorialStep, currentStep: tutorialCurrentStep, totalSteps: tutorialTotalSteps, next: tutorialNext, prev: tutorialPrev, skip: tutorialSkip, restart: tutorialRestart } = useTutorial();
 
   // "landing" | "game" | "leaderboard" | "pvp"
   const [activePage, setActivePage] = useState("landing");
