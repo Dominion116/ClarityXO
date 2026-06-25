@@ -246,12 +246,15 @@ export default function App() {
     }
     try {
       setProcessing(true);
+      const boardSnapshot = [...board];
       const response = await callContract("make-move", [encodeCVArg(uintCV(row)), encodeCVArg(uintCV(col))]);
       log(`TX broadcast: ${response?.txid?.slice(0, 16)}…`, "success");
+      setTxStatusWithAutoClear('pending', 999999);
       if (outcomeToRecord) await recordResult(walletAddr, outcomeToRecord);
-      setTimeout(syncChainState, 6000);
+      setTimeout(() => syncChainState(null, boardSnapshot), 6000);
     } catch (e) {
       log(`TX error: ${e.message}`, "error");
+      setTxStatusWithAutoClear(null);
     } finally {
       setProcessing(false);
     }
