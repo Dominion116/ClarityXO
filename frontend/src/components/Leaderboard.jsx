@@ -3,6 +3,7 @@ import { fetchLeaderboardFromContract, fetchAvailableMonths, getPlayerList, clea
 import { resolveAddressNames } from '../utils/bns';
 import { fetchPlayerProfiles } from '../utils/profile';
 import { CONFIG } from '../config';
+import PlayerProfile from './PlayerProfile';
 
 const PAGE_SIZE = 10;
 
@@ -21,6 +22,7 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
   const [profiles, setProfiles] = useState({});
   const [availableMonths, setAvailableMonths] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(null);
+  const [profileAddress, setProfileAddress] = useState(null);
   const isDeployer = walletAddr === CONFIG.contractAddress;
   const claimReady = countdown === "00:00:00";
   const isViewingHistory = selectedMonth !== null;
