@@ -418,6 +418,14 @@ export default function App() {
               </nav>
             </div>
             <div className="header-right">
+              <button
+                className="ghost-btn theme-toggle-btn"
+                onClick={toggleTheme}
+                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme === 'dark' ? '☀' : '☽'}
+              </button>
               <div className="badge">{CONFIG.network}</div>
               {walletAddr ? (
                 <div className="badge" style={{ color: 'var(--green)', borderColor: 'var(--green)' }}>
