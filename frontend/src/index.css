@@ -24,6 +24,27 @@ html { overflow-x: hidden; color-scheme: dark; }
   --lp-hero-v:    80px;
 }
 
+/* ── Light Theme ────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:      #f0ede8;
+  --surface: #e8e4de;
+  --border:  #d4cfc8;
+  --border2: #c0bab2;
+  --text:    #1a1714;
+  --muted:   #7a746c;
+  --dim:     #b8b2aa;
+  --ghost:   #ddd8d0;
+  --red:     #cc2222;
+  --green:   #2a8860;
+  --gold:    #9a7820;
+  --gold-dim:#c8b870;
+  --silver:  #666660;
+  --bronze:  #7a4e2a;
+  color-scheme: light;
+}
+[data-theme="light"] ::-webkit-scrollbar-track { background: var(--bg); }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--ghost); }
+
 body, #root {
   width: 100vw;
   max-width: 100%;
