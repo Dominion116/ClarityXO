@@ -103,6 +103,9 @@ export default function Game({
         {gameMode === GAME_MODE_PVP && (
           <span className="pvp-mode-badge">PvP</span>
         )}
+        {gameMode !== GAME_MODE_PVP && (
+          <span className={`difficulty-badge difficulty-badge-${difficulty}`}>{difficulty}</span>
+        )}
       </div>
 
       <div className="wallet-bar">
