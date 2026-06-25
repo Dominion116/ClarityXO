@@ -4,6 +4,7 @@ import { MongoClient } from 'mongodb';
 import 'dotenv/config';
 import swaggerUi from 'swagger-ui-express';
 import { cvToHex, cvToJSON, deserializeCV, uintCV } from '@stacks/transactions';
+import { ACHIEVEMENT_DEFINITIONS, checkAchievements } from './achievements.js';
 
 const app = express();
 const PORT = process.env.PORT || 8787;
