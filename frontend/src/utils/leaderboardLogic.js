@@ -55,6 +55,18 @@ export function formatCountdown(ms) {
 }
 
 // Fetch leaderboard stats from the smart contract
+export async function fetchAvailableMonths() {
+  try {
+    const res = await fetch(apiUrl('/api/leaderboard/months'), { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Months API error: ${res.status}`);
+    const payload = await res.json();
+    return Array.isArray(payload.months) ? payload.months : [];
+  } catch (e) {
+    console.error('Error fetching available months:', e);
+    return [];
+  }
+}
+
 export async function fetchLeaderboardFromContract() {
   try {
     const res = await fetch(apiUrl('/api/leaderboard'), { cache: 'no-store' });
