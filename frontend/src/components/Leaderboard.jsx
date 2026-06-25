@@ -511,6 +511,14 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
           : `Points reset monthly · NFT minted on Stacks · ${new Date().getFullYear()}`
         }
       </div>
+
+      {profileAddress && (
+        <PlayerProfile
+          address={profileAddress}
+          walletAddr={walletAddr}
+          onClose={() => setProfileAddress(null)}
+        />
+      )}
     </div>
   );
 }
