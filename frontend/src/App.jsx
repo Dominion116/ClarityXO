@@ -21,6 +21,7 @@ import { useTheme } from "./hooks/useTheme";
 
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
+  const { theme, toggleTheme } = useTheme();
 
   // "landing" | "game" | "leaderboard" | "pvp"
   const [activePage, setActivePage] = useState("landing");
