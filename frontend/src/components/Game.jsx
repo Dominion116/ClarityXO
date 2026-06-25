@@ -206,18 +206,26 @@ export default function Game({
         <div className="info-cell" id="info-empty">Cells left: {displayBoard.filter(c => c === EMPTY).length}</div>
       </div>
 
-      <div className="difficulty-row">
-        {DIFFICULTIES.map(d => (
-          <button
-            key={d}
-            className={`difficulty-btn ${d} ${difficulty === d ? 'active' : ''}`}
-            onClick={() => onDifficultyChange(d)}
-            disabled={processing}
-          >
-            {d}
-          </button>
-        ))}
-      </div>
+      {gameMode !== GAME_MODE_PVP && (
+        <div className="difficulty-row">
+          <span className="difficulty-label">Difficulty:</span>
+          {DIFFICULTIES.map(d => (
+            <button
+              key={d}
+              className={`difficulty-btn ${d} ${difficulty === d ? 'active' : ''}`}
+              onClick={() => onDifficultyChange(d)}
+              disabled={processing || (status === STATUS_ACTIVE && moveCount > 0)}
+              title={
+                d === 'easy' ? 'Random moves — great for beginners' :
+                d === 'medium' ? 'Smart AI — wins and blocks threats' :
+                'Minimax AI — plays perfectly every time'
+              }
+            >
+              {d}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="btn-row">
         <button className="btn btn-primary" id="btn-new" onClick={resetLocal} disabled={processing || !walletAddr}>New Game</button>
