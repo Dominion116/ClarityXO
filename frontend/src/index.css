@@ -317,6 +317,14 @@ header {
 .profile-achievement-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .profile-actions { padding: 14px 20px; }
 
+/* ── Reduced motion ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ── Print styles ──────────────────────────────────── */
 @media print {
   .wallet-bar, .btn-row, .log-wrap, .lb-actions, .difficulty-row,
