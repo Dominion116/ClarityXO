@@ -6,6 +6,10 @@ const _BNS_CONTRACT = BNS_CONTRACT_NAME;
 const cache = new Map(); // addr → { name: string|null, expiresAt: number }
 const TTL = 5 * 60 * 1000; // 5 min
 
+export function clearBNSCache() {
+  cache.clear();
+}
+
 /**
  * Resolves a Stacks address to its primary BNS name (e.g. "alice.btc").
  * Returns null if the address has no registered name or the lookup fails.
