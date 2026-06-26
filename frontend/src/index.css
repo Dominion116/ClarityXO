@@ -298,6 +298,22 @@ header {
 .profile-achievement-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .profile-actions { padding: 14px 20px; }
 
+/* ── Referral Section ──────────────────────────────── */
+.referral-section {
+  width: 100%; padding: 20px; border: 1px solid var(--border);
+  border-top: none; display: flex; flex-direction: column; gap: 12px;
+}
+.referral-title { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--text); }
+.referral-body  { font-size: 9px; letter-spacing: .08em; color: var(--muted); line-height: 1.6; }
+.referral-link-row { display: flex; gap: 8px; align-items: center; }
+.referral-link-input {
+  flex: 1; background: var(--surface); color: var(--muted); border: 1px solid var(--border2);
+  font-family: var(--mono); font-size: 9px; letter-spacing: .05em; padding: 7px 10px;
+  outline: none;
+}
+.referral-link-input:focus { border-color: var(--red); color: var(--text); }
+.referral-count { font-size: 9px; letter-spacing: .1em; color: var(--muted); }
+
 /* ── Spectator Mode ────────────────────────────────── */
 .spectator-count { margin-left: 10px; font-size: 9px; letter-spacing: .1em; color: var(--green); }
 .spectator-header { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border: 1px solid var(--border); border-top: none; }
