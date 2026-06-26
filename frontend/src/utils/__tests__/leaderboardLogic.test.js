@@ -541,3 +541,87 @@ describe("getPlayerList — single player is always rank 1", () => {
     expect(list[0].pts).toBe(99);
   });
 });
+
+// ── formatCountdown ───────────────────────────────────────────────────────────
+
+import { formatCountdown } from "../leaderboardLogic.js";
+
+describe("formatCountdown", () => {
+  it("returns 00:00:00 for zero ms", () => {
+    expect(formatCountdown(0)).toBe("00:00:00");
+  });
+
+  it("returns 00:00:00 for negative ms", () => {
+    expect(formatCountdown(-1000)).toBe("00:00:00");
+  });
+
+  it("formats 1 second correctly", () => {
+    expect(formatCountdown(1000)).toBe("00:00:01");
+  });
+
+  it("formats 1 minute correctly", () => {
+    expect(formatCountdown(60 * 1000)).toBe("00:01:00");
+  });
+
+  it("formats 1 hour correctly", () => {
+    expect(formatCountdown(3600 * 1000)).toBe("01:00:00");
+  });
+
+  it("formats 1 day using d h m format", () => {
+    const oneDayMs = 24 * 3600 * 1000;
+    const result = formatCountdown(oneDayMs);
+    expect(result).toContain("1d");
+  });
+
+  it("pads hours, minutes, seconds with leading zeros", () => {
+    const ms = (2 * 3600 + 3 * 60 + 4) * 1000;
+    expect(formatCountdown(ms)).toBe("02:03:04");
+  });
+});
+
+// ── getPlayerList tie-breaking ────────────────────────────────────────────────
+
+import { getPlayerList } from "../leaderboardLogic.js";
+
+describe("getPlayerList tie-breaking", () => {
+  it("sorts by wins descending when pts are equal", () => {
+    const data = {
+      players: {
+        "A": { pts: 10, wins: 2, draws: 2, losses: 0 },
+        "B": { pts: 10, wins: 5, draws: 0, losses: 0 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].addr).toBe("B");
+  });
+
+  it("sorts by losses ascending when pts and wins are equal", () => {
+    const data = {
+      players: {
+        "C": { pts: 5, wins: 1, draws: 2, losses: 3 },
+        "D": { pts: 5, wins: 1, draws: 2, losses: 1 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].addr).toBe("D");
+  });
+
+  it("computes games as wins + draws + losses", () => {
+    const data = {
+      players: {
+        "E": { pts: 7, wins: 2, draws: 1, losses: 1 },
+      },
+    };
+    expect(getPlayerList(data)[0].games).toBe(4);
+  });
+
+  it("handles missing losses field (uses losss legacy key)", () => {
+    const data = {
+      players: {
+        "F": { pts: 3, wins: 1, draws: 0, losss: 2 },
+      },
+    };
+    const list = getPlayerList(data);
+    expect(list[0].losses).toBe(2);
+  });
+});
