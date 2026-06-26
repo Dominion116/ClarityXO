@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from "../constants.js";
+import {
+  EMPTY, PLAYER_X, PLAYER_O,
+  STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW,
+  PTS_AI_WIN, PTS_PVP_WIN, PTS_DRAW_V, PTS_LOSS,
+  GAME_MODE_AI, GAME_MODE_PVP,
+} from "../constants.js";
 
 // ── Cell value constants ──────────────────────────────────────────────────────
 
@@ -54,5 +59,53 @@ describe("all constants are distinct with no collisions", () => {
 
   it("EMPTY does not collide with any STATUS constant", () => {
     expect(EMPTY).toBe(STATUS_ACTIVE);
+  });
+});
+
+// ── Points constants ──────────────────────────────────────────────────────────
+
+describe("points constants", () => {
+  it("PTS_AI_WIN is 3", () => {
+    expect(PTS_AI_WIN).toBe(3);
+  });
+
+  it("PTS_PVP_WIN is 5", () => {
+    expect(PTS_PVP_WIN).toBe(5);
+  });
+
+  it("PTS_DRAW_V is 1", () => {
+    expect(PTS_DRAW_V).toBe(1);
+  });
+
+  it("PTS_LOSS is 0", () => {
+    expect(PTS_LOSS).toBe(0);
+  });
+
+  it("PvP win is worth more than AI win", () => {
+    expect(PTS_PVP_WIN).toBeGreaterThan(PTS_AI_WIN);
+  });
+
+  it("AI win is worth more than draw", () => {
+    expect(PTS_AI_WIN).toBeGreaterThan(PTS_DRAW_V);
+  });
+
+  it("draw is worth more than loss", () => {
+    expect(PTS_DRAW_V).toBeGreaterThan(PTS_LOSS);
+  });
+});
+
+// ── Game mode constants ───────────────────────────────────────────────────────
+
+describe("game mode constants", () => {
+  it("GAME_MODE_AI is a string", () => {
+    expect(typeof GAME_MODE_AI).toBe("string");
+  });
+
+  it("GAME_MODE_PVP is a string", () => {
+    expect(typeof GAME_MODE_PVP).toBe("string");
+  });
+
+  it("GAME_MODE_AI and GAME_MODE_PVP are distinct", () => {
+    expect(GAME_MODE_AI).not.toBe(GAME_MODE_PVP);
   });
 });
