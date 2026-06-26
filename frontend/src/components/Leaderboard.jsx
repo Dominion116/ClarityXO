@@ -4,6 +4,7 @@ import { resolveAddressNames } from '../utils/bns';
 import { fetchPlayerProfiles } from '../utils/profile';
 import { CONFIG } from '../config';
 import PlayerProfile from './PlayerProfile';
+import ReferralSection from './ReferralSection';
 
 const PAGE_SIZE = 10;
 
@@ -511,6 +512,8 @@ export default function Leaderboard({ walletAddr, addLog, navigate }) {
           : `Points reset monthly · NFT minted on Stacks · ${new Date().getFullYear()}`
         }
       </div>
+
+      <ReferralSection walletAddr={walletAddr} />
 
       {profileAddress && (
         <PlayerProfile
