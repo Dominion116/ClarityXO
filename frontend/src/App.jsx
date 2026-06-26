@@ -9,6 +9,7 @@ import { recordResult } from "./utils/leaderboardLogic";
 import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge, createRematch } from "./utils/pvp";
 import { useRematch } from "./hooks/useRematch";
 import { parseReferralCodeFromUrl, claimReferral } from "./utils/referral";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { GAME_MODE_AI, GAME_MODE_PVP } from "./utils/constants";
 import './index.css';
 import './styles/refresh.css';
