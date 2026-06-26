@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { generateReferralCode, fetchReferralStats, buildReferralLink } from '../utils/referral';
-import { copyToClipboard } from '../utils/share';
+import CopyButton from './CopyButton';
 
 export default function ReferralSection({ walletAddr }) {
   const [code, setCode] = useState(null);
   const [stats, setStats] = useState(null);
-  const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -21,13 +20,6 @@ export default function ReferralSection({ walletAddr }) {
   }, [walletAddr]);
 
   const referralLink = code ? buildReferralLink(code) : null;
-
-  const handleCopy = async () => {
-    if (!referralLink) return;
-    await copyToClipboard(referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
 
   if (!walletAddr) return null;
 
@@ -48,9 +40,7 @@ export default function ReferralSection({ walletAddr }) {
             value={referralLink}
             onFocus={e => e.target.select()}
           />
-          <button className="ghost-btn" onClick={handleCopy}>
-            {copied ? 'Copied ✓' : 'Copy'}
-          </button>
+          <CopyButton text={referralLink} />
         </div>
       ) : null}
 
