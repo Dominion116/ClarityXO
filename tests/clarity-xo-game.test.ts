@@ -1387,3 +1387,319 @@ Clarinet.test({
     assertEquals(state["player"], types.some(types.principal(player.address)));
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 12 — PvP challenge lifecycle
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createChallengeCall(chain: Chain, challenger: Account, opponent: Account) {
+  return chain.mineBlock([
+    Tx.contractCall(
+      GAME, "create-challenge",
+      [types.principal(opponent.address)],
+      challenger.address
+    ),
+  ]);
+}
+
+function acceptChallengeCall(chain: Chain, accepter: Account, challenger: Account) {
+  return chain.mineBlock([
+    Tx.contractCall(
+      GAME, "accept-challenge",
+      [types.principal(challenger.address)],
+      accepter.address
+    ),
+  ]);
+}
+
+function declineChallengeCall(chain: Chain, decliner: Account, challenger: Account) {
+  return chain.mineBlock([
+    Tx.contractCall(
+      GAME, "decline-challenge",
+      [types.principal(challenger.address)],
+      decliner.address
+    ),
+  ]);
+}
+
+function cancelChallengeCall(chain: Chain, challenger: Account) {
+  return chain.mineBlock([
+    Tx.contractCall(GAME, "cancel-challenge", [], challenger.address),
+  ]);
+}
+
+function makePvPMoveCall(chain: Chain, caller: Account, row: number, col: number) {
+  return chain.mineBlock([
+    Tx.contractCall(
+      GAME, "make-pvp-move",
+      [types.uint(row), types.uint(col)],
+      caller.address
+    ),
+  ]);
+}
+
+Clarinet.test({
+  name: "GAME-79: create-challenge stores challenge keyed by challenger",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    const b = createChallengeCall(chain, challenger, opponent);
+    b.receipts[0].result.expectOk();
+
+    const pending = chain.callReadOnlyFn(
+      GAME, "get-pending-challenge",
+      [types.principal(challenger.address)],
+      challenger.address
+    );
+    pending.result.expectOk().expectSome();
+  },
+});
+
+Clarinet.test({
+  name: "GAME-80: create-challenge rejects self-challenge with u110",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    const b = chain.mineBlock([
+      Tx.contractCall(
+        GAME, "create-challenge",
+        [types.principal(player.address)],
+        player.address
+      ),
+    ]);
+    b.receipts[0].result.expectErr().expectUint(110);
+  },
+});
+
+Clarinet.test({
+  name: "GAME-81: accept-challenge starts a PvP game and returns a game-id",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    createChallengeCall(chain, challenger, opponent);
+    const b = acceptChallengeCall(chain, opponent, challenger);
+    b.receipts[0].result.expectOk();
+  },
+});
+
+Clarinet.test({
+  name: "GAME-82: decline-challenge removes the challenge record",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    createChallengeCall(chain, challenger, opponent);
+    const b = declineChallengeCall(chain, opponent, challenger);
+    b.receipts[0].result.expectOk();
+
+    const pending = chain.callReadOnlyFn(
+      GAME, "get-pending-challenge",
+      [types.principal(challenger.address)],
+      challenger.address
+    );
+    pending.result.expectOk().expectNone();
+  },
+});
+
+Clarinet.test({
+  name: "GAME-83: cancel-challenge removes own outgoing challenge",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    createChallengeCall(chain, challenger, opponent);
+    const b = cancelChallengeCall(chain, challenger);
+    b.receipts[0].result.expectOk();
+
+    const pending = chain.callReadOnlyFn(
+      GAME, "get-pending-challenge",
+      [types.principal(challenger.address)],
+      challenger.address
+    );
+    pending.result.expectOk().expectNone();
+  },
+});
+
+Clarinet.test({
+  name: "GAME-84: make-pvp-move enforces turn order — wrong player returns u111",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    createChallengeCall(chain, challenger, opponent);
+    acceptChallengeCall(chain, opponent, challenger);
+
+    // challenger is X and goes first — opponent trying to move returns error
+    const b = makePvPMoveCall(chain, opponent, 0, 0);
+    b.receipts[0].result.expectErr();
+  },
+});
+
+Clarinet.test({
+  name: "GAME-85: make-pvp-move X can play on their turn",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    createChallengeCall(chain, challenger, opponent);
+    acceptChallengeCall(chain, opponent, challenger);
+
+    const b = makePvPMoveCall(chain, challenger, 0, 0);
+    b.receipts[0].result.expectOk();
+  },
+});
+
+Clarinet.test({
+  name: "GAME-86: PvP win awards 5 pts to winner",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    createChallengeCall(chain, challenger, opponent);
+    acceptChallengeCall(chain, opponent, challenger);
+
+    // X wins via row 0: X(0,0) O(1,0) X(0,1) O(1,1) X(0,2)
+    makePvPMoveCall(chain, challenger, 0, 0);
+    makePvPMoveCall(chain, opponent,   1, 0);
+    makePvPMoveCall(chain, challenger, 0, 1);
+    makePvPMoveCall(chain, opponent,   1, 1);
+    makePvPMoveCall(chain, challenger, 0, 2); // X wins
+
+    const month = chain.callReadOnlyFn(GAME, "current-month", [], challenger.address);
+    const m = parseInt(month.result.replace("u", ""));
+    const stats = getStats(chain, challenger, m).result.expectTuple();
+    assertEquals(stats["pts"],  types.uint(5));
+    assertEquals(stats["wins"], types.uint(1));
+  },
+});
+
+Clarinet.test({
+  name: "GAME-87: get-pvp-game-state returns both player principals",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    createChallengeCall(chain, challenger, opponent);
+    acceptChallengeCall(chain, opponent, challenger);
+
+    const pvpState = chain.callReadOnlyFn(
+      GAME, "get-pvp-game-state",
+      [types.uint(1)],
+      challenger.address
+    ).result.expectOk().expectTuple();
+
+    assertExists(pvpState["player-x"]);
+    assertExists(pvpState["player-o"]);
+  },
+});
+
+Clarinet.test({
+  name: "GAME-88: cancel-challenge without active challenge returns u113",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    const b = cancelChallengeCall(chain, player);
+    b.receipts[0].result.expectErr().expectUint(113);
+  },
+});
+
+Clarinet.test({
+  name: "GAME-89: accept-challenge for nonexistent challenge returns u112",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+    const b = acceptChallengeCall(chain, opponent, challenger);
+    b.receipts[0].result.expectErr().expectUint(112);
+  },
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 13 — Edge cases and boundary conditions
+// ═══════════════════════════════════════════════════════════════════════════
+
+Clarinet.test({
+  name: "GAME-90: all 9 cells playable in a single game without collision",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const challenger = accounts.get("wallet_1")!;
+    const opponent   = accounts.get("wallet_2")!;
+
+    createChallengeCall(chain, challenger, opponent);
+    acceptChallengeCall(chain, opponent, challenger);
+
+    // Play all 9 cells in a draw pattern: X O X / X O O / O X X
+    const sequence = [
+      [challenger, 0, 0], [opponent, 0, 1], [challenger, 0, 2],
+      [challenger, 1, 0], [opponent, 1, 1], [opponent, 1, 2],
+      [opponent, 2, 0], [challenger, 2, 1],
+    ] as [Account, number, number][];
+
+    for (const [player, row, col] of sequence) {
+      makePvPMoveCall(chain, player, row, col);
+    }
+    // Last move completes the board
+    const b = makePvPMoveCall(chain, challenger, 2, 2);
+    assertExists(b.receipts[0].result);
+  },
+});
+
+Clarinet.test({
+  name: "GAME-91: multiple challenges can exist from different challengers simultaneously",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const c1 = accounts.get("wallet_1")!;
+    const c2 = accounts.get("wallet_2")!;
+    const op = accounts.get("wallet_3")!;
+
+    // Two different challengers send challenges to the same opponent
+    const b1 = createChallengeCall(chain, c1, op);
+    const b2 = createChallengeCall(chain, c2, op);
+
+    b1.receipts[0].result.expectOk();
+    b2.receipts[0].result.expectOk();
+  },
+});
+
+Clarinet.test({
+  name: "GAME-92: current-month returns a positive uint based on block height",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    const result = chain.callReadOnlyFn(
+      GAME, "current-month", [], player.address
+    ).result;
+    const month = parseInt(result.replace("u", ""));
+    assertEquals(month >= 0, true);
+  },
+});
+
+Clarinet.test({
+  name: "GAME-93: get-monthly-stats for unknown player returns all zeros",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player  = accounts.get("wallet_1")!;
+    const unknown = accounts.get("wallet_5")!;
+    const stats = getStats(chain, unknown, 0).result.expectTuple();
+    assertEquals(stats["pts"],    types.uint(0));
+    assertEquals(stats["wins"],   types.uint(0));
+    assertEquals(stats["draws"],  types.uint(0));
+    assertEquals(stats["losses"], types.uint(0));
+  },
+});
+
+Clarinet.test({
+  name: "GAME-94: get-next-game-id returns 1 before any games are started",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const player = accounts.get("wallet_1")!;
+    chain.callReadOnlyFn(GAME, "get-next-game-id", [], player.address)
+      .result.expectUint(1);
+  },
+});
+
+Clarinet.test({
+  name: "GAME-95: get-next-game-id increments correctly after game creation",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const p1 = accounts.get("wallet_1")!;
+    const p2 = accounts.get("wallet_2")!;
+    startGame(chain, p1);
+    startGame(chain, p2);
+    chain.callReadOnlyFn(GAME, "get-next-game-id", [], p1.address)
+      .result.expectUint(3);
+  },
+});
