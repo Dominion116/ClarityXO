@@ -656,3 +656,84 @@ describe("formatTime — edge cases", () => {
     expect(formatTime(1)).toBe("00:01");
   });
 });
+
+// ── chooseAiMoveEasy ─────────────────────────────────────────────────────────
+
+describe("chooseAiMoveEasy", () => {
+  it("returns a valid index on an empty board", () => {
+    const idx = chooseAiMoveEasy([...emptyBoard]);
+    expect(idx).toBeGreaterThanOrEqual(0);
+    expect(idx).toBeLessThanOrEqual(8);
+  });
+
+  it("never picks an occupied cell", () => {
+    const board = [X,O,X, O,X,O, O,X,E]; // only cell 8 free
+    const idx = chooseAiMoveEasy([...board]);
+    expect(idx).toBe(8);
+  });
+
+  it("returns -1 when board is completely full", () => {
+    const full = [X,O,X, O,X,O, O,X,O];
+    expect(chooseAiMoveEasy([...full])).toBe(-1);
+  });
+});
+
+// ── chooseAiMoveHard ─────────────────────────────────────────────────────────
+
+describe("chooseAiMoveHard", () => {
+  it("takes an immediate win when available", () => {
+    // O needs cell 8 to win diagonal 2-4-6… wait, let's use row 2
+    const board = [X,X,E, E,O,E, O,O,E]; // O needs cell 8 to win row 2
+    const idx = chooseAiMoveHard([...board]);
+    expect(idx).toBe(8);
+  });
+
+  it("blocks player from winning on next move", () => {
+    // X has two in a row: cells 0 and 1, needs cell 2
+    const board = [X,X,E, E,O,E, E,E,E];
+    const idx = chooseAiMoveHard([...board]);
+    expect(idx).toBe(2);
+  });
+
+  it("takes center on an empty board", () => {
+    const idx = chooseAiMoveHard([...emptyBoard]);
+    expect(idx).toBe(4);
+  });
+
+  it("returns a valid index on a partially filled board", () => {
+    const board = [X,O,X, E,E,E, E,E,E];
+    const idx = chooseAiMoveHard([...board]);
+    expect(idx).toBeGreaterThanOrEqual(0);
+    expect(idx).toBeLessThanOrEqual(8);
+    expect(board[idx]).toBe(EMPTY);
+  });
+});
+
+// ── chooseAiMove dispatch ─────────────────────────────────────────────────────
+
+describe("chooseAiMove difficulty dispatch", () => {
+  it("easy difficulty returns a valid index", () => {
+    const idx = chooseAiMove([...emptyBoard], 'easy');
+    expect(idx).toBeGreaterThanOrEqual(0);
+    expect(idx).toBeLessThanOrEqual(8);
+  });
+
+  it("medium difficulty blocks player win threat", () => {
+    const board = [X,X,E, E,O,E, E,E,E];
+    const idx = chooseAiMove([...board], 'medium');
+    expect(idx).toBe(2);
+  });
+
+  it("hard difficulty blocks player win threat", () => {
+    const board = [X,X,E, E,O,E, E,E,E];
+    const idx = chooseAiMove([...board], 'hard');
+    expect(idx).toBe(2);
+  });
+
+  it("defaults to medium when difficulty is unrecognised", () => {
+    const board = [X,X,E, E,O,E, E,E,E];
+    const idx = chooseAiMove([...board], 'unknown');
+    // medium should block at cell 2
+    expect(idx).toBe(2);
+  });
+});
