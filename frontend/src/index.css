@@ -216,6 +216,15 @@ header {
 }
 .wallet-bar-btns { display: flex; gap: 8px; }
 
+/* ── Loading Spinner ───────────────────────────────── */
+.loading-spinner { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px; }
+.spinner-ring {
+  border: 2px solid var(--border2); border-top-color: var(--red);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner-label { font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+
 /* ── Error Boundary ────────────────────────────────── */
 .error-boundary {
   width: 100%; padding: 60px 24px; text-align: center;
