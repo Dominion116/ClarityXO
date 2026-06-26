@@ -317,6 +317,13 @@ header {
 .profile-achievement-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .profile-actions { padding: 14px 20px; }
 
+/* ── Print styles ──────────────────────────────────── */
+@media print {
+  .wallet-bar, .btn-row, .log-wrap, .lb-actions, .difficulty-row,
+  .tutorial-overlay, .achievement-toast, .tx-status-badge { display: none !important; }
+  body { background: #fff; color: #000; }
+}
+
 /* ── Focus visible ring ────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--red);
