@@ -954,6 +954,110 @@ app.get('/api/player/:address/achievements', async (req, res) => {
   }
 });
 
+// ─── Referral helpers ────────────────────────────────────────────────────────
+
+function generateReferralCode(address) {
+  // Short deterministic code: first 6 + last 4 chars of address
+  return `${address.slice(2, 8)}${address.slice(-4)}`.toUpperCase();
+}
+
+async function getReferralsCollection() {
+  const db = await getDatabase();
+  return db.collection('referrals');
+}
+
+/**
+ * POST /api/referral/generate
+ * Generate (or fetch) a referral code for a wallet address.
+ */
+app.post('/api/referral/generate', async (req, res) => {
+  const { address } = req.body || {};
+  if (!address || typeof address !== 'string') {
+    return res.status(400).json({ error: 'address is required' });
+  }
+  const code = generateReferralCode(address);
+  try {
+    const referrals = await getReferralsCollection();
+    await referrals.updateOne(
+      { address },
+      { $setOnInsert: { address, code, referredAddresses: [], createdAt: new Date() } },
+      { upsert: true }
+    );
+    res.json({ ok: true, address, code });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/referral/:code
+ * Resolve a referral code to the referrer address.
+ */
+app.get('/api/referral/:code', async (req, res) => {
+  const { code } = req.params;
+  try {
+    const referrals = await getReferralsCollection();
+    const doc = await referrals.findOne({ code: code.toUpperCase() });
+    if (!doc) return res.status(404).json({ error: 'code not found' });
+    res.json({ ok: true, referrer: doc.address, code: doc.code });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/referral/claim
+ * Record a referred player's first game and credit the referrer 5 pts.
+ */
+app.post('/api/referral/claim', async (req, res) => {
+  const { referrerAddress, newPlayerAddress, month } = req.body || {};
+  if (!referrerAddress || !newPlayerAddress) {
+    return res.status(400).json({ error: 'referrerAddress and newPlayerAddress are required' });
+  }
+  try {
+    const referrals = await getReferralsCollection();
+    const existing = await referrals.findOne({ address: referrerAddress });
+    if (existing?.referredAddresses?.includes(newPlayerAddress)) {
+      return res.json({ ok: true, alreadyClaimed: true });
+    }
+    await referrals.updateOne(
+      { address: referrerAddress },
+      { $addToSet: { referredAddresses: newPlayerAddress } }
+    );
+    // Award 5 pts to referrer on the current month leaderboard
+    const monthKey = month || await getLatestMonthKey() || await getCurrentChainMonthKey();
+    const collection = await getMonthCollection();
+    await collection.updateOne(
+      { month: monthKey },
+      {
+        $setOnInsert: { month: monthKey },
+        $inc: { [`players.${referrerAddress}.pts`]: 5 },
+      },
+      { upsert: true }
+    );
+    res.json({ ok: true, credited: 5, referrerAddress, newPlayerAddress, monthKey });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/referral/stats/:address
+ * Return referral count for an address.
+ */
+app.get('/api/referral/stats/:address', async (req, res) => {
+  const { address } = req.params;
+  try {
+    const referrals = await getReferralsCollection();
+    const doc = await referrals.findOne({ address });
+    const count = doc?.referredAddresses?.length || 0;
+    const code = doc?.code || generateReferralCode(address);
+    res.json({ ok: true, address, code, referralCount: count });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 /**
  * GET /api/pvp/live
  * Returns recently-active PvP game IDs (status=0 = ACTIVE in game_results).
