@@ -216,6 +216,16 @@ header {
 }
 .wallet-bar-btns { display: flex; gap: 8px; }
 
+/* ── Error Boundary ────────────────────────────────── */
+.error-boundary {
+  width: 100%; padding: 60px 24px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  border: 1px solid var(--border); border-top: none;
+}
+.error-boundary-icon  { font-size: 32px; color: var(--red); }
+.error-boundary-title { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--text); }
+.error-boundary-body  { font-size: 9px; letter-spacing: .08em; color: var(--muted); max-width: 280px; line-height: 1.6; }
+
 /* ── Tutorial Overlay ──────────────────────────────── */
 .tutorial-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 800;
