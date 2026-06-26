@@ -8,6 +8,7 @@ import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCV
 import { recordResult } from "./utils/leaderboardLogic";
 import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge, createRematch } from "./utils/pvp";
 import { useRematch } from "./hooks/useRematch";
+import { parseReferralCodeFromUrl, claimReferral } from "./utils/referral";
 import { GAME_MODE_AI, GAME_MODE_PVP } from "./utils/constants";
 import './index.css';
 import './styles/refresh.css';
@@ -194,6 +195,29 @@ export default function App() {
     if (!walletAddr) return;
     syncChainState(walletAddr);
   }, [walletAddr, syncChainState]);
+
+  // Auto-claim referral bonus when wallet connects and ?ref= param is present
+  useEffect(() => {
+    if (!walletAddr) return;
+    const refCode = parseReferralCodeFromUrl();
+    if (!refCode) return;
+    const CLAIMED_KEY = `clarityxo.refClaimed.${walletAddr}`;
+    if (localStorage.getItem(CLAIMED_KEY)) return;
+    // Resolve code to referrer, then credit
+    fetch(`${CONFIG.leaderboardApiBaseUrl}/api/referral/${encodeURIComponent(refCode)}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data?.referrer || data.referrer === walletAddr) return;
+        return claimReferral(data.referrer, walletAddr);
+      })
+      .then(result => {
+        if (result?.ok && !result.alreadyClaimed) {
+          localStorage.setItem(CLAIMED_KEY, 'true');
+          log(`Referral bonus: your inviter earned +5 pts. Thanks for joining!`, 'success');
+        }
+      })
+      .catch(() => {});
+  }, [walletAddr]);
 
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
