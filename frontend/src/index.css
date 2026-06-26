@@ -907,7 +907,7 @@ svg.mark { overflow: visible; }
 .lb-action-btn:hover { background: #1a1a1a; color: var(--text); }
 .lb-action-btn.danger:hover { color: var(--red); }
 
-.footer { margin: 24px 0 16px; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--ghost); text-align: center; }
+.footer { margin: 24px 0 16px; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--ghost); text-align: center; line-height: 1.6; }
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
