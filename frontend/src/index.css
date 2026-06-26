@@ -317,6 +317,12 @@ header {
 .profile-achievement-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .profile-actions { padding: 14px 20px; }
 
+/* ── Focus visible ring ────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
 /* ── Referral Section ──────────────────────────────── */
 .referral-section {
   width: 100%; padding: 20px; border: 1px solid var(--border);
