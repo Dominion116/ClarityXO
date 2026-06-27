@@ -29,8 +29,6 @@ import { useTutorial } from "./hooks/useTutorial";
 export default function App() {
   const WALLET_STORAGE_KEY = "clarityxo.walletAddress";
   const { theme, toggleTheme } = useTheme();
-  const { rematchState, sendRematch, clearRematch } = useRematch(walletAddr);
-  const { isActive: tutorialActive, step: tutorialStep, currentStep: tutorialCurrentStep, totalSteps: tutorialTotalSteps, next: tutorialNext, prev: tutorialPrev, skip: tutorialSkip, restart: tutorialRestart } = useTutorial();
 
   // "landing" | "game" | "leaderboard" | "pvp"
   const [activePage, setActivePage] = useState("landing");
@@ -44,6 +42,9 @@ export default function App() {
     if (typeof window === "undefined") return null;
     return window.localStorage.getItem(WALLET_STORAGE_KEY);
   });
+
+  const { rematchState, sendRematch, clearRematch } = useRematch(walletAddr);
+  const { isActive: tutorialActive, step: tutorialStep, currentStep: tutorialCurrentStep, totalSteps: tutorialTotalSteps, next: tutorialNext, prev: tutorialPrev, skip: tutorialSkip, restart: tutorialRestart } = useTutorial();
   const [gameId, setGameId] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [logs, setLogs] = useState([]);
