@@ -261,3 +261,38 @@ describe("SUITE 5 — multi-month scenario", () => {
     ).toBeOk(Cl.some(Cl.stringAscii("https://clarityxo.xyz/nft/1")));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 6 — set-month-winners edge cases
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 6 — set-month-winners edge cases", () => {
+  it("TROPHY-21: owner can overwrite winners for same past month", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    expect(setWinners(0, [wallet6, wallet2, wallet3, wallet4, wallet5])).toBeOk(Cl.bool(true));
+    expect(getRank(0, wallet6)).toBeOk(Cl.some(Cl.uint(1)));
+    expect(getRank(0, wallet1)).toBeOk(Cl.none());
+  });
+
+  it("TROPHY-22: single winner list (same address five times) works correctly", () => {
+    advanceMonth();
+    expect(setWinners(0, [wallet1, wallet1, wallet1, wallet1, wallet1])).toBeOk(Cl.bool(true));
+    expect(getRank(0, wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+  });
+
+  it("TROPHY-23: same principal appears twice — get-player-rank finds first occurrence", () => {
+    advanceMonth();
+    setWinners(0, [wallet1, wallet2, wallet1, wallet3, wallet3]);
+    expect(getRank(0, wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+  });
+
+  it("TROPHY-24: cannot set winners for a month that is still current (u103)", () => {
+    expect(setWinners(0, [wallet1, wallet1, wallet1, wallet1, wallet1])).toBeErr(Cl.uint(103));
+  });
+
+  it("TROPHY-25: set-month-winners for month 2 after three advances works", () => {
+    advanceMonth(3);
+    expect(setWinners(2, TOP5)).toBeOk(Cl.bool(true));
+    expect(getRank(2, wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+  });
+});
