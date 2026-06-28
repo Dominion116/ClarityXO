@@ -55,3 +55,16 @@ function tupleFields(result: ClarityValue): Record<string, ClarityValue> {
 function okTupleFields(result: ClarityValue): Record<string, ClarityValue> {
   return ((result as ResponseOkCV).value as TupleCV).data;
 }
+
+// 4-move fork win (verified against AI):
+// X: (0,0)→(2,2)→(2,0)→(2,1) creates two simultaneous threats
+//   Turn 1: X at corner (0) → AI at center (4)
+//   Turn 2: X at corner (8) → AI at first empty corner (2)
+//   Turn 3: X at corner (6) → AI blocks col-0 threat at (3)
+//   Turn 4: X at (7) → row 2 (6,7,8) complete → WIN
+function winGame(player: string) {
+  move(player, 0, 0); // AI → center (4)
+  move(player, 2, 2); // AI → corner (2)
+  move(player, 2, 0); // AI → blocks col-0 at (3)
+  return move(player, 2, 1); // row 2 complete → STATUS_X_WON, ai-move u999
+}
