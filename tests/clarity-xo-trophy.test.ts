@@ -393,3 +393,50 @@ describe("SUITE 8 — Trophy metadata", () => {
     expect(metaFields(result).player).toEqual(Cl.principal(wallet2));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 9 — Token URI
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 9 — Token URI", () => {
+  it("TROPHY-36: get-token-uri returns ok some with non-empty ascii string", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    const result = simnet.callReadOnlyFn(TROPHY, "get-token-uri", [Cl.uint(1)], wallet1).result;
+    const uri = ((result as ResponseOkCV).value as SomeCV).value as StringAsciiCV;
+    expect(typeof uri.data).toBe("string");
+    expect(uri.data.length).toBeGreaterThan(0);
+  });
+
+  it("TROPHY-37: get-token-uri after set-base-uri returns uri with new base", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    simnet.callPublicFn(TROPHY, "set-base-uri", [Cl.stringAscii("https://example.com/nft/")], deployer);
+    const result = simnet.callReadOnlyFn(TROPHY, "get-token-uri", [Cl.uint(1)], wallet1).result;
+    const uri = ((result as ResponseOkCV).value as SomeCV).value as StringAsciiCV;
+    expect(uri.data.includes("https://example.com/nft/")).toBe(true);
+  });
+
+  it("TROPHY-38: get-token-uri for token 10 returns ok some", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    TOP5.forEach(p => claim(p, 1));
+    advanceMonth(3);
+    setWinners(2, TOP5);
+    // p1 already claimed month 1; use fresh wallets for month 2
+    [wallet6, wallet7, wallet8, wallet9, wallet10].forEach((_, i) => {
+      // Each of the original winners claims month 2 (they're the winners)
+      claim(TOP5[i], 2);
+    });
+    const result = simnet.callReadOnlyFn(TROPHY, "get-token-uri", [Cl.uint(10)], wallet5).result;
+    const uri = ((result as ResponseOkCV).value as SomeCV).value as StringAsciiCV;
+    expect(typeof uri.data).toBe("string");
+  });
+
+  // Contract always returns a URI even for un-minted tokens (concat base-uri + id)
+  it("TROPHY-39: get-token-uri for un-minted token returns ok some with URI", () => {
+    const result = simnet.callReadOnlyFn(TROPHY, "get-token-uri", [Cl.uint(42)], wallet1).result;
+    expect(result).toBeOk(Cl.some(Cl.stringAscii("https://clarityxo.xyz/nft/42")));
+  });
+});
