@@ -68,3 +68,36 @@ function winGame(player: string) {
   move(player, 2, 0); // AI → blocks col-0 at (3)
   return move(player, 2, 1); // row 2 complete → STATUS_X_WON, ai-move u999
 }
+
+// PvP draw: verified sequence produces a draw board (X O X / O O X / X O X)
+// X: (0,0),(0,1),(1,2),(2,0),(2,2)  O: (0,2),(1,0),(1,1),(2,1)
+function playDrawPvP() {
+  createChallenge(wallet1, wallet2);
+  acceptChallenge(wallet2, wallet1);
+  pvpMove(wallet1, 0, 0); pvpMove(wallet2, 0, 2);
+  pvpMove(wallet1, 0, 1); pvpMove(wallet2, 1, 0);
+  pvpMove(wallet1, 1, 2); pvpMove(wallet2, 1, 1);
+  pvpMove(wallet1, 2, 0); pvpMove(wallet2, 2, 1);
+  return pvpMove(wallet1, 2, 2); // fills the board → draw
+}
+
+// PvP helpers
+function createChallenge(challenger: string, opponent: string) {
+  return simnet.callPublicFn(GAME, "create-challenge", [Cl.principal(opponent)], challenger).result;
+}
+
+function acceptChallenge(accepter: string, challenger: string) {
+  return simnet.callPublicFn(GAME, "accept-challenge", [Cl.principal(challenger)], accepter).result;
+}
+
+function declineChallenge(decliner: string, challenger: string) {
+  return simnet.callPublicFn(GAME, "decline-challenge", [Cl.principal(challenger)], decliner).result;
+}
+
+function cancelChallenge(challenger: string) {
+  return simnet.callPublicFn(GAME, "cancel-challenge", [], challenger).result;
+}
+
+function pvpMove(player: string, row: number, col: number) {
+  return simnet.callPublicFn(GAME, "make-pvp-move", [Cl.uint(row), Cl.uint(col)], player).result;
+}
