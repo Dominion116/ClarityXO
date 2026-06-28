@@ -235,3 +235,29 @@ describe("SUITE 4 — SIP-009 transfer", () => {
     ).toBeErr(Cl.uint(106));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 5 — multi-month scenario
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 5 — multi-month scenario", () => {
+  it("TROPHY-19: winners from month 0 and month 1 are tracked independently", () => {
+    const m0 = [wallet1, wallet2, wallet3, wallet4, wallet5];
+    const m1 = [wallet6, wallet7, wallet8, wallet9, wallet10];
+    advanceMonth();
+    setWinners(0, m0);
+    advanceMonth();
+    setWinners(1, m1);
+    expect(getRank(0, wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+    expect(getRank(1, wallet6)).toBeOk(Cl.some(Cl.uint(1)));
+    expect(getRank(1, wallet1)).toBeOk(Cl.none());
+  });
+
+  it("TROPHY-20: get-token-uri returns base-uri concatenated with token id", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    claim(wallet1, 0);
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-token-uri", [Cl.uint(1)], wallet1).result
+    ).toBeOk(Cl.some(Cl.stringAscii("https://clarityxo.xyz/nft/1")));
+  });
+});
