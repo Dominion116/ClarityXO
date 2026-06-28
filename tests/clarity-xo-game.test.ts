@@ -255,3 +255,20 @@ describe("SUITE 5 — monthly points accumulation", () => {
     expect(s2.losses).toEqual(Cl.uint(1));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 6 — month totals
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 6 — month totals", () => {
+  it("GAME-18: month-totals tracks games and total pts across all players", () => {
+    startGame(wallet1); winGame(wallet1);   // +1 game, +3 pts
+    startGame(wallet2); resign(wallet2);    // +1 game, +0 pts
+
+    const m = currentMonth(wallet1);
+    const tf = tupleFields(
+      simnet.callReadOnlyFn(GAME, "get-month-totals", [Cl.uint(m)], wallet1).result
+    );
+    expect(tf.games).toEqual(Cl.uint(2));
+    expect(tf["total-pts"]).toEqual(Cl.uint(3));
+  });
+});
