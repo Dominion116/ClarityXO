@@ -224,3 +224,34 @@ describe("SUITE 4 — resign-game", () => {
     expect(tupleFields(getStats(wallet1, m)).losses).toEqual(Cl.uint(1));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 5 — monthly points accumulation
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 5 — monthly points accumulation", () => {
+  it("GAME-16: points accumulate correctly across multiple games in same month", () => {
+    startGame(wallet1); winGame(wallet1);           // +3 pts
+    startGame(wallet1); resign(wallet1);             // +0 pts
+    startGame(wallet1); winGame(wallet1);            // +3 pts = 6 total
+
+    const m = currentMonth(wallet1);
+    const sf = tupleFields(getStats(wallet1, m));
+    expect(sf.pts).toEqual(Cl.uint(6));
+    expect(sf.wins).toEqual(Cl.uint(2));
+    expect(sf.losses).toEqual(Cl.uint(1));
+  });
+
+  it("GAME-17: different players have independent stats", () => {
+    startGame(wallet1); winGame(wallet1);
+    startGame(wallet2); resign(wallet2);
+
+    const m = currentMonth(wallet1);
+    const s1 = tupleFields(getStats(wallet1, m));
+    const s2 = tupleFields(getStats(wallet2, m));
+
+    expect(s1.pts).toEqual(Cl.uint(3));
+    expect(s2.pts).toEqual(Cl.uint(0));
+    expect(s1.wins).toEqual(Cl.uint(1));
+    expect(s2.losses).toEqual(Cl.uint(1));
+  });
+});
