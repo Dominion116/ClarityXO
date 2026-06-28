@@ -590,3 +590,32 @@ describe("SUITE 14 — get-next-game-id", () => {
     ).toBeOk(Cl.uint(6));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 15 — Error code verification
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 15 — Error code verification", () => {
+  it("GAME-56: resign after game finished returns u105", () => {
+    startGame(wallet1); resign(wallet1);
+    expect(resign(wallet1)).toBeErr(Cl.uint(105));
+  });
+
+  it("GAME-57: move to occupied center (AI took it) returns u104", () => {
+    startGame(wallet1); move(wallet1, 0, 0);
+    expect(move(wallet1, 1, 1)).toBeErr(Cl.uint(104));
+  });
+
+  it("GAME-58: move with col=3 returns u102 (out-of-bounds col)", () => {
+    startGame(wallet1);
+    expect(move(wallet1, 0, 3)).toBeErr(Cl.uint(102));
+  });
+
+  it("GAME-59: second start-game while active returns u106", () => {
+    startGame(wallet1);
+    expect(startGame(wallet1)).toBeErr(Cl.uint(106));
+  });
+
+  it("GAME-60: get-active-game before any start returns none", () => {
+    expect(getActiveGame(wallet1)).toBeOk(Cl.none());
+  });
+});
