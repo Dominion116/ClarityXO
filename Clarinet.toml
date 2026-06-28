@@ -16,6 +16,11 @@ path = "contracts/clarityxotrophyv2.clar"
 clarity_version = 2
 epoch = 2.5
 
+[contracts.clarityxotrophyv3]
+path = "contracts/clarityxotrophyv3.clar"
+clarity_version = 2
+epoch = 2.5
+
 [contracts.nft-trait]
 path = "contracts/nft-trait.clar"
 clarity_version = 2

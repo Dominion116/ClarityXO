@@ -78,4 +78,9 @@ plan:
             emulated-sender: ST15HAS2P9DF2TWKK0GPEVM4T9FZZC4PCK19630H4
             path: contracts/clarityxotrophyv2.clar
             clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: clarityxotrophyv3
+            emulated-sender: ST15HAS2P9DF2TWKK0GPEVM4T9FZZC4PCK19630H4
+            path: contracts/clarityxotrophyv3.clar
+            clarity-version: 2
       epoch: "2.5"
