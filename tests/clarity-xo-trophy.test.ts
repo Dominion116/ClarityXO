@@ -203,3 +203,35 @@ describe("SUITE 3 — admin functions", () => {
     ).toBeOk(Cl.stringAscii(newUri));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 4 — SIP-009 transfer
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 4 — SIP-009 transfer", () => {
+  it("TROPHY-17: token owner can transfer to another principal", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    claim(wallet1, 0);
+    expect(
+      simnet.callPublicFn(
+        TROPHY, "transfer",
+        [Cl.uint(1), Cl.principal(wallet1), Cl.principal(wallet6)],
+        wallet1
+      ).result
+    ).toBeOk(Cl.bool(true));
+    expect(getOwner(1)).toBeOk(Cl.some(Cl.principal(wallet6)));
+  });
+
+  it("TROPHY-18: non-owner cannot transfer a token (u106)", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    claim(wallet1, 0);
+    expect(
+      simnet.callPublicFn(
+        TROPHY, "transfer",
+        [Cl.uint(1), Cl.principal(wallet1), Cl.principal(wallet6)],
+        wallet6
+      ).result
+    ).toBeErr(Cl.uint(106));
+  });
+});
