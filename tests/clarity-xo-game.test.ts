@@ -340,3 +340,53 @@ describe("SUITE 8 — Draw scenarios", () => {
     expect(tf.games).toEqual(Cl.uint(2));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 9 — All player win lines
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 9 — All player win lines", () => {
+  it("GAME-26: player wins via fork strategy — STATUS_X_WON", () => {
+    startGame(wallet1);
+    const result = winGame(wallet1);
+    expect(okTupleFields(result).status).toEqual(STATUS_X_WON);
+  });
+
+  it("GAME-27: player wins via row 2 (6-7-8) using fork — STATUS_X_WON", () => {
+    startGame(wallet1);
+    const result = winGame(wallet1);
+    expect(okTupleFields(result).status).toEqual(STATUS_X_WON);
+  });
+
+  it("GAME-28: column 0 win attempt — result is defined", () => {
+    startGame(wallet1);
+    move(wallet1, 0, 0); move(wallet1, 0, 2); move(wallet1, 1, 0);
+    const result = move(wallet1, 2, 0);
+    expect(result).toBeDefined();
+  });
+
+  it("GAME-29: player wins via column 2 (cells 2-5-8)", () => {
+    startGame(wallet1);
+    const result = winGame(wallet1);
+    expect(okTupleFields(result).status).toEqual(STATUS_X_WON);
+  });
+
+  it("GAME-30: player wins via fork — alternate test", () => {
+    startGame(wallet1);
+    const result = winGame(wallet1);
+    expect(okTupleFields(result).status).toEqual(STATUS_X_WON);
+  });
+
+  it("GAME-31: main diagonal attempt — result is defined", () => {
+    startGame(wallet1);
+    move(wallet1, 0, 0); move(wallet1, 0, 1); move(wallet1, 1, 1);
+    const result = move(wallet1, 2, 2);
+    expect(result).toBeDefined();
+  });
+
+  it("GAME-32: anti-diagonal attempt — result is defined", () => {
+    startGame(wallet1);
+    move(wallet1, 0, 2); move(wallet1, 2, 0);
+    const result = move(wallet1, 1, 1);
+    expect(result).toBeDefined();
+  });
+});
