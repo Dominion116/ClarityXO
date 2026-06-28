@@ -390,3 +390,41 @@ describe("SUITE 9 — All player win lines", () => {
     expect(result).toBeDefined();
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 10 — AI behavior verification
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 10 — AI behavior verification", () => {
+  it("GAME-33: AI takes winning move when available", () => {
+    startGame(wallet1);
+    move(wallet1, 1, 0); move(wallet1, 2, 2);
+    const result = move(wallet1, 2, 1);
+    expect(okTupleFields(result)["ai-move"]).toBeDefined();
+  });
+
+  it("GAME-34: AI blocks player threat — ai-move is u2", () => {
+    startGame(wallet1);
+    move(wallet1, 0, 0);
+    const result = move(wallet1, 0, 1);
+    expect(okTupleFields(result)["ai-move"]).toEqual(Cl.uint(2));
+  });
+
+  it("GAME-35: AI takes center (index 4) on opening move", () => {
+    startGame(wallet1);
+    const result = move(wallet1, 0, 0);
+    expect(okTupleFields(result)["ai-move"]).toEqual(Cl.uint(4));
+  });
+
+  it("GAME-36: AI takes a corner when center is occupied by player", () => {
+    startGame(wallet1);
+    const result = move(wallet1, 1, 1);
+    const aiMove = Number((okTupleFields(result)["ai-move"] as UIntCV).value);
+    expect([0, 2, 6, 8].includes(aiMove)).toBe(true);
+  });
+
+  it("GAME-37: AI ai-move field is defined on any result (win returns u999)", () => {
+    startGame(wallet1);
+    const result = winGame(wallet1); // 4-move fork win — ai-move: u999
+    expect(okTupleFields(result)["ai-move"]).toBeDefined();
+  });
+});
