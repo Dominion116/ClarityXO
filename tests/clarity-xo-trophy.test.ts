@@ -296,3 +296,50 @@ describe("SUITE 6 — set-month-winners edge cases", () => {
     expect(getRank(2, wallet1)).toBeOk(Cl.some(Cl.uint(1)));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 7 — Token minting sequence
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 7 — Token minting sequence", () => {
+  it("TROPHY-26: first claim mints token with id 1", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    claim(wallet1, 0);
+    expect(getOwner(1)).toBeOk(Cl.some(Cl.principal(wallet1)));
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-last-token-id", [], deployer).result
+    ).toBeOk(Cl.uint(1));
+  });
+
+  it("TROPHY-27: after 10 claims across 2 months last-token-id is 10", () => {
+    const m0 = [wallet1, wallet2, wallet3, wallet4, wallet5];
+    const m1 = [wallet6, wallet7, wallet8, wallet9, wallet10];
+    advanceMonth();
+    setWinners(0, m0);
+    m0.forEach(p => claim(p, 0));
+    advanceMonth();
+    setWinners(1, m1);
+    m1.forEach(p => claim(p, 1));
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-last-token-id", [], deployer).result
+    ).toBeOk(Cl.uint(10));
+  });
+
+  it("TROPHY-28: token IDs are globally sequential not per-month", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    claim(wallet1, 0); claim(wallet2, 0);
+    advanceMonth();
+    setWinners(1, [wallet6, wallet2, wallet3, wallet4, wallet5]);
+    claim(wallet6, 1);
+    expect(getOwner(3)).toBeOk(Cl.some(Cl.principal(wallet6)));
+  });
+
+  it("TROPHY-29: get-owner returns none for a token that has not been minted", () => {
+    expect(getOwner(999)).toBeOk(Cl.none());
+  });
+
+  it("TROPHY-30: get-owner returns none for token id 0", () => {
+    expect(getOwner(0)).toBeOk(Cl.none());
+  });
+});
