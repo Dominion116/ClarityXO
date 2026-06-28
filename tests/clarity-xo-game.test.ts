@@ -645,3 +645,31 @@ describe("SUITE 16 — Month assignment", () => {
     expect(sf.losses).toEqual(Cl.uint(0));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 17 — Board after AI
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 17 — Board after AI", () => {
+  it("GAME-64: after first move ai-move=u4 and status=ACTIVE", () => {
+    startGame(wallet1);
+    const result = move(wallet1, 0, 0);
+    const f = okTupleFields(result);
+    expect(f["ai-move"]).toEqual(Cl.uint(4));
+    expect(f.status).toEqual(STATUS_ACTIVE);
+  });
+
+  it("GAME-65: after second move get-game-moves returns u4", () => {
+    startGame(wallet1); move(wallet1, 0, 0); move(wallet1, 0, 2);
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-game-moves", [Cl.uint(1)], wallet1).result
+    ).toBeOk(Cl.uint(4));
+  });
+
+  it("GAME-66: after player wins via fork, status=X_WON and moves=u7 (4P+3AI)", () => {
+    startGame(wallet1); winGame(wallet1);
+    const state = simnet.callReadOnlyFn(GAME, "get-full-game-state", [Cl.uint(1)], wallet1).result;
+    const f = okTupleFields(state);
+    expect(f.status).toEqual(STATUS_X_WON);
+    expect(f.moves).toEqual(Cl.uint(7));
+  });
+});
