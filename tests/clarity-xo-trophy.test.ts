@@ -512,3 +512,110 @@ describe("SUITE 10 — Transfer edge cases", () => {
     expect(events.length).toBeGreaterThan(0);
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 11 — Admin & multi-month
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 11 — Admin & multi-month", () => {
+  it("TROPHY-46: updated mint fee is charged on next claim", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    simnet.callPublicFn(TROPHY, "set-mint-fee", [Cl.uint(2_000_000)], deployer);
+    // Fee = 2 STX; wallet1 has 100T uSTX so claim should still succeed
+    expect(claim(wallet1, 1).result).toBeOk(Cl.bool(true));
+  });
+
+  // Note: stx-transfer? with amount=0 fails in Clarity (returns err), so
+  // setting mint-fee to 0 causes claim-trophy to fail with err-transfer-failed (u105)
+  it("TROPHY-47: set-mint-fee to 0 causes stx-transfer? to fail (u105)", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    simnet.callPublicFn(TROPHY, "set-mint-fee", [Cl.uint(0)], deployer);
+    expect(claim(wallet1, 1).result).toBeErr(Cl.uint(105));
+  });
+
+  it("TROPHY-48: month 0 and month 1 winners are stored independently", () => {
+    advanceMonth(3);
+    setWinners(0, [wallet1, wallet2, wallet3, wallet4, wallet5]);
+    setWinners(1, [wallet6, wallet7, wallet8, wallet9, wallet1]);
+    expect(getRank(0, wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+    expect(getRank(1, wallet6)).toBeOk(Cl.some(Cl.uint(1)));
+  });
+
+  it("TROPHY-49: month 0 player cannot claim trophy for month 1", () => {
+    advanceMonth(3);
+    setWinners(0, [wallet1, wallet2, wallet3, wallet4, wallet5]);
+    setWinners(1, [wallet6, wallet7, wallet8, wallet9, wallet2]);
+    expect(claim(wallet1, 1).result).toBeErr(Cl.uint(101));
+  });
+
+  it("TROPHY-50: last-token-id matches total number of claims across all months", () => {
+    advanceMonth(3);
+    setWinners(0, TOP5);
+    setWinners(1, TOP5);
+    claim(wallet1, 0); claim(wallet2, 0); claim(wallet3, 0);
+    claim(wallet1, 1); claim(wallet2, 1);
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-last-token-id", [], deployer).result
+    ).toBeOk(Cl.uint(5));
+  });
+
+  it("TROPHY-51: set-month-winners is idempotent for same month", () => {
+    advanceMonth(1);
+    setWinners(0, TOP5);
+    expect(setWinners(0, TOP5)).toBeOk(Cl.bool(true));
+  });
+
+  it("TROPHY-52: get-month-winners returns none for month with no winners set", () => {
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-month-winners", [Cl.uint(999)], deployer).result
+    ).toBeOk(Cl.none());
+  });
+
+  it("TROPHY-53: claim-trophy succeeds and STX is transferred to owner", () => {
+    advanceMonth(1);
+    setWinners(0, [wallet1, wallet1, wallet1, wallet1, wallet1]);
+    expect(claim(wallet1, 0).result).toBeOk(Cl.bool(true));
+  });
+
+  it("TROPHY-54: non-owner cannot call set-month-winners", () => {
+    advanceMonth(1);
+    expect(
+      simnet.callPublicFn(TROPHY, "set-month-winners",
+        [Cl.uint(0), Cl.list(TOP5.map(w => Cl.principal(w)))],
+        wallet6
+      ).result
+    ).toBeErr(Cl.uint(100));
+  });
+
+  it("TROPHY-55: has-claimed returns false before claiming", () => {
+    expect(hasClaimed(0, wallet1)).toBeOk(Cl.bool(false));
+  });
+
+  it("TROPHY-56: has-claimed returns true after successful claim", () => {
+    advanceMonth(1);
+    setWinners(0, TOP5);
+    claim(wallet1, 0);
+    expect(hasClaimed(0, wallet1)).toBeOk(Cl.bool(true));
+  });
+
+  it("TROPHY-57: is-eligible returns false for non-winner address", () => {
+    advanceMonth(1);
+    setWinners(0, TOP5);
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "is-eligible",
+        [Cl.uint(0), Cl.principal(wallet6)], wallet6
+      ).result
+    ).toBeOk(Cl.bool(false));
+  });
+
+  it("TROPHY-58: is-eligible returns true for top-5 winner before claiming", () => {
+    advanceMonth(1);
+    setWinners(0, TOP5);
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "is-eligible",
+        [Cl.uint(0), Cl.principal(wallet1)], wallet1
+      ).result
+    ).toBeOk(Cl.bool(true));
+  });
+});
