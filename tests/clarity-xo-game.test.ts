@@ -698,3 +698,36 @@ describe("SUITE 18 — Boundary conditions", () => {
     expect(move(wallet1, 0, 3)).toBeErr(Cl.uint(102));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 19 — Game count and history
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 19 — Game count and history", () => {
+  it("GAME-71: month-totals games count matches completed games", () => {
+    startGame(wallet1); winGame(wallet1);
+    startGame(wallet2); resign(wallet2);
+    const m = currentMonth(wallet1);
+    const tf = tupleFields(
+      simnet.callReadOnlyFn(GAME, "get-month-totals", [Cl.uint(m)], wallet1).result
+    );
+    expect(tf.games).toEqual(Cl.uint(2));
+  });
+
+  it("GAME-72: resigned game is counted in month-totals games", () => {
+    startGame(wallet1); resign(wallet1);
+    const m = currentMonth(wallet1);
+    const tf = tupleFields(
+      simnet.callReadOnlyFn(GAME, "get-month-totals", [Cl.uint(m)], wallet1).result
+    );
+    expect(tf.games).toEqual(Cl.uint(1));
+  });
+
+  it("GAME-73: PvP draw game counted in month-totals games (2 entries — one per player)", () => {
+    playDrawPvP();
+    const m = currentMonth(wallet1);
+    const tf = tupleFields(
+      simnet.callReadOnlyFn(GAME, "get-month-totals", [Cl.uint(m)], wallet1).result
+    );
+    expect(tf.games).toEqual(Cl.uint(2));
+  });
+});
