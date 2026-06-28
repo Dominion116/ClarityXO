@@ -343,3 +343,53 @@ describe("SUITE 7 — Token minting sequence", () => {
     expect(getOwner(0)).toBeOk(Cl.none());
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 8 — Trophy metadata
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 8 — Trophy metadata", () => {
+  it("TROPHY-31: rank-2 player trophy has rank u2 in meta", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    claim(wallet2, 0);
+    const result = simnet.callReadOnlyFn(TROPHY, "get-trophy-meta", [Cl.uint(1)], wallet2).result;
+    const f = metaFields(result);
+    expect(f.rank).toEqual(Cl.uint(2));
+    expect(f.month).toEqual(Cl.uint(0));
+    expect(f.player).toEqual(Cl.principal(wallet2));
+  });
+
+  it("TROPHY-32: rank 3-5 meta has correct ranks", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    TOP5.forEach(p => claim(p, 0));
+    for (let i = 2; i < 5; i++) {
+      const result = simnet.callReadOnlyFn(
+        TROPHY, "get-trophy-meta", [Cl.uint(i + 1)], TOP5[i]
+      ).result;
+      expect(metaFields(result).rank).toEqual(Cl.uint(i + 1));
+    }
+  });
+
+  it("TROPHY-33: trophy from month 1 has month u1 in meta", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    const result = simnet.callReadOnlyFn(TROPHY, "get-trophy-meta", [Cl.uint(1)], wallet1).result;
+    expect(metaFields(result).month).toEqual(Cl.uint(1));
+  });
+
+  it("TROPHY-34: get-trophy-meta returns none for an un-minted token id", () => {
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-trophy-meta", [Cl.uint(999)], wallet1).result
+    ).toBeOk(Cl.none());
+  });
+
+  it("TROPHY-35: player field in trophy meta matches the wallet that claimed", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet2, 1);
+    const result = simnet.callReadOnlyFn(TROPHY, "get-trophy-meta", [Cl.uint(1)], wallet2).result;
+    expect(metaFields(result).player).toEqual(Cl.principal(wallet2));
+  });
+});
