@@ -18,7 +18,8 @@
     "@stacks/transactions": "^6.0.0",
     "concurrently": "^9.1.2",
     "typescript": "^5.0.0",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "vitest-environment-clarinet": "^2.6.0"
   },
   "dependencies": {
     "clarityxo-ai": "^0.1.0",
