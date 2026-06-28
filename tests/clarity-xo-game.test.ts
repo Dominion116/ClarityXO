@@ -207,3 +207,20 @@ describe("SUITE 3 — make-move happy path & AI response", () => {
     expect(getActiveGame(wallet1)).toBeOk(Cl.none());
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 4 — resign-game
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 4 — resign-game", () => {
+  it("GAME-14: resign-game without active game returns u105", () => {
+    expect(resign(wallet1)).toBeErr(Cl.uint(105));
+  });
+
+  it("GAME-15: resign-game returns game-id, records loss, clears active game", () => {
+    startGame(wallet1);
+    expect(resign(wallet1)).toBeOk(Cl.uint(1));
+    expect(getActiveGame(wallet1)).toBeOk(Cl.none());
+    const m = currentMonth(wallet1);
+    expect(tupleFields(getStats(wallet1, m)).losses).toEqual(Cl.uint(1));
+  });
+});
