@@ -731,3 +731,48 @@ describe("SUITE 19 — Game count and history", () => {
     expect(tf.games).toEqual(Cl.uint(2));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 20 — Read-only completeness
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 20 — Read-only completeness", () => {
+  it("GAME-74: get-game-board for new game returns nine zeros", () => {
+    startGame(wallet1);
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-game-board", [Cl.uint(1)], wallet1).result
+    ).toBeOk(Cl.list([
+      Cl.uint(0), Cl.uint(0), Cl.uint(0),
+      Cl.uint(0), Cl.uint(0), Cl.uint(0),
+      Cl.uint(0), Cl.uint(0), Cl.uint(0),
+    ]));
+  });
+
+  it("GAME-75: get-game-board for unknown game-id returns nine zeros", () => {
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-game-board", [Cl.uint(999)], wallet1).result
+    ).toBeOk(Cl.list([
+      Cl.uint(0), Cl.uint(0), Cl.uint(0),
+      Cl.uint(0), Cl.uint(0), Cl.uint(0),
+      Cl.uint(0), Cl.uint(0), Cl.uint(0),
+    ]));
+  });
+
+  it("GAME-76: get-game-status for unknown game-id returns STATUS_ACTIVE (default)", () => {
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-game-status", [Cl.uint(999)], wallet1).result
+    ).toBeOk(Cl.uint(0));
+  });
+
+  it("GAME-77: get-game-moves for new game returns u0", () => {
+    startGame(wallet1);
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-game-moves", [Cl.uint(1)], wallet1).result
+    ).toBeOk(Cl.uint(0));
+  });
+
+  it("GAME-78: get-full-game-state player field matches tx-sender", () => {
+    startGame(wallet1);
+    const state = simnet.callReadOnlyFn(GAME, "get-full-game-state", [Cl.uint(1)], wallet1).result;
+    expect(okTupleFields(state).player).toEqual(Cl.some(Cl.principal(wallet1)));
+  });
+});
