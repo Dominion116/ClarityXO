@@ -1,0 +1,81 @@
+---
+id: 0
+name: "Simulated deployment, used as a default for `clarinet console`, `clarinet test` and `clarinet check`"
+network: simnet
+genesis:
+  wallets:
+    - name: deployer
+      address: ST15HAS2P9DF2TWKK0GPEVM4T9FZZC4PCK19630H4
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_1
+      address: STKCS0BBKZDF6JM0M0WA9WKCRSBNEG22HBGDNNCC
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_10
+      address: ST1NC1D2569AHPE000K0XD6P9BTW3NGAWQMVXN9WZ
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_2
+      address: ST1XCN39P13HS41EMN8P8M5FNEFXFRF2TY6SP15SX
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_3
+      address: STVS6VB6WQKZVE2NFTQTA3DY2PEAS24DV0KZCRBJ
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_4
+      address: ST17HBTVWFPMMYPBV6YXWXYE84QQ49DFBRSTXVV9
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_5
+      address: ST2VJV4ES1N57K36PDHZNMSKAFF07A7NW8NHV8JY7
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_6
+      address: ST3DK8PQ2Y9M3EX7CXE1WXH88AYA4923746HKW289
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_7
+      address: ST5BS4C49S6WBFP5ZSKH97XJ1KYA9DAZ9H45D9CD
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_8
+      address: STTJRH4FNMNVZGA2X4HA4D879E3TK3VH236F9F24
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+    - name: wallet_9
+      address: ST15YFKWX9ZTYQXV0YWGG78S575XJJ2XE1N1QGPKW
+      balance: "100000000000000"
+      sbtc-balance: "1000000000"
+  contracts:
+    - costs
+    - pox
+    - pox-2
+    - pox-3
+    - pox-4
+    - lockup
+    - costs-2
+    - costs-3
+    - cost-voting
+    - bns
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - emulated-contract-publish:
+            contract-name: clarity-xo-game-v2
+            emulated-sender: ST15HAS2P9DF2TWKK0GPEVM4T9FZZC4PCK19630H4
+            path: contracts/clarity-xo-game-v2.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: nft-trait
+            emulated-sender: ST15HAS2P9DF2TWKK0GPEVM4T9FZZC4PCK19630H4
+            path: contracts/nft-trait.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: clarityxotrophyv2
+            emulated-sender: ST15HAS2P9DF2TWKK0GPEVM4T9FZZC4PCK19630H4
+            path: contracts/clarityxotrophyv2.clar
+            clarity-version: 2
+      epoch: "2.5"
