@@ -101,3 +101,29 @@ function cancelChallenge(challenger: string) {
 function pvpMove(player: string, row: number, col: number) {
   return simnet.callPublicFn(GAME, "make-pvp-move", [Cl.uint(row), Cl.uint(col)], player).result;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 1 — start-game
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 1 — start-game", () => {
+  it("GAME-01: start-game creates a new game and returns game-id u1", () => {
+    expect(startGame(wallet1)).toBeOk(Cl.uint(1));
+    expect(getActiveGame(wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+  });
+
+  it("GAME-02: start-game increments game-id for each new player", () => {
+    startGame(wallet1);
+    expect(startGame(wallet2)).toBeOk(Cl.uint(2));
+  });
+
+  it("GAME-03: start-game fails if player already has an active game (u106)", () => {
+    startGame(wallet1);
+    expect(startGame(wallet1)).toBeErr(Cl.uint(106));
+  });
+
+  it("GAME-04: player can start a new game after finishing previous one", () => {
+    startGame(wallet1);
+    resign(wallet1);
+    expect(startGame(wallet1)).toBeOk(Cl.uint(2));
+  });
+});
