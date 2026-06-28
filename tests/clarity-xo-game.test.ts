@@ -776,3 +776,85 @@ describe("SUITE 20 — Read-only completeness", () => {
     expect(okTupleFields(state).player).toEqual(Cl.some(Cl.principal(wallet1)));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 21 — PvP challenge lifecycle
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 21 — PvP challenge lifecycle", () => {
+  it("GAME-79: create-challenge stores challenge keyed by challenger", () => {
+    expect(createChallenge(wallet1, wallet2)).toBeOk(expect.anything());
+    const result = simnet.callReadOnlyFn(GAME, "get-pending-challenge", [Cl.principal(wallet1)], wallet1).result;
+    // challenge is stored as (some {created-at: uint, opponent: principal})
+    expect(result).toBeOk(expect.anything());
+    const someVal = ((result as any).value as any);
+    expect(someVal.type).not.toBe(9); // not none (type 9 = OptionalNone)
+  });
+
+  it("GAME-80: create-challenge rejects self-challenge with u109 (err-cannot-challenge-self)", () => {
+    expect(createChallenge(wallet1, wallet1)).toBeErr(Cl.uint(109));
+  });
+
+  it("GAME-81: accept-challenge starts a PvP game and returns a game-id", () => {
+    createChallenge(wallet1, wallet2);
+    expect(acceptChallenge(wallet2, wallet1)).toBeOk(expect.anything());
+  });
+
+  it("GAME-82: decline-challenge removes the challenge record", () => {
+    createChallenge(wallet1, wallet2);
+    expect(declineChallenge(wallet2, wallet1)).toBeOk(expect.anything());
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-pending-challenge", [Cl.principal(wallet1)], wallet1).result
+    ).toBeOk(Cl.none());
+  });
+
+  it("GAME-83: cancel-challenge removes own outgoing challenge", () => {
+    createChallenge(wallet1, wallet2);
+    expect(cancelChallenge(wallet1)).toBeOk(expect.anything());
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-pending-challenge", [Cl.principal(wallet1)], wallet1).result
+    ).toBeOk(Cl.none());
+  });
+
+  it("GAME-84: make-pvp-move enforces turn order — wrong player returns error", () => {
+    createChallenge(wallet1, wallet2);
+    acceptChallenge(wallet2, wallet1);
+    expect(pvpMove(wallet2, 0, 0)).toBeErr(expect.anything());
+  });
+
+  it("GAME-85: make-pvp-move X can play on their turn", () => {
+    createChallenge(wallet1, wallet2);
+    acceptChallenge(wallet2, wallet1);
+    expect(pvpMove(wallet1, 0, 0)).toBeOk(expect.anything());
+  });
+
+  it("GAME-86: PvP win awards 5 pts to winner", () => {
+    createChallenge(wallet1, wallet2);
+    acceptChallenge(wallet2, wallet1);
+    // X wins row 0: X(0,0) O(1,0) X(0,1) O(1,1) X(0,2)
+    pvpMove(wallet1, 0, 0); pvpMove(wallet2, 1, 0);
+    pvpMove(wallet1, 0, 1); pvpMove(wallet2, 1, 1);
+    pvpMove(wallet1, 0, 2);
+
+    const m = currentMonth(wallet1);
+    const sf = tupleFields(getStats(wallet1, m));
+    expect(sf.pts).toEqual(Cl.uint(5));
+    expect(sf.wins).toEqual(Cl.uint(1));
+  });
+
+  it("GAME-87: get-pvp-game-state returns x-player and o-player fields", () => {
+    createChallenge(wallet1, wallet2);
+    acceptChallenge(wallet2, wallet1);
+    const state = simnet.callReadOnlyFn(GAME, "get-pvp-game-state", [Cl.uint(1)], wallet1).result;
+    const f = okTupleFields(state);
+    expect(f["x-player"]).toBeDefined();
+    expect(f["o-player"]).toBeDefined();
+  });
+
+  it("GAME-88: cancel-challenge without active challenge returns u107 (err-no-pending-challenge)", () => {
+    expect(cancelChallenge(wallet1)).toBeErr(Cl.uint(107));
+  });
+
+  it("GAME-89: accept-challenge for nonexistent challenge returns u107 (err-no-pending-challenge)", () => {
+    expect(acceptChallenge(wallet2, wallet1)).toBeErr(Cl.uint(107));
+  });
+});
