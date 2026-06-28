@@ -512,3 +512,56 @@ describe("SUITE 12 — Concurrent multi-player games", () => {
     expect(s2.wins).toEqual(Cl.uint(0));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 13 — Points edge cases
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 13 — Points edge cases", () => {
+  it("GAME-48: ten-game mix — 5 wins + 3 losses + 2 draws = 17 pts", () => {
+    for (let i = 0; i < 5; i++) { startGame(wallet1); winGame(wallet1); }
+    for (let i = 0; i < 3; i++) { startGame(wallet1); resign(wallet1); }
+    // 2 PvP draws — wallet1 and wallet2 both get draw points
+    for (let i = 0; i < 2; i++) { playDrawPvP(); }
+
+    const m = currentMonth(wallet1);
+    const sf = tupleFields(getStats(wallet1, m));
+    expect(sf.wins).toEqual(Cl.uint(5));
+    expect(sf.losses).toEqual(Cl.uint(3));
+    expect(sf.draws).toEqual(Cl.uint(2));
+    expect(sf.pts).toEqual(Cl.uint(17));
+  });
+
+  it("GAME-49: draw awards exactly PTS_DRAW (u1) to the challenger", () => {
+    playDrawPvP();
+    const m = currentMonth(wallet1);
+    expect(tupleFields(getStats(wallet1, m)).pts).toEqual(Cl.uint(1));
+  });
+
+  it("GAME-50: loss awards exactly PTS_LOSS (u0)", () => {
+    startGame(wallet1); resign(wallet1);
+    const m = currentMonth(wallet1);
+    const sf = tupleFields(getStats(wallet1, m));
+    expect(sf.pts).toEqual(Cl.uint(0));
+    expect(sf.losses).toEqual(Cl.uint(1));
+  });
+
+  it("GAME-51: win awards exactly PTS_WIN (u3)", () => {
+    startGame(wallet1); winGame(wallet1);
+    const m = currentMonth(wallet1);
+    const sf = tupleFields(getStats(wallet1, m));
+    expect(sf.pts).toEqual(Cl.uint(3));
+    expect(sf.wins).toEqual(Cl.uint(1));
+  });
+
+  it("GAME-52: month-totals total-pts includes draw and win points correctly", () => {
+    playDrawPvP();               // wallet1 +1, wallet2 +1 → month-totals: games=2, pts=2
+    startGame(wallet2); winGame(wallet2); // wallet2 win +3 → month-totals: games=3, pts=5
+
+    const m = currentMonth(wallet1);
+    const tf = tupleFields(
+      simnet.callReadOnlyFn(GAME, "get-month-totals", [Cl.uint(m)], wallet1).result
+    );
+    expect(tf["total-pts"]).toEqual(Cl.uint(5));
+    expect(tf.games).toEqual(Cl.uint(3));
+  });
+});
