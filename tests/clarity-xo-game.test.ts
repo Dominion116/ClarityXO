@@ -297,3 +297,46 @@ describe("SUITE 7 — read-only helpers", () => {
     expect(sf.losses).toEqual(Cl.uint(0));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 8 — Draw scenarios (PvP — both players controlled)
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 8 — Draw scenarios", () => {
+  it("GAME-21: draw when board fills — STATUS_DRAW returned", () => {
+    const result = playDrawPvP();
+    const f = okTupleFields(result);
+    expect(f.status).toEqual(STATUS_DRAW);
+  });
+
+  it("GAME-22: draw awards exactly 1 point (PTS_DRAW) to each player", () => {
+    playDrawPvP();
+    const m = currentMonth(wallet1);
+    expect(tupleFields(getStats(wallet1, m)).pts).toEqual(Cl.uint(1));
+  });
+
+  it("GAME-23: draw increments draws counter for each player", () => {
+    playDrawPvP();
+    const m = currentMonth(wallet1);
+    const sf = tupleFields(getStats(wallet1, m));
+    expect(sf.draws).toEqual(Cl.uint(1));
+    expect(sf.wins).toEqual(Cl.uint(0));
+    expect(sf.losses).toEqual(Cl.uint(0));
+  });
+
+  it("GAME-24: draw clears both players active game mapping", () => {
+    playDrawPvP();
+    expect(getActiveGame(wallet1)).toBeOk(Cl.none());
+    expect(getActiveGame(wallet2)).toBeOk(Cl.none());
+  });
+
+  it("GAME-25: draw is tracked in month-totals (both players recorded)", () => {
+    playDrawPvP();
+    const m = currentMonth(wallet1);
+    const tf = tupleFields(
+      simnet.callReadOnlyFn(GAME, "get-month-totals", [Cl.uint(m)], wallet1).result
+    );
+    // PvP draw records 1 entry per player (2 total)
+    expect(tf["total-pts"]).toEqual(Cl.uint(2));
+    expect(tf.games).toEqual(Cl.uint(2));
+  });
+});
