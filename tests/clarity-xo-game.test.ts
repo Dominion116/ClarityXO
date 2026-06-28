@@ -619,3 +619,29 @@ describe("SUITE 15 — Error code verification", () => {
     expect(getActiveGame(wallet1)).toBeOk(Cl.none());
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 16 — Month assignment
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 16 — Month assignment", () => {
+  it("GAME-61: game started in current month stored in correct month", () => {
+    startGame(wallet1); winGame(wallet1);
+    const m = currentMonth(wallet1);
+    expect(tupleFields(getStats(wallet1, m)).wins).toEqual(Cl.uint(1));
+  });
+
+  it("GAME-62: get-full-game-state month field matches current-month", () => {
+    startGame(wallet1);
+    const m = currentMonth(wallet1);
+    const state = simnet.callReadOnlyFn(GAME, "get-full-game-state", [Cl.uint(1)], wallet1).result;
+    expect(okTupleFields(state).month).toEqual(Cl.uint(m));
+  });
+
+  it("GAME-63: stats query for wrong month returns zeros", () => {
+    startGame(wallet1); winGame(wallet1);
+    const sf = tupleFields(getStats(wallet1, 999));
+    expect(sf.pts).toEqual(Cl.uint(0));
+    expect(sf.wins).toEqual(Cl.uint(0));
+    expect(sf.losses).toEqual(Cl.uint(0));
+  });
+});
