@@ -47,3 +47,11 @@ function currentMonth(caller: string): number {
   const r = simnet.callReadOnlyFn(GAME, "current-month", [], caller).result;
   return Number((r as UIntCV).value);
 }
+
+function tupleFields(result: ClarityValue): Record<string, ClarityValue> {
+  return (result as TupleCV).data;
+}
+
+function okTupleFields(result: ClarityValue): Record<string, ClarityValue> {
+  return ((result as ResponseOkCV).value as TupleCV).data;
+}
