@@ -127,3 +127,29 @@ describe("SUITE 1 — start-game", () => {
     expect(startGame(wallet1)).toBeOk(Cl.uint(2));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 2 — make-move guards
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 2 — make-move guards", () => {
+  it("GAME-05: make-move without active game returns u105", () => {
+    expect(move(wallet1, 0, 0)).toBeErr(Cl.uint(105));
+  });
+
+  it("GAME-06: make-move with out-of-bounds row returns u102", () => {
+    startGame(wallet1);
+    expect(move(wallet1, 3, 0)).toBeErr(Cl.uint(102));
+  });
+
+  it("GAME-07: playing the same cell twice returns u104", () => {
+    startGame(wallet1);
+    move(wallet1, 0, 0);
+    expect(move(wallet1, 0, 0)).toBeErr(Cl.uint(104));
+  });
+
+  it("GAME-08: make-move after game finished returns u105", () => {
+    startGame(wallet1);
+    resign(wallet1);
+    expect(move(wallet1, 0, 0)).toBeErr(Cl.uint(105));
+  });
+});
