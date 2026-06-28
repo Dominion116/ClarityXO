@@ -106,3 +106,73 @@ describe("SUITE 1 — set-month-winners", () => {
     expect(getRank(0, wallet6)).toBeOk(Cl.none());
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 2 — claim-trophy
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 2 — claim-trophy", () => {
+  it("TROPHY-06: whitelisted player can claim trophy after month ends", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    expect(claim(wallet1, 0).result).toBeOk(Cl.bool(true));
+    expect(getOwner(1)).toBeOk(Cl.some(Cl.principal(wallet1)));
+  });
+
+  it("TROPHY-07: STX fee is transferred from claimer to owner on claim", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    const { result, events } = claim(wallet1, 0);
+    expect(result).toBeOk(Cl.bool(true));
+    const stxEvent = events.find(e => e.event === "stx_transfer_event");
+    expect(stxEvent).toBeDefined();
+    expect(stxEvent!.data.amount).toBe("500000");
+    expect(stxEvent!.data.sender).toBe(wallet1);
+    expect(stxEvent!.data.recipient).toBe(deployer);
+  });
+
+  it("TROPHY-08: non-whitelisted player cannot claim (u101)", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    expect(claim(wallet6, 0).result).toBeErr(Cl.uint(101));
+  });
+
+  it("TROPHY-09: double claim by same player returns u102", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    claim(wallet1, 0);
+    expect(claim(wallet1, 0).result).toBeErr(Cl.uint(102));
+  });
+
+  it("TROPHY-10: claiming before month is over returns u103", () => {
+    expect(claim(wallet1, 0).result).toBeErr(Cl.uint(103));
+  });
+
+  it("TROPHY-11: all 5 winners can each claim their own trophy", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    TOP5.forEach(p => expect(claim(p, 0).result).toBeOk(Cl.bool(true)));
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-last-token-id", [], deployer).result
+    ).toBeOk(Cl.uint(5));
+  });
+
+  it("TROPHY-12: has-claimed reflects correct state", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    expect(hasClaimed(0, wallet1)).toBeOk(Cl.bool(false));
+    claim(wallet1, 0);
+    expect(hasClaimed(0, wallet1)).toBeOk(Cl.bool(true));
+    expect(hasClaimed(0, wallet2)).toBeOk(Cl.bool(false));
+  });
+
+  it("TROPHY-13: get-trophy-meta stores correct month, rank and player", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    claim(wallet1, 0);
+    const result = simnet.callReadOnlyFn(TROPHY, "get-trophy-meta", [Cl.uint(1)], wallet1).result;
+    const f = metaFields(result);
+    expect(f.month).toEqual(Cl.uint(0));
+    expect(f.rank).toEqual(Cl.uint(1));
+    expect(f.player).toEqual(Cl.principal(wallet1));
+  });
+});
