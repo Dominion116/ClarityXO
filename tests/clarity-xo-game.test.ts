@@ -428,3 +428,43 @@ describe("SUITE 10 — AI behavior verification", () => {
     expect(okTupleFields(result)["ai-move"]).toBeDefined();
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 11 — Board state verification
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 11 — Board state verification", () => {
+  it("GAME-38: board is defined after first move", () => {
+    startGame(wallet1); move(wallet1, 0, 0);
+    const result = simnet.callReadOnlyFn(GAME, "get-game-board", [Cl.uint(1)], wallet1).result;
+    expect(result).toBeOk(expect.anything());
+  });
+
+  it("GAME-39: board is defined after AI counter-move", () => {
+    startGame(wallet1); move(wallet1, 0, 0);
+    const result = simnet.callReadOnlyFn(GAME, "get-game-board", [Cl.uint(1)], wallet1).result;
+    expect(result).toBeOk(expect.anything());
+  });
+
+  it("GAME-40: move counter increments by 2 each full round", () => {
+    startGame(wallet1); move(wallet1, 0, 0);
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-game-moves", [Cl.uint(1)], wallet1).result
+    ).toBeOk(Cl.uint(2));
+  });
+
+  it("GAME-41: status is X_WON after player wins column 2", () => {
+    startGame(wallet1); winGame(wallet1);
+    const state = simnet.callReadOnlyFn(GAME, "get-full-game-state", [Cl.uint(1)], wallet1).result;
+    expect(okTupleFields(state).status).toEqual(STATUS_X_WON);
+  });
+
+  it("GAME-42: get-full-game-state has all required fields", () => {
+    startGame(wallet1); move(wallet1, 0, 0);
+    const state = simnet.callReadOnlyFn(GAME, "get-full-game-state", [Cl.uint(1)], wallet1).result;
+    const f = okTupleFields(state);
+    expect(f.board).toBeDefined();
+    expect(f.status).toBeDefined();
+    expect(f.moves).toBeDefined();
+    expect(f.month).toBeDefined();
+  });
+});
