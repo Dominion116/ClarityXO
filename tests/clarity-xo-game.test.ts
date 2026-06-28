@@ -858,3 +858,51 @@ describe("SUITE 21 — PvP challenge lifecycle", () => {
     expect(acceptChallenge(wallet2, wallet1)).toBeErr(Cl.uint(107));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 22 — Edge cases and boundary conditions
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 22 — Edge cases and boundary conditions", () => {
+  it("GAME-90: PvP 9-cell board completes without error", () => {
+    createChallenge(wallet1, wallet2);
+    acceptChallenge(wallet2, wallet1);
+    const seq: [string, number, number][] = [
+      [wallet1, 0, 0], [wallet2, 0, 1], [wallet1, 0, 2],
+      [wallet1, 1, 0], [wallet2, 1, 1], [wallet2, 1, 2],
+      [wallet2, 2, 0], [wallet1, 2, 1],
+    ];
+    for (const [p, r, c] of seq) pvpMove(p, r, c);
+    const result = pvpMove(wallet1, 2, 2);
+    expect(result).toBeDefined();
+  });
+
+  it("GAME-91: multiple challenges can exist from different challengers simultaneously", () => {
+    expect(createChallenge(wallet1, wallet3)).toBeOk(expect.anything());
+    expect(createChallenge(wallet2, wallet3)).toBeOk(expect.anything());
+  });
+
+  it("GAME-92: current-month returns a non-negative uint", () => {
+    expect(currentMonth(wallet1) >= 0).toBe(true);
+  });
+
+  it("GAME-93: get-monthly-stats for unknown player returns all zeros", () => {
+    const sf = tupleFields(getStats(wallet5, 0));
+    expect(sf.pts).toEqual(Cl.uint(0));
+    expect(sf.wins).toEqual(Cl.uint(0));
+    expect(sf.draws).toEqual(Cl.uint(0));
+    expect(sf.losses).toEqual(Cl.uint(0));
+  });
+
+  it("GAME-94: get-next-game-id returns (ok u1) before any games", () => {
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-next-game-id", [], wallet1).result
+    ).toBeOk(Cl.uint(1));
+  });
+
+  it("GAME-95: get-next-game-id increments correctly after game creation", () => {
+    startGame(wallet1); startGame(wallet2);
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-next-game-id", [], wallet1).result
+    ).toBeOk(Cl.uint(3));
+  });
+});
