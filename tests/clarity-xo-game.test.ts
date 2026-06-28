@@ -673,3 +673,28 @@ describe("SUITE 17 — Board after AI", () => {
     expect(f.moves).toEqual(Cl.uint(7));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 18 — Boundary conditions
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 18 — Boundary conditions", () => {
+  it("GAME-67: move at (0,0) is valid (top-left boundary)", () => {
+    startGame(wallet1);
+    expect(move(wallet1, 0, 0)).toBeOk(expect.anything());
+  });
+
+  it("GAME-68: move at (2,2) is valid (max boundary)", () => {
+    startGame(wallet1);
+    expect(move(wallet1, 2, 2)).toBeOk(expect.anything());
+  });
+
+  it("GAME-69: move at row=3 returns err-invalid-move u102", () => {
+    startGame(wallet1);
+    expect(move(wallet1, 3, 0)).toBeErr(Cl.uint(102));
+  });
+
+  it("GAME-70: move at col=3 returns err-invalid-move u102", () => {
+    startGame(wallet1);
+    expect(move(wallet1, 0, 3)).toBeErr(Cl.uint(102));
+  });
+});
