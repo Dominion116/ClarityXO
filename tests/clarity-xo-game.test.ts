@@ -153,3 +153,57 @@ describe("SUITE 2 — make-move guards", () => {
     expect(move(wallet1, 0, 0)).toBeErr(Cl.uint(105));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 3 — make-move happy path & AI response
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 3 — make-move happy path & AI response", () => {
+  it("GAME-09: first move returns STATUS_ACTIVE and AI takes center (u4)", () => {
+    startGame(wallet1);
+    const result = move(wallet1, 0, 0);
+    const f = okTupleFields(result);
+    expect(f.status).toEqual(STATUS_ACTIVE);
+    expect(f["ai-move"]).toEqual(Cl.uint(4));
+  });
+
+  it("GAME-10: player wins via column 2 — STATUS_X_WON, ai-move u999, 3 pts", () => {
+    startGame(wallet1);
+    const result = winGame(wallet1);
+    const f = okTupleFields(result);
+    expect(f.status).toEqual(STATUS_X_WON);
+    expect(f["ai-move"]).toEqual(Cl.uint(999));
+
+    const m = currentMonth(wallet1);
+    const sf = tupleFields(getStats(wallet1, m));
+    expect(sf.pts).toEqual(Cl.uint(3));
+    expect(sf.wins).toEqual(Cl.uint(1));
+    expect(sf.losses).toEqual(Cl.uint(0));
+  });
+
+  it("GAME-11: player loses via resign — STATUS_O_WON, 0 pts", () => {
+    startGame(wallet1);
+    resign(wallet1);
+    const m = currentMonth(wallet1);
+    const sf = tupleFields(getStats(wallet1, m));
+    expect(sf.pts).toEqual(Cl.uint(0));
+    expect(sf.losses).toEqual(Cl.uint(1));
+    expect(sf.wins).toEqual(Cl.uint(0));
+  });
+
+  it("GAME-12: player loses via make-move — STATUS_O_WON returned", () => {
+    startGame(wallet1);
+    move(wallet1, 1, 0);
+    move(wallet1, 2, 0);
+    const result = move(wallet1, 1, 2);
+    const f = okTupleFields(result);
+    expect(f.status).toEqual(STATUS_O_WON);
+    const aiMove = Number((f["ai-move"] as UIntCV).value);
+    expect(aiMove >= 0 && aiMove <= 8).toBe(true);
+  });
+
+  it("GAME-13: active game is cleared after player wins", () => {
+    startGame(wallet1);
+    winGame(wallet1);
+    expect(getActiveGame(wallet1)).toBeOk(Cl.none());
+  });
+});
