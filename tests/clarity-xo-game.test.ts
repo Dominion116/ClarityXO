@@ -565,3 +565,28 @@ describe("SUITE 13 — Points edge cases", () => {
     expect(tf.games).toEqual(Cl.uint(3));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 14 — get-next-game-id
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 14 — get-next-game-id", () => {
+  it("GAME-53: get-next-game-id returns (ok u1) before any game is started", () => {
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-next-game-id", [], wallet1).result
+    ).toBeOk(Cl.uint(1));
+  });
+
+  it("GAME-54: get-next-game-id increments by 1 after each start-game", () => {
+    startGame(wallet1); startGame(wallet2);
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-next-game-id", [], wallet1).result
+    ).toBeOk(Cl.uint(3));
+  });
+
+  it("GAME-55: get-next-game-id returns u6 after five games started", () => {
+    [wallet1, wallet2, wallet3, wallet4, wallet5].forEach(w => startGame(w));
+    expect(
+      simnet.callReadOnlyFn(GAME, "get-next-game-id", [], wallet1).result
+    ).toBeOk(Cl.uint(6));
+  });
+});
