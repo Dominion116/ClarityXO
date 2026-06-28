@@ -272,3 +272,28 @@ describe("SUITE 6 — month totals", () => {
     expect(tf["total-pts"]).toEqual(Cl.uint(3));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 7 — read-only helpers
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 7 — read-only helpers", () => {
+  it("GAME-19: get-full-game-state returns correct shape after one move", () => {
+    startGame(wallet1);
+    const state = simnet.callReadOnlyFn(GAME, "get-full-game-state", [Cl.uint(1)], wallet1).result;
+    const f = okTupleFields(state);
+    expect(f.board).toBeDefined();
+    expect(f.status).toEqual(STATUS_ACTIVE);
+    expect(f.moves).toEqual(Cl.uint(0));
+  });
+
+  it("GAME-20: get-my-stats-this-month returns zeros for new player", () => {
+    const result = simnet.callReadOnlyFn(
+      GAME, "get-my-stats-this-month", [Cl.principal(wallet1)], wallet1
+    ).result;
+    const sf = tupleFields(result);
+    expect(sf.pts).toEqual(Cl.uint(0));
+    expect(sf.wins).toEqual(Cl.uint(0));
+    expect(sf.draws).toEqual(Cl.uint(0));
+    expect(sf.losses).toEqual(Cl.uint(0));
+  });
+});
