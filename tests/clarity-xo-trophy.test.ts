@@ -176,3 +176,30 @@ describe("SUITE 2 — claim-trophy", () => {
     expect(f.player).toEqual(Cl.principal(wallet1));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 3 — admin functions
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 3 — admin functions", () => {
+  it("TROPHY-14: owner can update mint fee", () => {
+    expect(
+      simnet.callPublicFn(TROPHY, "set-mint-fee", [Cl.uint(1_000_000)], deployer).result
+    ).toBeOk(Cl.uint(1_000_000));
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-mint-fee", [], deployer).result
+    ).toBeOk(Cl.uint(1_000_000));
+  });
+
+  it("TROPHY-15: non-owner cannot update mint fee (u100)", () => {
+    expect(
+      simnet.callPublicFn(TROPHY, "set-mint-fee", [Cl.uint(0)], wallet1).result
+    ).toBeErr(Cl.uint(100));
+  });
+
+  it("TROPHY-16: owner can update base-uri", () => {
+    const newUri = "https://myipfs.io/nft/";
+    expect(
+      simnet.callPublicFn(TROPHY, "set-base-uri", [Cl.stringAscii(newUri)], deployer).result
+    ).toBeOk(Cl.stringAscii(newUri));
+  });
+});
