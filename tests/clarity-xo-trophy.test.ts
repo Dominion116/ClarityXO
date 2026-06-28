@@ -64,3 +64,45 @@ function metaFields(result: ClarityValue): Record<string, ClarityValue> {
 }
 
 const TOP5 = [wallet1, wallet2, wallet3, wallet4, wallet5];
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 1 — set-month-winners (owner admin)
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 1 — set-month-winners", () => {
+  it("TROPHY-01: non-owner cannot set-month-winners (u100)", () => {
+    advanceMonth();
+    expect(
+      simnet.callPublicFn(
+        TROPHY, "set-month-winners",
+        [Cl.uint(0), Cl.list(TOP5.map(w => Cl.principal(w)))],
+        wallet1
+      ).result
+    ).toBeErr(Cl.uint(100));
+  });
+
+  it("TROPHY-02: owner cannot set winners for the current (non-over) month (u103)", () => {
+    expect(setWinners(0, TOP5)).toBeErr(Cl.uint(103));
+  });
+
+  it("TROPHY-03: owner sets winners for a past month successfully", () => {
+    advanceMonth();
+    expect(setWinners(0, TOP5)).toBeOk(Cl.bool(true));
+    expect(
+      simnet.callReadOnlyFn(TROPHY, "get-month-winners", [Cl.uint(0)], deployer).result
+    ).toBeOk(Cl.some(Cl.list(TOP5.map(w => Cl.principal(w)))));
+  });
+
+  it("TROPHY-04: get-player-rank returns correct 1-based rank", () => {
+    advanceMonth();
+    setWinners(0, TOP5);
+    expect(getRank(0, wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+    expect(getRank(0, wallet2)).toBeOk(Cl.some(Cl.uint(2)));
+    expect(getRank(0, wallet5)).toBeOk(Cl.some(Cl.uint(5)));
+  });
+
+  it("TROPHY-05: get-player-rank returns none for non-whitelisted player", () => {
+    advanceMonth();
+    setWinners(0, [wallet1, wallet1, wallet1, wallet1, wallet1]);
+    expect(getRank(0, wallet6)).toBeOk(Cl.none());
+  });
+});
