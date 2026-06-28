@@ -30,3 +30,20 @@ function move(player: string, row: number, col: number) {
 function resign(player: string) {
   return simnet.callPublicFn(GAME, "resign-game", [], player).result;
 }
+
+function getActiveGame(player: string) {
+  return simnet.callReadOnlyFn(GAME, "get-active-game", [Cl.principal(player)], player).result;
+}
+
+function getStats(player: string, month: number) {
+  return simnet.callReadOnlyFn(
+    GAME, "get-monthly-stats",
+    [Cl.uint(month), Cl.principal(player)],
+    player
+  ).result;
+}
+
+function currentMonth(caller: string): number {
+  const r = simnet.callReadOnlyFn(GAME, "current-month", [], caller).result;
+  return Number((r as UIntCV).value);
+}
