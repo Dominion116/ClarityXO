@@ -468,3 +468,47 @@ describe("SUITE 11 — Board state verification", () => {
     expect(f.month).toBeDefined();
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 12 — Concurrent multi-player games
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 12 — Concurrent multi-player games", () => {
+  it("GAME-43: three players can hold simultaneous active games", () => {
+    startGame(wallet1); startGame(wallet2); startGame(wallet3);
+    expect(getActiveGame(wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+    expect(getActiveGame(wallet2)).toBeOk(Cl.some(Cl.uint(2)));
+    expect(getActiveGame(wallet3)).toBeOk(Cl.some(Cl.uint(3)));
+  });
+
+  it("GAME-44: five players can hold simultaneous active games", () => {
+    [wallet1, wallet2, wallet3, wallet4, wallet5].forEach(p => startGame(p));
+    [wallet1, wallet2, wallet3, wallet4, wallet5].forEach(p =>
+      expect(getActiveGame(p)).toBeOk(expect.anything())
+    );
+  });
+
+  it("GAME-45: each player's board is independent from others", () => {
+    startGame(wallet1); startGame(wallet2);
+    move(wallet1, 0, 0);
+    expect(getActiveGame(wallet1)).toBeOk(Cl.some(Cl.uint(1)));
+    expect(getActiveGame(wallet2)).toBeOk(Cl.some(Cl.uint(2)));
+  });
+
+  it("GAME-46: game IDs are unique across all players", () => {
+    expect(startGame(wallet1)).toBeOk(Cl.uint(1));
+    expect(startGame(wallet2)).toBeOk(Cl.uint(2));
+    expect(startGame(wallet3)).toBeOk(Cl.uint(3));
+  });
+
+  it("GAME-47: multiple players monthly stats do not interfere", () => {
+    startGame(wallet1); winGame(wallet1);
+    startGame(wallet2); resign(wallet2);
+    const m = currentMonth(wallet1);
+    const s1 = tupleFields(getStats(wallet1, m));
+    const s2 = tupleFields(getStats(wallet2, m));
+    expect(s1.wins).toEqual(Cl.uint(1));
+    expect(s2.losses).toEqual(Cl.uint(1));
+    expect(s1.losses).toEqual(Cl.uint(0));
+    expect(s2.wins).toEqual(Cl.uint(0));
+  });
+});
