@@ -440,3 +440,75 @@ describe("SUITE 9 — Token URI", () => {
     expect(result).toBeOk(Cl.some(Cl.stringAscii("https://clarityxo.xyz/nft/42")));
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUITE 10 — Transfer edge cases
+// ═══════════════════════════════════════════════════════════════════════════
+describe("SUITE 10 — Transfer edge cases", () => {
+  // Note: each test sets up its own state since simnet resets before each test
+
+  it("TROPHY-40: wallet1 owns token 1 after claiming", () => {
+    // Self-transfer (sender=recipient) is rejected by nft-transfer? with (err u2)
+    // So we verify ownership directly instead
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    expect(getOwner(1)).toBeOk(Cl.some(Cl.principal(wallet1)));
+  });
+
+  it("TROPHY-41: chain transfer A→B→C results in C owning the token", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    simnet.callPublicFn(TROPHY, "transfer",
+      [Cl.uint(1), Cl.principal(wallet1), Cl.principal(wallet2)], wallet1);
+    simnet.callPublicFn(TROPHY, "transfer",
+      [Cl.uint(1), Cl.principal(wallet2), Cl.principal(wallet6)], wallet2);
+    expect(getOwner(1)).toBeOk(Cl.some(Cl.principal(wallet6)));
+  });
+
+  it("TROPHY-42: transfer with wrong sender returns err-not-token-owner (u106)", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    expect(
+      simnet.callPublicFn(TROPHY, "transfer",
+        [Cl.uint(1), Cl.principal(wallet1), Cl.principal(wallet6)],
+        wallet2 // wrong sender
+      ).result
+    ).toBeErr(Cl.uint(106));
+  });
+
+  it("TROPHY-43: original owner no longer owns token after transfer", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    simnet.callPublicFn(TROPHY, "transfer",
+      [Cl.uint(1), Cl.principal(wallet1), Cl.principal(wallet6)], wallet1);
+    expect(getOwner(1)).toBeOk(Cl.some(Cl.principal(wallet6)));
+  });
+
+  it("TROPHY-44: new owner can transfer the token to a third party", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    simnet.callPublicFn(TROPHY, "transfer",
+      [Cl.uint(1), Cl.principal(wallet1), Cl.principal(wallet6)], wallet1);
+    expect(
+      simnet.callPublicFn(TROPHY, "transfer",
+        [Cl.uint(1), Cl.principal(wallet6), Cl.principal(wallet3)], wallet6
+      ).result
+    ).toBeOk(Cl.bool(true));
+    expect(getOwner(1)).toBeOk(Cl.some(Cl.principal(wallet3)));
+  });
+
+  it("TROPHY-45: successful transfer emits nft-transfer event", () => {
+    advanceMonth(2);
+    setWinners(1, TOP5);
+    claim(wallet1, 1);
+    const { result, events } = simnet.callPublicFn(TROPHY, "transfer",
+      [Cl.uint(1), Cl.principal(wallet1), Cl.principal(wallet6)], wallet1);
+    expect(result).toBeOk(Cl.bool(true));
+    expect(events.length).toBeGreaterThan(0);
+  });
+});
