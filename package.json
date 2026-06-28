@@ -14,6 +14,7 @@
     "test": "vitest run --reporter verbose"
   },
   "devDependencies": {
+    "@hirosystems/clarinet-sdk": "^2.0.0",
     "concurrently": "^9.1.2"
   },
   "dependencies": {
