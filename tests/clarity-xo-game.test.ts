@@ -16,3 +16,17 @@ const wallet2   = accounts.get("wallet_2")!;
 const wallet3   = accounts.get("wallet_3")!;
 const wallet4   = accounts.get("wallet_4")!;
 const wallet5   = accounts.get("wallet_5")!;
+
+// ─── helpers ─────────────────────────────────────────────────────────────────
+
+function startGame(player: string) {
+  return simnet.callPublicFn(GAME, "start-game", [], player).result;
+}
+
+function move(player: string, row: number, col: number) {
+  return simnet.callPublicFn(GAME, "make-move", [Cl.uint(row), Cl.uint(col)], player).result;
+}
+
+function resign(player: string) {
+  return simnet.callPublicFn(GAME, "resign-game", [], player).result;
+}
