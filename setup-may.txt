@@ -1,0 +1,7 @@
+::set_tx_sender SP30VGN68PSGVWGNMD0HH2WQMM5T486EK3YGP7Z3Y
+
+(contract-call? .clarityxotrophyv3 set-month-uri u220 "https://scarlet-large-hummingbird-596.mypinata.cloud/ipfs/bafybeib6x6w7u4emwb4k7ky757xhw4u367ttykskchj6q522ttd2jh4fgm/")
+
+(contract-call? .clarityxotrophyv3 set-mint-fee u20000)
+
+(contract-call? .clarityxotrophyv3 set-month-winners u220 (list 'SP1VW7TPKTY8W4AWNYR00YD4E914RSWGM70VKVCAY 'SP3XR5PCCV557KE2ZZB3W04B91F6042HKZ8KNX1ZS 'SP1HCKS0FDRC50F7VWRZJ9747V2EB38YA8FXGRXNC 'SP1EM6HQFSV15WYS4G9BRMM3YF4TH9Y4437YCKTG1 'SPJY043NRW86A9SVMHPC6AZ1CWCXV21KCDC42P2N))
