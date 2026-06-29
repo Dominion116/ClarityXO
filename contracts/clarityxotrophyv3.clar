@@ -1,13 +1,13 @@
 ;;
-;;  ClarityXO TROPHY NFT CONTRACT — v3
+;;  ClarityXO TROPHY NFT CONTRACT - v3
 ;;  clarityxotrophyv3.clar
 ;;
 ;;  Changes over v2:
-;;    • month-uri map: owner can set a distinct base URI per calendar month
+;;    - month-uri map: owner can set a distinct base URI per calendar month
 ;;      so each month's NFT collection resolves to its own image set
-;;    • get-token-uri resolves month-specific URI first, falls back to base-uri
-;;    • set-month-uri admin function to configure per-month images
-;;    • get-month-uri read-only to inspect what URI a month resolves to
+;;    - get-token-uri resolves month-specific URI first, falls back to base-uri
+;;    - set-month-uri admin function to configure per-month images
+;;    - get-month-uri read-only to inspect what URI a month resolves to
 ;;
 
 
@@ -38,7 +38,7 @@
 ;; Default: 0.5 STX.  Owner can update via set-mint-fee.
 (define-data-var mint-fee uint u500000)
 
-;; ~4320 Bitcoin blocks per month (30 d × 24 h × 6 blocks/h)
+;; ~4320 Bitcoin blocks per month (30 d x 24 h x 6 blocks/h)
 (define-constant BLOCKS_PER_MONTH u4320)
 
 ;; Global sequential token counter
@@ -52,16 +52,16 @@
 ;;  STORAGE
 ;;
 
-;; month-id → list of up to 5 whitelisted principals
+;; month-id -> list of up to 5 whitelisted principals
 (define-map month-winners uint (list 5 principal))
 
-;; (month, player) → claimed?
+;; (month, player) -> claimed?
 (define-map claimed
   { month: uint, player: principal }
   bool
 )
 
-;; token-id → lightweight on-chain metadata
+;; token-id -> lightweight on-chain metadata
 (define-map trophy-meta
   uint
   { month: uint, rank: uint, player: principal }
@@ -145,7 +145,7 @@
 
 
 ;;
-;;  OWNER — admin functions
+;;  OWNER - admin functions
 ;;
 
 (define-public (set-month-winners (month uint) (winners (list 5 principal)))
@@ -175,7 +175,7 @@
 )
 
 ;; Set or update the base URI for a specific month's NFT images.
-;; Call this BEFORE or AFTER set-month-winners — order doesn't matter.
+;; Call this BEFORE or AFTER set-month-winners - order doesn't matter.
 ;; Example: (set-month-uri u220 "https://clarityxo.xyz/nft/may2026/")
 ;;          (set-month-uri u220 "https://ipfs.io/ipfs/Qm.../")
 (define-public (set-month-uri (month uint) (uri (string-ascii 80)))
@@ -188,7 +188,7 @@
 
 
 ;;
-;;  PUBLIC — claim-trophy
+;;  PUBLIC - claim-trophy
 ;;
 ;;  Steps:
 ;;    1. Month must be over (< current-month).
