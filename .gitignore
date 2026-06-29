@@ -69,6 +69,12 @@ Thumbs.db
 .tmp/
 config.bat
 
+# Wallet and sensitive scripts
+derive*.js
+derive*.mjs
+setup-may*.mjs
+setup-may*.js
+
 # Local planning docs
 TEST_IMPLEMENTATION_PLAN.md
 plan.md

@@ -45,7 +45,7 @@
 (define-data-var last-token-id uint u0)
 
 ;; Fallback base metadata URI used for any month that has no month-specific URI set
-(define-data-var base-uri (string-ascii 80) "https://clarityxo.xyz/nft/")
+(define-data-var base-uri (string-ascii 256) "https://clarityxo.xyz/nft/")
 
 
 ;;
@@ -71,7 +71,7 @@
 ;; When set for a month, get-token-uri uses this instead of base-uri.
 ;; Format: any reachable prefix such as "https://clarityxo.xyz/nft/may2026/"
 ;;         or an IPFS gateway "https://ipfs.io/ipfs/<CID>/"
-(define-map month-uri uint (string-ascii 80))
+(define-map month-uri uint (string-ascii 256))
 
 
 ;;
@@ -166,7 +166,7 @@
 )
 
 ;; Update the global fallback base URI
-(define-public (set-base-uri (new-uri (string-ascii 80)))
+(define-public (set-base-uri (new-uri (string-ascii 256)))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-not-authorized)
     (var-set base-uri new-uri)
@@ -178,7 +178,7 @@
 ;; Call this BEFORE or AFTER set-month-winners - order doesn't matter.
 ;; Example: (set-month-uri u220 "https://clarityxo.xyz/nft/may2026/")
 ;;          (set-month-uri u220 "https://ipfs.io/ipfs/Qm.../")
-(define-public (set-month-uri (month uint) (uri (string-ascii 80)))
+(define-public (set-month-uri (month uint) (uri (string-ascii 256)))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-not-authorized)
     (map-set month-uri month uri)
