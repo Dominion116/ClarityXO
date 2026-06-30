@@ -91,3 +91,20 @@ export async function fetchIncomingChallenge(playerAddr, knownChallengers = []) 
     return String(r.raw).includes(playerAddr);
   });
 }
+
+export async function fetchIncomingChallenges(playerAddr) {
+  const apiBase = CONFIG.leaderboardApiBaseUrl;
+  try {
+    const res = await fetch(`${apiBase}/api/pvp/incoming/${encodeURIComponent(playerAddr)}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data?.incoming?.map(c => ({
+      challenger: c.challenger,
+      previousGameId: c.previousGameId,
+      createdAt: c.createdAt
+    })) || [];
+  } catch (error) {
+    console.error('Failed to fetch incoming challenges:', error);
+    return [];
+  }
+}

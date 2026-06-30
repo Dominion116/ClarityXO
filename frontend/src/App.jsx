@@ -6,7 +6,7 @@ import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, S
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
 import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
-import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge, createRematch } from "./utils/pvp";
+import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge, createRematch, fetchIncomingChallenges } from "./utils/pvp";
 import { useRematch } from "./hooks/useRematch";
 import { parseReferralCodeFromUrl, claimReferral } from "./utils/referral";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -61,10 +61,12 @@ export default function App() {
   const [pvpOpponent, setPvpOpponent] = useState(null);
   const [pvpTurn, setPvpTurn] = useState(PLAYER_X);
   const [pvpOutboundChallenge, setPvpOutboundChallenge] = useState(null);
+  const [incomingChallengeCount, setIncomingChallengeCount] = useState(0);
 
   // null | "pending" | "confirmed" | "dropped"
   const [txStatus, setTxStatus] = useState(null);
   const txStatusTimerRef = useRef(null);
+  const pvpPollingRef = useRef(null);
 
   const setTxStatusWithAutoClear = useCallback((status, clearAfterMs = 4000) => {
     if (txStatusTimerRef.current) clearTimeout(txStatusTimerRef.current);
@@ -225,6 +227,30 @@ export default function App() {
         }
       })
       .catch(() => {});
+  }, [walletAddr]);
+
+  useEffect(() => {
+    if (!walletAddr) {
+      setIncomingChallengeCount(0);
+      if (pvpPollingRef.current) clearInterval(pvpPollingRef.current);
+      return;
+    }
+
+    const pollForChallenges = async () => {
+      try {
+        const challenges = await fetchIncomingChallenges(walletAddr);
+        setIncomingChallengeCount(challenges.length);
+      } catch (error) {
+        console.error('Error polling challenges:', error);
+      }
+    };
+
+    pollForChallenges();
+    pvpPollingRef.current = setInterval(pollForChallenges, 5000);
+
+    return () => {
+      if (pvpPollingRef.current) clearInterval(pvpPollingRef.current);
+    };
   }, [walletAddr]);
 
   const makeMove = useCallback(async (idx) => {
@@ -452,7 +478,14 @@ export default function App() {
               <div className="logo" onClick={() => setActivePage('landing')}>Clarity<span>XO</span></div>
               <nav className="desktop-nav">
                 <div className={`nav-item ${activePage === 'game' ? 'active' : ''}`} onClick={() => setActivePage('game')}>Game</div>
-                <div className={`nav-item ${activePage === 'pvp' ? 'active' : ''}`} onClick={() => setActivePage('pvp')}>PvP</div>
+                <div className={`nav-item ${activePage === 'pvp' ? 'active' : ''}`} onClick={() => setActivePage('pvp')}>
+                  PvP
+                  {incomingChallengeCount > 0 && (
+                    <span className="nav-badge" title={`${incomingChallengeCount} incoming challenge${incomingChallengeCount !== 1 ? 's' : ''}`}>
+                      {incomingChallengeCount}
+                    </span>
+                  )}
+                </div>
                 <div className={`nav-item ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => setActivePage('leaderboard')}>Leaderboard</div>
                 <div className={`nav-item ${activePage === 'gallery' ? 'active' : ''}`} onClick={() => setActivePage('gallery')}>Trophies</div>
               </nav>
@@ -498,7 +531,14 @@ export default function App() {
             <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
               <nav className="mobile-nav">
                 <div className={`nav-item mobile ${activePage === 'game' ? 'active' : ''}`} onClick={() => { setActivePage('game'); setMobileMenuOpen(false); }}>Game</div>
-                <div className={`nav-item mobile ${activePage === 'pvp' ? 'active' : ''}`} onClick={() => { setActivePage('pvp'); setMobileMenuOpen(false); }}>PvP Lobby</div>
+                <div className={`nav-item mobile ${activePage === 'pvp' ? 'active' : ''}`} onClick={() => { setActivePage('pvp'); setMobileMenuOpen(false); }}>
+                  PvP Lobby
+                  {incomingChallengeCount > 0 && (
+                    <span className="nav-badge" title={`${incomingChallengeCount} incoming challenge${incomingChallengeCount !== 1 ? 's' : ''}`}>
+                      {incomingChallengeCount}
+                    </span>
+                  )}
+                </div>
                 <div className={`nav-item mobile ${activePage === 'leaderboard' ? 'active' : ''}`} onClick={() => { setActivePage('leaderboard'); setMobileMenuOpen(false); }}>Leaderboard</div>
                 <div className={`nav-item mobile ${activePage === 'gallery' ? 'active' : ''}`} onClick={() => { setActivePage('gallery'); setMobileMenuOpen(false); }}>Trophies</div>
               </nav>

@@ -822,6 +822,27 @@ app.get('/api/pvp/game/:gameId', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/pvp/incoming/:playerAddr
+ * Fetch incoming challenges (challenges where playerAddr is the opponent).
+ */
+app.get('/api/pvp/incoming/:playerAddr', async (req, res) => {
+  const { playerAddr } = req.params;
+  if (!playerAddr || typeof playerAddr !== 'string') {
+    return res.status(400).json({ error: 'playerAddr is required' });
+  }
+  try {
+    const db = await getDatabase();
+    const rematches = db.collection('rematches');
+    const incoming = await rematches
+      .find({ opponent: playerAddr })
+      .toArray();
+    res.json({ ok: true, playerAddr, incoming });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/pvp/result', async (req, res) => {
   const { walletAddr, outcome, month } = req.body || {};
   const validOutcomes = new Set(['win', 'draw', 'loss']);

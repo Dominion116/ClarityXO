@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GAME_MODE_PVP } from '../utils/constants';
-import { fetchPendingChallenge } from '../utils/pvp';
+import { fetchPendingChallenge, fetchIncomingChallenges } from '../utils/pvp';
 
 export default function PvPLobby({
   walletAddr,
@@ -20,11 +20,38 @@ export default function PvPLobby({
   const [inputError, setInputError] = useState('');
   const [outboundStatus, setOutboundStatus] = useState(null);
   const [incomingChallenges, setIncomingChallenges] = useState([]);
+  const pollingRef = useRef(null);
 
   useEffect(() => {
     if (!pvpOutboundChallenge) { setOutboundStatus(null); return; }
     setOutboundStatus('pending');
   }, [pvpOutboundChallenge]);
+
+  const fetchIncomingChallengesAsync = useCallback(async () => {
+    if (!walletAddr) return;
+    try {
+      const challenges = await fetchIncomingChallenges(walletAddr);
+      setIncomingChallenges(challenges);
+    } catch (error) {
+      console.error('Error fetching incoming challenges:', error);
+    }
+  }, [walletAddr]);
+
+  useEffect(() => {
+    if (!walletAddr) {
+      setIncomingChallenges([]);
+      if (pollingRef.current) clearInterval(pollingRef.current);
+      return;
+    }
+
+    fetchIncomingChallengesAsync();
+
+    pollingRef.current = setInterval(fetchIncomingChallengesAsync, 5000);
+
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, [walletAddr, fetchIncomingChallengesAsync]);
 
   const handleAccept = useCallback(async (challengerAddr) => {
     await acceptPvPChallenge(challengerAddr);
