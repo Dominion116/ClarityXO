@@ -193,6 +193,12 @@ export default function App() {
     }
   }, [log]);
 
+  const disconnectWallet = useCallback(() => {
+    setWalletAddr(null);
+    window.localStorage.removeItem(WALLET_STORAGE_KEY);
+    log("Wallet disconnected", "success");
+  }, [log]);
+
   useEffect(() => {
     if (!walletAddr) return;
     syncChainState(walletAddr);
@@ -471,8 +477,13 @@ export default function App() {
               </button>
               <div className="badge">{CONFIG.network}</div>
               {walletAddr ? (
-                <div className="badge" style={{ color: 'var(--green)', borderColor: 'var(--green)' }}>
-                  {`${walletAddr.slice(0, 6)}…${walletAddr.slice(-4)}`}
+                <div className="wallet-group">
+                  <div className="badge" style={{ color: 'var(--green)', borderColor: 'var(--green)' }}>
+                    {`${walletAddr.slice(0, 6)}…${walletAddr.slice(-4)}`}
+                  </div>
+                  <button className="ghost-btn" onClick={disconnectWallet}>
+                    Logout
+                  </button>
                 </div>
               ) : (
                 <button className="ghost-btn" onClick={connectWallet}>

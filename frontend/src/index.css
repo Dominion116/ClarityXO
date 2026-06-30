@@ -134,6 +134,7 @@ header {
 }
 
 .header-right { display: flex; align-items: center; gap: 12px; padding: 20px 0; }
+.wallet-group { display: flex; align-items: center; gap: 8px; }
 .lp-oss-pill {
   font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
   border: 1px solid var(--border2); color: var(--green);
@@ -1095,7 +1096,8 @@ svg.mark { overflow: visible; }
   nav { flex: 1; min-width: 0; }
   .nav-item { padding: 0 10px; font-size: 9px; letter-spacing: .15em; white-space: nowrap; }
   .badge { font-size: 8px; padding: 3px 8px; }
-  
+  .wallet-group { gap: 6px; }
+
   .page { width: 100vw; max-width: 100%; padding: 0; box-sizing: border-box; }
   #page-game { padding: 12px; max-width: 100%; width: 100%; box-sizing: border-box; }
   .eyebrow { font-size: 9px; margin-bottom: 12px; }
