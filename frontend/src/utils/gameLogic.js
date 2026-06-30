@@ -69,12 +69,16 @@ function minimax(board, isMaximizing, depth = 0) {
 export function chooseAiMoveHard(board) {
   let bestVal = -Infinity;
   let bestMove = -1;
-  for (let i = 0; i < 9; i++) {
+  const preferenceOrder = [4, 8, 6, 2, 0, 1, 3, 5, 7];
+  for (const i of preferenceOrder) {
     if (board[i] === EMPTY) {
       board[i] = PLAYER_O;
       const val = minimax(board, false);
       board[i] = EMPTY;
-      if (val > bestVal) { bestVal = val; bestMove = i; }
+      if (val > bestVal) {
+        bestVal = val;
+        bestMove = i;
+      }
     }
   }
   return bestMove;

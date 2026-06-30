@@ -105,13 +105,13 @@ export default function PvPLobby({
         <div className="pvp-card">
           <div className="pvp-card-title">Send a Challenge</div>
           <p className="pvp-card-desc">
-            Enter the opponent's STX address or BNS name (e.g. <em>alice.btc</em>).
+            Enter the opponent's STX address or BNS name (e.g. <em>alice.stx</em>).
           </p>
           <div className="pvp-input-row">
             <input
               className={`pvp-input${inputError ? ' pvp-input-error' : ''}`}
               type="text"
-              placeholder="SP… or name.btc"
+              placeholder="SP… or name.stx"
               value={challengeInput}
               onChange={(e) => { setChallengeInput(e.target.value); setInputError(''); }}
               disabled={processing}

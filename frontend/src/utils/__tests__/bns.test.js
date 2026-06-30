@@ -29,10 +29,10 @@ describe('resolveAddressName', () => {
   it('returns BNS name from API when available', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ names: ['alice.btc'] }),
+      json: async () => ({ names: ['alice.stx'] }),
     });
     const result = await resolveAddressName('SP123');
-    expect(result).toBe('alice.btc');
+    expect(result).toBe('alice.stx');
   });
 
   it('returns null when address has no names', async () => {
@@ -59,7 +59,7 @@ describe('resolveAddressName', () => {
   it('caches result so API is only called once for same address', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ names: ['bob.btc'] }),
+      json: async () => ({ names: ['bob.stx'] }),
     });
     await resolveAddressName('SP111');
     await resolveAddressName('SP111');
@@ -75,11 +75,11 @@ describe('resolveAddressNames', () => {
 
   it('resolves multiple addresses in parallel', async () => {
     global.fetch = vi.fn()
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ names: ['alice.btc'] }) })
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ names: ['bob.btc'] }) });
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ names: ['alice.stx'] }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ names: ['bob.stx'] }) });
     const result = await resolveAddressNames(['SP1', 'SP2']);
-    expect(result['SP1']).toBe('alice.btc');
-    expect(result['SP2']).toBe('bob.btc');
+    expect(result['SP1']).toBe('alice.stx');
+    expect(result['SP2']).toBe('bob.stx');
   });
 
   it('omits addresses with no BNS name from result', async () => {

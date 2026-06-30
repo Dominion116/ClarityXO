@@ -11,7 +11,7 @@ export function clearBNSCache() {
 }
 
 /**
- * Resolves a Stacks address to its primary BNS name (e.g. "alice.btc").
+ * Resolves a Stacks address to its primary BNS name (e.g. "alice.stx").
  * Returns null if the address has no registered name or the lookup fails.
  * Results are cached for 5 minutes.
  */
@@ -40,7 +40,7 @@ export async function resolveAddressName(addr) {
 
 /**
  * Batch-resolves an array of addresses.
- * Returns a plain object keyed by address: { "SP1...": "alice.btc", ... }
+ * Returns a plain object keyed by address: { "SP1...": "alice.stx", ... }
  * Addresses with no name are omitted.
  */
 export async function resolveAddressNames(addrs) {

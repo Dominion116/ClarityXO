@@ -34,11 +34,11 @@ describe('displayName', () => {
   });
 
   it('prefers profile name over BNS name', () => {
-    expect(displayName('SP1', 'bns.btc', { name: 'Profile Name' })).toBe('Profile Name');
+    expect(displayName('SP1', 'bns.stx', { name: 'Profile Name' })).toBe('Profile Name');
   });
 
   it('uses BNS name when no profile name', () => {
-    expect(displayName('SP1', 'bns.btc', null)).toBe('bns.btc');
+    expect(displayName('SP1', 'bns.stx', null)).toBe('bns.stx');
   });
 
   it('falls back to truncated address', () => {

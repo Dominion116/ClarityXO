@@ -38,8 +38,8 @@ describe('generateShareText', () => {
   });
 
   it('uses bnsName in message when provided', () => {
-    const text = generateShareText({ outcome: 'win', rank: 1, pts: 10, bnsName: 'alice.btc' });
-    expect(text).toContain('alice.btc');
+    const text = generateShareText({ outcome: 'win', rank: 1, pts: 10, bnsName: 'alice.stx' });
+    expect(text).toContain('alice.stx');
   });
 });
 
