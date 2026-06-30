@@ -100,3 +100,9 @@ export function parseUintResult(cv) {
   const decoded = decodeClarityValue(cv?.result);
   return findFirstUint(decoded?.success ? decoded.value : decoded);
 }
+
+export function hasPendingChallenge(cv) {
+  const decoded = decodeClarityValue(cv?.result);
+  const optional = decoded?.success ? decoded.value : decoded;
+  return Boolean(optional?.value);
+}

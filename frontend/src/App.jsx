@@ -4,7 +4,7 @@ import { connect, request } from "@stacks/connect";
 import { CONFIG } from "./config";
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from "./utils/constants";
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
-import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg } from "./utils/stacks";
+import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg, hasPendingChallenge } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
 import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge, createRematch, fetchIncomingChallenges } from "./utils/pvp";
 import { useRematch } from "./hooks/useRematch";
@@ -252,6 +252,50 @@ export default function App() {
       if (pvpPollingRef.current) clearInterval(pvpPollingRef.current);
     };
   }, [walletAddr]);
+
+  // While waiting for someone to respond to a challenge we sent, poll the chain
+  // directly to find out the moment they accept (or decline) it.
+  useEffect(() => {
+    if (!walletAddr || !pvpOutboundChallenge) return;
+
+    let cancelled = false;
+    const pollOutboundChallenge = async () => {
+      try {
+        const activeGameRes = await callReadOnly("get-active-game", [encodeCVArg(principalCV(walletAddr))]);
+        const activeGameId = parseUintResult(activeGameRes);
+        if (cancelled) return;
+
+        if (activeGameId > 0) {
+          setGameMode(GAME_MODE_PVP);
+          setPvpOpponent(pvpOutboundChallenge);
+          setPvpTurn(PLAYER_X);
+          setGameStarted(true);
+          setGameId(activeGameId);
+          log(`${pvpOutboundChallenge.slice(0, 12)}… accepted your challenge!`, "success");
+          setPvpOutboundChallenge(null);
+          await syncChainState();
+          return;
+        }
+
+        const challengeRes = await callReadOnly("get-challenge", [encodeCVArg(principalCV(walletAddr))]);
+        if (cancelled) return;
+        if (!hasPendingChallenge(challengeRes)) {
+          log("Your challenge was declined.", "info");
+          setPvpOutboundChallenge(null);
+        }
+      } catch (e) {
+        // Transient read failure — try again on the next tick.
+      }
+    };
+
+    pollOutboundChallenge();
+    const interval = setInterval(pollOutboundChallenge, 5000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [walletAddr, pvpOutboundChallenge, log, syncChainState]);
 
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
