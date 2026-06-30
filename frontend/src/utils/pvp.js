@@ -73,25 +73,6 @@ export async function createRematch(opponentAddr) {
   return createChallenge(opponentAddr);
 }
 
-export async function fetchIncomingChallenge(playerAddr, knownChallengers = []) {
-  const results = await Promise.all(
-    knownChallengers.map(async (addr) => {
-      const apiBase = CONFIG.leaderboardApiBaseUrl;
-      try {
-        const res = await fetch(`${apiBase}/api/pvp/challenges/${encodeURIComponent(addr)}`);
-        if (!res.ok) return null;
-        const data = await res.json();
-        return data?.result ? { challenger: addr, raw: data.result } : null;
-      } catch {
-        return null;
-      }
-    })
-  );
-  return results.filter(Boolean).filter((r) => {
-    return String(r.raw).includes(playerAddr);
-  });
-}
-
 export async function fetchIncomingChallenges(playerAddr) {
   const apiBase = CONFIG.leaderboardApiBaseUrl;
   try {
@@ -100,7 +81,6 @@ export async function fetchIncomingChallenges(playerAddr) {
     const data = await res.json();
     return data?.incoming?.map(c => ({
       challenger: c.challenger,
-      previousGameId: c.previousGameId,
       createdAt: c.createdAt
     })) || [];
   } catch (error) {

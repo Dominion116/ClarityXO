@@ -328,6 +328,19 @@ function parseGameState(resultText) {
   };
 }
 
+function parseChallengeState(resultText) {
+  const decoded = typeof resultText === 'string' && resultText.startsWith('0x')
+    ? cvToJSON(deserializeCV(resultText))
+    : resultText;
+  const optional = decoded?.success ? decoded.value : decoded;
+  if (!optional?.value) return null;
+  const fields = optional.value.value || {};
+  return {
+    opponent: normalizePrincipalValue(fields.opponent),
+    createdAt: Number(fields['created-at']?.value || 0),
+  };
+}
+
 async function callTrophyReadOnly(functionName, args = []) {
   const url = `${STACKS_API_BASE}/v2/contracts/call-read/${TROPHY_CONTRACT_ADDRESS}/${TROPHY_CONTRACT_NAME}/${functionName}`;
   const response = await fetch(url, {
@@ -825,6 +838,13 @@ app.get('/api/pvp/game/:gameId', async (req, res) => {
 /**
  * GET /api/pvp/incoming/:playerAddr
  * Fetch incoming challenges (challenges where playerAddr is the opponent).
+ *
+ * The on-chain `pvp-challenges` map is keyed by challenger, not opponent,
+ * so there is no direct reverse lookup. Instead we scan the contract's
+ * recent transactions for successful `create-challenge` calls naming
+ * playerAddr as the opponent, then confirm each is still pending via the
+ * `get-challenge` read-only call (it may since have been accepted,
+ * declined, or cancelled).
  */
 app.get('/api/pvp/incoming/:playerAddr', async (req, res) => {
   const { playerAddr } = req.params;
@@ -832,11 +852,39 @@ app.get('/api/pvp/incoming/:playerAddr', async (req, res) => {
     return res.status(400).json({ error: 'playerAddr is required' });
   }
   try {
-    const db = await getDatabase();
-    const rematches = db.collection('rematches');
-    const incoming = await rematches
-      .find({ opponent: playerAddr })
-      .toArray();
+    const contractId = `${GAME_CONTRACT_ADDRESS}.${GAME_CONTRACT_NAME}`;
+    const txUrl = `${STACKS_API_BASE}/extended/v1/address/${contractId}/transactions?limit=50`;
+    const txResponse = await fetch(txUrl);
+    if (!txResponse.ok) throw new Error(`Stacks API error: ${txResponse.status}`);
+    const txData = await txResponse.json();
+
+    const candidateChallengers = new Set();
+    for (const tx of txData.results || []) {
+      if (tx.tx_status !== 'success') continue;
+      if (tx.tx_type !== 'contract_call') continue;
+      if (tx.contract_call?.function_name !== 'create-challenge') continue;
+      const arg = tx.contract_call.function_args?.[0];
+      const opponent = arg?.repr?.replace(/^'/, '');
+      if (opponent === playerAddr && tx.sender_address) {
+        candidateChallengers.add(tx.sender_address);
+      }
+    }
+
+    const { cvToHex, principalCV } = await import('@stacks/transactions');
+    const incoming = [];
+    await Promise.all(Array.from(candidateChallengers).map(async (challenger) => {
+      try {
+        const argHex = cvToHex(principalCV(challenger));
+        const raw = await callReadOnly('get-challenge', [argHex]);
+        const chal = parseChallengeState(raw?.result);
+        if (chal && chal.opponent === playerAddr) {
+          incoming.push({ challenger, createdAt: chal.createdAt });
+        }
+      } catch (error) {
+        console.error(`Failed to verify challenge from ${challenger}:`, error.message);
+      }
+    }));
+
     res.json({ ok: true, playerAddr, incoming });
   } catch (error) {
     res.status(500).json({ error: error.message });
