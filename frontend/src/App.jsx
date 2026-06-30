@@ -4,7 +4,7 @@ import { connect, request } from "@stacks/connect";
 import { CONFIG } from "./config";
 import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, STATUS_DRAW } from "./utils/constants";
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
-import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg, hasPendingChallenge } from "./utils/stacks";
+import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg, hasPendingChallenge, parsePvpGameStateFromClarityValue } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
 import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge, createRematch, fetchIncomingChallenges } from "./utils/pvp";
 import { useRematch } from "./hooks/useRematch";
@@ -133,11 +133,27 @@ export default function App() {
       if (activeGameId === 0) {
         log("No active game found.", "info");
         setGameId(null);
+        setGameMode(GAME_MODE_AI);
+        setPvpOpponent(null);
         if (boardSnapshot) setTxStatusWithAutoClear('dropped');
         return;
       }
       setGameId(activeGameId);
-      const fullGameRes = await callReadOnly("get-full-game-state", [encodeCVArg(uintCV(activeGameId))]);
+      const [fullGameRes, pvpStateRes] = await Promise.all([
+        callReadOnly("get-full-game-state", [encodeCVArg(uintCV(activeGameId))]),
+        callReadOnly("get-pvp-game-state", [encodeCVArg(uintCV(activeGameId))]),
+      ]);
+      const pvpState = parsePvpGameStateFromClarityValue(pvpStateRes);
+      if (pvpState.isPvp) {
+        const opponent = pvpState.xPlayer === activeWalletAddr ? pvpState.oPlayer : pvpState.xPlayer;
+        setGameMode(GAME_MODE_PVP);
+        setPvpOpponent(opponent);
+        setPvpTurn(pvpState.turn);
+        setGameStarted(true);
+      } else {
+        setGameMode(GAME_MODE_AI);
+        setPvpOpponent(null);
+      }
       if (fullGameRes.result) {
         const parsedGame = parseGameStateFromClarityValue(fullGameRes);
         const chainBoard = parsedGame.board;
@@ -623,6 +639,7 @@ export default function App() {
               makeMove={makeMove}
               resetLocal={resetLocal}
               resign={resign}
+              gameId={gameId}
               gameMode={gameMode}
               pvpOpponent={pvpOpponent}
               pvpTurn={pvpTurn}

@@ -1,5 +1,5 @@
 import { CONTRACT_ADDRESS, CONTRACT_NAME, NETWORK } from "../config";
-import { EMPTY } from "./constants";
+import { EMPTY, PLAYER_X } from "./constants";
 import { cvToHex, cvToJSON, deserializeCV, principalCV, uintCV } from "@stacks/transactions";
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -105,4 +105,17 @@ export function hasPendingChallenge(cv) {
   const decoded = decodeClarityValue(cv?.result);
   const optional = decoded?.success ? decoded.value : decoded;
   return Boolean(optional?.value);
+}
+
+export function parsePvpGameStateFromClarityValue(cv) {
+  const decoded = decodeClarityValue(cv?.result);
+  const tuple = decoded?.success ? decoded.value : decoded;
+  const fields = tuple?.value || tuple || {};
+
+  return {
+    xPlayer: fields['x-player']?.value?.value || null,
+    oPlayer: fields['o-player']?.value?.value || null,
+    turn: Number(fields.turn?.value || PLAYER_X),
+    isPvp: Boolean(fields['is-pvp']?.value),
+  };
 }

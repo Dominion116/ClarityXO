@@ -35,6 +35,7 @@ export default function Game({
   makeMove,
   resetLocal,
   resign,
+  gameId,
   gameMode,
   pvpOpponent,
   pvpTurn,
@@ -238,7 +239,7 @@ export default function Game({
 
       <div className="btn-row">
         <button className="btn btn-primary" id="btn-new" onClick={resetLocal} disabled={processing || !walletAddr}>New Game</button>
-        <button className="btn btn-secondary" id="btn-resign" onClick={resign} disabled={processing || !walletAddr || gameOver}>Resign</button>
+        <button className="btn btn-secondary" id="btn-resign" onClick={resign} disabled={processing || !walletAddr || (gameOver && !gameId)}>Resign</button>
         {gameOver && gameMode === GAME_MODE_PVP && pvpOpponent && onRematch && (
           <button className="ghost-btn rematch-btn" onClick={() => onRematch(pvpOpponent)}>
             ⚔ Rematch
