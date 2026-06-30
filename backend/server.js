@@ -328,6 +328,50 @@ function parseGameState(resultText) {
   };
 }
 
+// Hiro's public API caps unauthenticated callers at 50 req/min. The contract's
+// transaction history is identical for every player polling /api/pvp/incoming,
+// so cache it once and reuse it across all of them instead of re-fetching per poll.
+let contractTxCache = { data: null, fetchedAt: 0 };
+const CONTRACT_TX_TTL_MS = 8000;
+
+async function getContractTransactions() {
+  const now = Date.now();
+  if (contractTxCache.data && now - contractTxCache.fetchedAt < CONTRACT_TX_TTL_MS) {
+    return contractTxCache.data;
+  }
+  const contractId = `${GAME_CONTRACT_ADDRESS}.${GAME_CONTRACT_NAME}`;
+  const txUrl = `${STACKS_API_BASE}/extended/v1/address/${contractId}/transactions?limit=50`;
+  try {
+    const txResponse = await fetch(txUrl);
+    if (!txResponse.ok) throw new Error(`Stacks API error: ${txResponse.status}`);
+    const txData = await txResponse.json();
+    contractTxCache = { data: txData, fetchedAt: now };
+    return txData;
+  } catch (error) {
+    if (contractTxCache.data) return contractTxCache.data; // serve stale data over a hard failure
+    throw error;
+  }
+}
+
+// Per-challenger get-challenge results, cached briefly so a poll burst across
+// multiple incoming-challenge requests doesn't re-verify the same challenger repeatedly.
+const challengeStateCache = new Map(); // challenger -> { data, fetchedAt }
+const CHALLENGE_STATE_TTL_MS = 5000;
+
+async function getChallengeStateCached(challenger) {
+  const now = Date.now();
+  const cached = challengeStateCache.get(challenger);
+  if (cached && now - cached.fetchedAt < CHALLENGE_STATE_TTL_MS) {
+    return cached.data;
+  }
+  const { cvToHex, principalCV } = await import('@stacks/transactions');
+  const argHex = cvToHex(principalCV(challenger));
+  const raw = await callReadOnly('get-challenge', [argHex]);
+  const chal = parseChallengeState(raw?.result);
+  challengeStateCache.set(challenger, { data: chal, fetchedAt: now });
+  return chal;
+}
+
 function parseChallengeState(resultText) {
   const decoded = typeof resultText === 'string' && resultText.startsWith('0x')
     ? cvToJSON(deserializeCV(resultText))
@@ -852,11 +896,7 @@ app.get('/api/pvp/incoming/:playerAddr', async (req, res) => {
     return res.status(400).json({ error: 'playerAddr is required' });
   }
   try {
-    const contractId = `${GAME_CONTRACT_ADDRESS}.${GAME_CONTRACT_NAME}`;
-    const txUrl = `${STACKS_API_BASE}/extended/v1/address/${contractId}/transactions?limit=50`;
-    const txResponse = await fetch(txUrl);
-    if (!txResponse.ok) throw new Error(`Stacks API error: ${txResponse.status}`);
-    const txData = await txResponse.json();
+    const txData = await getContractTransactions();
 
     const candidateChallengers = new Set();
     for (const tx of txData.results || []) {
@@ -870,13 +910,10 @@ app.get('/api/pvp/incoming/:playerAddr', async (req, res) => {
       }
     }
 
-    const { cvToHex, principalCV } = await import('@stacks/transactions');
     const incoming = [];
     await Promise.all(Array.from(candidateChallengers).map(async (challenger) => {
       try {
-        const argHex = cvToHex(principalCV(challenger));
-        const raw = await callReadOnly('get-challenge', [argHex]);
-        const chal = parseChallengeState(raw?.result);
+        const chal = await getChallengeStateCached(challenger);
         if (chal && chal.opponent === playerAddr) {
           incoming.push({ challenger, createdAt: chal.createdAt });
         }

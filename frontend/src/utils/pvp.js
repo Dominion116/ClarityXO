@@ -77,7 +77,10 @@ export async function fetchIncomingChallenges(playerAddr) {
   const apiBase = CONFIG.leaderboardApiBaseUrl;
   try {
     const res = await fetch(`${apiBase}/api/pvp/incoming/${encodeURIComponent(playerAddr)}`);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.warn(`fetchIncomingChallenges: backend returned ${res.status}`);
+      return [];
+    }
     const data = await res.json();
     return data?.incoming?.map(c => ({
       challenger: c.challenger,
