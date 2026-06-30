@@ -166,7 +166,9 @@ header {
 }
 
 .hamburger-btn {
+  position: relative;
   display: block;
+  flex-shrink: 0;
   background: transparent;
   color: var(--text);
   border: 1px solid var(--border2);
@@ -176,27 +178,36 @@ header {
   transition: background .15s;
 }
 .hamburger-btn:hover { background: var(--surface); }
+.hamburger-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 2px solid var(--bg);
+  animation: pulse-badge 1.5s ease-in-out infinite;
+}
 
 .mobile-menu {
-  position: absolute;
-  top: 100%;
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
+  bottom: 0;
   height: 100vh;
-  background: rgba(10,10,10,0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--bg);
   border-top: 1px solid var(--border2);
   transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease;
-  opacity: 0;
-  display: none;
+  transition: transform 0.3s ease-in-out;
+  display: flex;
   flex-direction: column;
-  z-index: 90;
+  padding-top: 60px;
+  z-index: 9999;
 }
 .mobile-menu.open {
   transform: translateX(0);
-  opacity: 1;
 }
 .mobile-nav {
   display: flex;
@@ -204,10 +215,14 @@ header {
   width: 100%;
 }
 .nav-item.mobile {
-  padding: 16px 20px;
+  padding: 24px 0;
   border-bottom: 1px solid var(--border2);
   border-right: none;
-  font-size: 11px;
+  font-size: 20px;
+  text-align: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ════════════════════════════════════════════════════
@@ -983,9 +998,14 @@ svg.mark { overflow: visible; }
 
 /* ── RESPONSIVE ───────────────────────────────────── */
 
+/* Hamburger-driven nav covers every width below desktop (matches .hamburger-btn's
+   own min-width: 1025px hide rule) so the desktop nav and hamburger never show together. */
+@media (max-width: 1024px) {
+  .desktop-nav { display: none !important; }
+}
+
 /* Mobile: < 480px (small phones) */
 @media (max-width: 479px) {
-  .desktop-nav { display: none !important; }
   .close-mobile-menu {
     position: absolute;
     top: 18px;
@@ -998,42 +1018,6 @@ svg.mark { overflow: visible; }
     cursor: pointer;
     padding: 8px;
     line-height: 1;
-  }
-  /* Make mobile menu overlay full screen and visible when open */
-  .mobile-menu {
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 100vh;
-    background: var(--bg);
-    z-index: 9999;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-    padding-top: 60px;
-  }
-  .mobile-menu.open {
-    transform: translateX(0);
-    display: flex;
-  }
-  .mobile-nav {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .mobile-nav .nav-item {
-    font-size: 20px;
-    padding: 24px 0 24px 0;
-    border-bottom: 1px solid var(--border2);
-    text-align: center;
-    width: 100%;
-    box-sizing: border-box;
   }
 
   /* Responsive landing sections */
@@ -1106,15 +1090,18 @@ svg.mark { overflow: visible; }
   .logo { font-size: 11px; padding-right: 12px; letter-spacing: .25em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   nav { flex: 1; min-width: 0; }
   .nav-item { padding: 0 10px; font-size: 9px; letter-spacing: .15em; white-space: nowrap; }
+  .header-right { gap: 6px; flex-shrink: 0; }
+  .header-right .ghost-btn { padding: 5px 8px; font-size: 11px; }
   .badge { font-size: 8px; padding: 3px 8px; }
   .wallet-group { gap: 6px; }
+  .wallet-group .badge { max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .page { width: 100vw; max-width: 100%; padding: 0; box-sizing: border-box; }
   #page-game { padding: 12px; max-width: 100%; width: 100%; box-sizing: border-box; }
   .eyebrow { font-size: 9px; margin-bottom: 12px; }
   .wallet-bar { padding: 8px 10px; font-size: 9px; flex-wrap: wrap; width: 100%; max-width: 100%; box-sizing: border-box; }
   .wallet-bar-btns { width: 100%; gap: 4px; margin-top: 4px; }
-  .ghost-btn { padding: 5px 10px; font-size: 8px; flex: 1; min-width: 0; }
+  .wallet-bar-btns .ghost-btn { padding: 5px 10px; font-size: 8px; flex: 1; min-width: 0; }
   
   .status-bar { padding: 10px 10px; font-size: 9px; width: 100%; max-width: 100%; box-sizing: border-box; }
   .move-count { font-size: 8px; }

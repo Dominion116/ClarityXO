@@ -525,6 +525,12 @@ export default function App() {
               )}
               <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
                 {mobileMenuOpen ? '✕' : '☰'}
+                {incomingChallengeCount > 0 && (
+                  <span
+                    className="hamburger-dot"
+                    title={`${incomingChallengeCount} incoming challenge${incomingChallengeCount !== 1 ? 's' : ''}`}
+                  />
+                )}
               </button>
             </div>
             
