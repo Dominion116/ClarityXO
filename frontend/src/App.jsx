@@ -60,7 +60,12 @@ export default function App() {
   const [gameMode, setGameMode] = useState(GAME_MODE_AI);
   const [pvpOpponent, setPvpOpponent] = useState(null);
   const [pvpTurn, setPvpTurn] = useState(PLAYER_X);
-  const [pvpOutboundChallenge, setPvpOutboundChallenge] = useState(null);
+  const [pvpOutboundChallenge, setPvpOutboundChallenge] = useState(
+    () => window.localStorage.getItem('clarityxo.pvpOutboundChallenge') || null
+  );
+  const [pvpOutboundTxid, setPvpOutboundTxid] = useState(
+    () => window.localStorage.getItem('clarityxo.pvpOutboundTxid') || null
+  );
   const [incomingChallengeCount, setIncomingChallengeCount] = useState(0);
 
   // null | "pending" | "confirmed" | "dropped"
@@ -277,6 +282,7 @@ export default function App() {
     let cancelled = false;
     const pollOutboundChallenge = async () => {
       try {
+        // Check if the opponent already accepted (game is now active)
         const activeGameRes = await callReadOnly("get-active-game", [encodeCVArg(principalCV(walletAddr))]);
         const activeGameId = parseUintResult(activeGameRes);
         if (cancelled) return;
@@ -288,16 +294,30 @@ export default function App() {
           setGameStarted(true);
           setGameId(activeGameId);
           log(`${pvpOutboundChallenge.slice(0, 12)}… accepted your challenge!`, "success");
-          setPvpOutboundChallenge(null);
+          clearOutboundChallenge();
           await syncChainState();
           return;
+        }
+
+        // Only check for decline after the create-challenge tx itself is confirmed.
+        // If we check before it lands on-chain, get-challenge returns none and we
+        // would incorrectly interpret that as a decline.
+        if (pvpOutboundTxid) {
+          const txRes = await fetch(`https://api.hiro.so/extended/v1/tx/${pvpOutboundTxid}`);
+          if (cancelled) return;
+          if (txRes.ok) {
+            const txData = await txRes.json();
+            if (txData.tx_status !== 'success') return; // still pending — don't clear yet
+          } else {
+            return; // can't confirm tx status — leave waiting state intact
+          }
         }
 
         const challengeRes = await callReadOnly("get-challenge", [encodeCVArg(principalCV(walletAddr))]);
         if (cancelled) return;
         if (!hasPendingChallenge(challengeRes)) {
-          log("Your challenge was declined.", "info");
-          setPvpOutboundChallenge(null);
+          log("Your challenge was declined or cancelled.", "info");
+          clearOutboundChallenge();
         }
       } catch (e) {
         // Transient read failure — try again on the next tick.
@@ -311,7 +331,7 @@ export default function App() {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [walletAddr, pvpOutboundChallenge, log, syncChainState]);
+  }, [walletAddr, pvpOutboundChallenge, pvpOutboundTxid, clearOutboundChallenge, log, syncChainState]);
 
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
@@ -416,7 +436,11 @@ export default function App() {
     try {
       setProcessing(true);
       const response = await createChallenge(opponentAddr);
+      const txid = response?.txid || null;
       setPvpOutboundChallenge(opponentAddr);
+      setPvpOutboundTxid(txid);
+      window.localStorage.setItem('clarityxo.pvpOutboundChallenge', opponentAddr);
+      if (txid) window.localStorage.setItem('clarityxo.pvpOutboundTxid', txid);
       log(`Challenge sent to ${opponentAddr.slice(0, 12)}… TX: ${response?.txid?.slice(0, 16)}…`, "success");
     } catch (e) {
       log(`Challenge error: ${e.message}`, "error");
@@ -456,12 +480,19 @@ export default function App() {
     }
   }, [walletAddr, log]);
 
+  const clearOutboundChallenge = useCallback(() => {
+    setPvpOutboundChallenge(null);
+    setPvpOutboundTxid(null);
+    window.localStorage.removeItem('clarityxo.pvpOutboundChallenge');
+    window.localStorage.removeItem('clarityxo.pvpOutboundTxid');
+  }, []);
+
   const cancelPvPChallenge = useCallback(async () => {
     if (!walletAddr) return;
     try {
       setProcessing(true);
       await cancelChallenge();
-      setPvpOutboundChallenge(null);
+      clearOutboundChallenge();
       log("Challenge cancelled.", "info");
     } catch (e) {
       log(`Cancel error: ${e.message}`, "error");
