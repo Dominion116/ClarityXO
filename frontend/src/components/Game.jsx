@@ -3,6 +3,7 @@ import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, S
 import { resolveAddressName } from '../utils/bns';
 import { fetchPlayerProfile } from '../utils/profile';
 import { formatTime } from '../utils/gameLogic';
+import { isMyPvpTurn } from '../utils/pvp';
 import { CONFIG } from '../config';
 import StatsStrip from './StatsStrip';
 import ShareButton from './ShareButton';
@@ -39,6 +40,8 @@ export default function Game({
   gameMode,
   pvpOpponent,
   pvpTurn,
+  pvpMyMarker,
+  pvpAwaitingMove,
   makePvPMoveHandler,
   txStatus,
   onRematch,
@@ -78,8 +81,13 @@ export default function Game({
     if (status === STATUS_O_WON) return { label: gameMode === GAME_MODE_PVP ? "O wins" : "computer wins", color: "var(--red)", dotActive: false };
     if (status === STATUS_DRAW) return { label: "draw", color: "var(--text)", dotActive: false };
     if (gameMode === GAME_MODE_PVP) {
-      const isMyTurn = (pvpTurn === PLAYER_X && walletAddr) || pvpTurn === PLAYER_X;
-      return { label: pvpTurn === PLAYER_X ? "X's turn" : "O's turn", color: "var(--muted)", dotActive: true };
+      if (pvpAwaitingMove) return { label: "confirming your move…", color: "var(--muted)", dotActive: true };
+      const isMyTurn = isMyPvpTurn(pvpMyMarker, pvpTurn);
+      return {
+        label: isMyTurn ? "your turn" : "opponent's turn",
+        color: isMyTurn ? "var(--green)" : "var(--muted)",
+        dotActive: isMyTurn,
+      };
     }
     return { label: "your move", color: "var(--muted)", dotActive: true };
   };
@@ -89,11 +97,19 @@ export default function Game({
   const isReplaying = historyStep !== null;
   const displayBoard = isReplaying ? moveHistory[historyStep].boardAfter : board;
 
+  // In PvP, block clicks when it isn't our turn or a move is still confirming.
+  const pvpBlocked = gameMode === GAME_MODE_PVP && (
+    pvpAwaitingMove || !isMyPvpTurn(pvpMyMarker, pvpTurn)
+  );
+  const boardBusy = processing || pvpAwaitingMove;
+
   const handleCellClick = (idx) => {
-    playClick();
     if (gameMode === GAME_MODE_PVP && makePvPMoveHandler) {
+      if (pvpBlocked || gameOver) return;
+      playClick();
       makePvPMoveHandler(idx);
     } else {
+      playClick();
       makeMove(idx);
     }
   };
@@ -176,8 +192,12 @@ export default function Game({
         <span className="game-timer" id="game-timer">{formatTime(gameTime)}</span>
       </div>
 
-      <div className="board" id="board">
-        {processing && <div className="board-overlay" id="board-overlay">waiting…</div>}
+      <div className={`board${pvpBlocked && !gameOver ? ' board-waiting-turn' : ''}`} id="board">
+        {boardBusy && (
+          <div className="board-overlay" id="board-overlay">
+            {pvpAwaitingMove ? 'confirming move…' : 'waiting…'}
+          </div>
+        )}
         {displayBoard.map((cell, idx) => {
           const isWinCell = !isReplaying && winLine && winLine.includes(idx);
           const drawAnimate = !isReplaying && newCells.has(idx);
@@ -206,8 +226,8 @@ export default function Game({
       </div>
 
       <div className="info-row">
-        <div className="info-cell"><span className="mark-x">X</span> · {gameMode === GAME_MODE_PVP ? 'Challenger' : 'You'}</div>
-        <div className="info-cell"><span className="mark-o">O</span> · {gameMode === GAME_MODE_PVP ? 'Opponent' : 'Computer'}</div>
+        <div className="info-cell"><span className="mark-x">X</span> · {gameMode === GAME_MODE_PVP ? (pvpMyMarker === PLAYER_X ? 'You' : 'Opponent') : 'You'}</div>
+        <div className="info-cell"><span className="mark-o">O</span> · {gameMode === GAME_MODE_PVP ? (pvpMyMarker === PLAYER_O ? 'You' : 'Opponent') : 'Computer'}</div>
         <div className="info-cell" id="info-empty">Cells left: {displayBoard.filter(c => c === EMPTY).length}</div>
       </div>
 

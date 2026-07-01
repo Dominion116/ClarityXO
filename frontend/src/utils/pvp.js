@@ -2,6 +2,24 @@ import { uintCV, principalCV } from '@stacks/transactions';
 import { request } from '@stacks/connect';
 import { CONFIG } from '../config';
 import { encodeCVArg } from './stacks';
+import { PLAYER_X, PLAYER_O } from './constants';
+
+/**
+ * Work out which marker (X or O) the local wallet plays in a PvP game.
+ * The challenger is always X; the acceptor is always O. Returns null when the
+ * wallet isn't a participant (e.g. a spectator, or state not yet loaded).
+ */
+export function deriveMyMarker(xPlayer, oPlayer, walletAddr) {
+  if (!walletAddr) return null;
+  if (xPlayer === walletAddr) return PLAYER_X;
+  if (oPlayer === walletAddr) return PLAYER_O;
+  return null;
+}
+
+/** True when it is the local player's turn to move in a PvP game. */
+export function isMyPvpTurn(myMarker, turn) {
+  return myMarker != null && myMarker === turn;
+}
 
 function callPvPContract(functionName, functionArgs = []) {
   return request('stx_callContract', {

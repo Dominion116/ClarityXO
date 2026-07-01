@@ -576,6 +576,11 @@ svg.mark { overflow: visible; }
   font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--muted);
 }
 
+/* PvP: dim the board and show a not-allowed cursor while it isn't our turn. */
+.board.board-waiting-turn { opacity: 0.55; }
+.board.board-waiting-turn .cell { cursor: not-allowed; }
+.board.board-waiting-turn .cell:not(.occupied):hover { background: transparent; }
+
 .info-row { width: 100%; border: 1px solid var(--border); border-top: none; display: flex; }
 .info-cell {
   flex: 1; padding: 10px 16px; font-size: 10px; letter-spacing: .2em; text-transform: uppercase;

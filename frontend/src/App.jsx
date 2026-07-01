@@ -6,7 +6,7 @@ import { EMPTY, PLAYER_X, PLAYER_O, STATUS_ACTIVE, STATUS_X_WON, STATUS_O_WON, S
 import { checkWinner, chooseAiMove, getWinningLine } from "./utils/gameLogic";
 import { callReadOnly, parseGameStateFromClarityValue, parseUintResult, encodeCVArg, hasPendingChallenge, parsePvpGameStateFromClarityValue } from "./utils/stacks";
 import { recordResult } from "./utils/leaderboardLogic";
-import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, recordPvPResult, syncPvPGameState, fetchPendingChallenge, createRematch, fetchIncomingChallenges } from "./utils/pvp";
+import { createChallenge, acceptChallenge, declineChallenge, cancelChallenge, makePvPMove, fetchIncomingChallenges, deriveMyMarker } from "./utils/pvp";
 import { useRematch } from "./hooks/useRematch";
 import { parseReferralCodeFromUrl, claimReferral } from "./utils/referral";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -60,6 +60,8 @@ export default function App() {
   const [gameMode, setGameMode] = useState(GAME_MODE_AI);
   const [pvpOpponent, setPvpOpponent] = useState(null);
   const [pvpTurn, setPvpTurn] = useState(PLAYER_X);
+  const [pvpMyMarker, setPvpMyMarker] = useState(null); // PLAYER_X | PLAYER_O | null
+  const [pvpAwaitingMove, setPvpAwaitingMove] = useState(false);
   const [pvpOutboundChallenge, setPvpOutboundChallenge] = useState(
     () => window.localStorage.getItem('clarityxo.pvpOutboundChallenge') || null
   );
@@ -72,6 +74,10 @@ export default function App() {
   const [txStatus, setTxStatus] = useState(null);
   const txStatusTimerRef = useRef(null);
   const pvpPollingRef = useRef(null);
+  // Live-PvP bookkeeping (refs so the polling callback reads fresh values)
+  const pvpGameIdRef = useRef(null);       // last known active PvP game id
+  const pvpMoveSnapshotRef = useRef(0);    // move count captured when we broadcast our move
+  const pvpAwaitingRef = useRef(false);    // true while our submitted move is unconfirmed
 
   const setTxStatusWithAutoClear = useCallback((status, clearAfterMs = 4000) => {
     if (txStatusTimerRef.current) clearTimeout(txStatusTimerRef.current);
@@ -140,6 +146,8 @@ export default function App() {
         setGameId(null);
         setGameMode(GAME_MODE_AI);
         setPvpOpponent(null);
+        setPvpMyMarker(null);
+        pvpGameIdRef.current = null;
         if (boardSnapshot) setTxStatusWithAutoClear('dropped');
         return;
       }
@@ -150,14 +158,19 @@ export default function App() {
       ]);
       const pvpState = parsePvpGameStateFromClarityValue(pvpStateRes);
       if (pvpState.isPvp) {
-        const opponent = pvpState.xPlayer === activeWalletAddr ? pvpState.oPlayer : pvpState.xPlayer;
+        const marker = deriveMyMarker(pvpState.xPlayer, pvpState.oPlayer, activeWalletAddr);
+        const opponent = marker === PLAYER_O ? pvpState.xPlayer : pvpState.oPlayer;
         setGameMode(GAME_MODE_PVP);
         setPvpOpponent(opponent);
+        setPvpMyMarker(marker);
         setPvpTurn(pvpState.turn);
         setGameStarted(true);
+        pvpGameIdRef.current = activeGameId;
       } else {
         setGameMode(GAME_MODE_AI);
         setPvpOpponent(null);
+        setPvpMyMarker(null);
+        pvpGameIdRef.current = null;
       }
       if (fullGameRes.result) {
         const parsedGame = parseGameStateFromClarityValue(fullGameRes);
@@ -181,6 +194,62 @@ export default function App() {
       if (boardSnapshot) setTxStatusWithAutoClear('dropped');
     }
   }, [log, walletAddr, setTxStatusWithAutoClear]);
+
+  // Quiet, non-destructive live sync for an in-progress PvP game. Unlike
+  // syncChainState it never flips the UI back to AI mode when get-active-game
+  // returns 0 (which happens both before accept confirms and right after the
+  // game ends — the finishing move deletes both players' active-game entries),
+  // and it doesn't spam the event log on every 5s tick.
+  const syncPvpLive = useCallback(async () => {
+    if (!walletAddr) return;
+    try {
+      const activeRes = await callReadOnly("get-active-game", [encodeCVArg(principalCV(walletAddr))]);
+      let gid = parseUintResult(activeRes);
+      if (gid === 0) gid = pvpGameIdRef.current; // game may have just ended — reuse last known id
+      if (!gid) return;
+
+      const [fullRes, pvpRes] = await Promise.all([
+        callReadOnly("get-full-game-state", [encodeCVArg(uintCV(gid))]),
+        callReadOnly("get-pvp-game-state", [encodeCVArg(uintCV(gid))]),
+      ]);
+      const pvp = parsePvpGameStateFromClarityValue(pvpRes);
+      if (!pvp.isPvp) return;
+      const parsed = parseGameStateFromClarityValue(fullRes);
+      pvpGameIdRef.current = gid;
+
+      // While our own move is still unconfirmed, hold the optimistic turn flip
+      // instead of snapping the board back to the pre-move chain state.
+      const advanced = parsed.moves > pvpMoveSnapshotRef.current;
+      if (pvpAwaitingRef.current && !advanced) return;
+
+      const marker = deriveMyMarker(pvp.xPlayer, pvp.oPlayer, walletAddr);
+      setGameId(gid);
+      setGameMode(GAME_MODE_PVP);
+      setPvpMyMarker(marker);
+      setPvpOpponent(marker === PLAYER_O ? pvp.xPlayer : pvp.oPlayer);
+      setPvpTurn(pvp.turn);
+      setBoard(parsed.board);
+      setMoveCount(parsed.moves || 0);
+
+      const chainStatus = parsed.status ?? STATUS_ACTIVE;
+      setStatus(chainStatus);
+
+      if (pvpAwaitingRef.current && advanced) {
+        pvpAwaitingRef.current = false;
+        setPvpAwaitingMove(false);
+      }
+
+      if (chainStatus !== STATUS_ACTIVE) {
+        setWinLine(getWinningLine(parsed.board));
+        pvpGameIdRef.current = null;
+        pvpAwaitingRef.current = false;
+        setPvpAwaitingMove(false);
+        stopTimer();
+      }
+    } catch {
+      // transient read failure — the next tick will retry
+    }
+  }, [walletAddr, stopTimer]);
 
   const startGame = useCallback(async () => {
     if (gameStarted || processing) return;
@@ -288,14 +357,24 @@ export default function App() {
         if (cancelled) return;
 
         if (activeGameId > 0) {
+          // The challenger is always X. Reset the local board for the fresh game.
+          setBoard(Array(9).fill(EMPTY));
+          setStatus(STATUS_ACTIVE);
+          setMoveCount(0);
+          setWinLine(null);
           setGameMode(GAME_MODE_PVP);
           setPvpOpponent(pvpOutboundChallenge);
+          setPvpMyMarker(PLAYER_X);
           setPvpTurn(PLAYER_X);
           setGameStarted(true);
           setGameId(activeGameId);
+          pvpGameIdRef.current = activeGameId;
+          pvpAwaitingRef.current = false;
+          setPvpAwaitingMove(false);
           log(`${pvpOutboundChallenge.slice(0, 12)}… accepted your challenge!`, "success");
           clearOutboundChallenge();
-          await syncChainState();
+          setActivePage('game');
+          await syncPvpLive();
           return;
         }
 
@@ -331,7 +410,23 @@ export default function App() {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [walletAddr, pvpOutboundChallenge, pvpOutboundTxid, clearOutboundChallenge, log, syncChainState]);
+  }, [walletAddr, pvpOutboundChallenge, pvpOutboundTxid, clearOutboundChallenge, log, syncPvpLive]);
+
+  // Live PvP watcher: while a PvP game is pending-start or in progress, poll the
+  // chain every 5s so each player sees the other's moves and the turn indicator
+  // updates in real time. Stops automatically once the game is no longer active.
+  useEffect(() => {
+    if (gameMode !== GAME_MODE_PVP || !walletAddr) return;
+    if (status !== STATUS_ACTIVE) return;
+    let cancelled = false;
+    const tick = () => { if (!cancelled) syncPvpLive(); };
+    tick();
+    const interval = setInterval(tick, 5000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [gameMode, walletAddr, status, syncPvpLive]);
 
   const makeMove = useCallback(async (idx) => {
     if (processing || status !== STATUS_ACTIVE) return;
@@ -454,18 +549,26 @@ export default function App() {
     try {
       setProcessing(true);
       const response = await acceptChallenge(challengerAddr);
+      // The acceptor is always O; the challenger (X) moves first. Reset the local
+      // board and let the live watcher pick up the real game once accept confirms.
+      setBoard(Array(9).fill(EMPTY));
+      setStatus(STATUS_ACTIVE);
+      setMoveCount(0);
+      setWinLine(null);
       setGameMode(GAME_MODE_PVP);
       setPvpOpponent(challengerAddr);
+      setPvpMyMarker(PLAYER_O);
       setPvpTurn(PLAYER_X);
       setGameStarted(true);
+      pvpAwaitingRef.current = false;
+      setPvpAwaitingMove(false);
       log(`Accepted challenge from ${challengerAddr.slice(0, 12)}… TX: ${response?.txid?.slice(0, 16)}…`, "success");
-      setTimeout(syncChainState, 6000);
     } catch (e) {
       log(`Accept challenge error: ${e.message}`, "error");
     } finally {
       setProcessing(false);
     }
-  }, [walletAddr, log, syncChainState]);
+  }, [walletAddr, log]);
 
   const declinePvPChallenge = useCallback(async (challengerAddr) => {
     if (!walletAddr) return;
@@ -505,33 +608,39 @@ export default function App() {
     if (processing || status !== STATUS_ACTIVE) return;
     if (board[idx] !== EMPTY) return;
     if (!walletAddr) { log("Connect wallet to play.", "error"); return; }
+    if (pvpAwaitingMove) { log("Hold on — your last move is still confirming.", "info"); return; }
+    if (pvpMyMarker != null && pvpTurn !== pvpMyMarker) {
+      log("Not your turn yet — waiting for your opponent's move.", "info");
+      return;
+    }
     const row = Math.floor(idx / 3);
     const col = idx % 3;
     startTimer();
     try {
       setProcessing(true);
+      pvpMoveSnapshotRef.current = moveCount;
       const response = await makePvPMove(row, col);
       log(`PvP move at [${row},${col}] TX: ${response?.txid?.slice(0, 16)}…`, "success");
-      setTimeout(async () => {
-        await syncChainState();
-      }, 6000);
+      // Lock input and optimistically flip the turn until the move confirms.
+      pvpAwaitingRef.current = true;
+      setPvpAwaitingMove(true);
+      if (pvpMyMarker != null) setPvpTurn(pvpMyMarker === PLAYER_X ? PLAYER_O : PLAYER_X);
+      // Failsafe: never leave the board permanently locked if confirmation is slow.
+      setTimeout(() => {
+        if (pvpAwaitingRef.current) {
+          pvpAwaitingRef.current = false;
+          setPvpAwaitingMove(false);
+        }
+      }, 45000);
+      setTimeout(() => { syncPvpLive(); }, 4000);
     } catch (e) {
       log(`PvP move error: ${e.message}`, "error");
+      pvpAwaitingRef.current = false;
+      setPvpAwaitingMove(false);
     } finally {
       setProcessing(false);
     }
-  }, [board, processing, status, walletAddr, startTimer, log, syncChainState]);
-
-  const syncPvPState = useCallback(async () => {
-    if (!gameId || gameMode !== GAME_MODE_PVP) return;
-    try {
-      const data = await syncPvPGameState(gameId);
-      if (!data) return;
-      await syncChainState();
-    } catch (e) {
-      log(`PvP sync error: ${e.message}`, "error");
-    }
-  }, [gameId, gameMode, syncChainState, log]);
+  }, [board, processing, status, walletAddr, pvpAwaitingMove, pvpMyMarker, pvpTurn, moveCount, startTimer, log, syncPvpLive]);
 
   const resign = useCallback(async () => {
     if (!walletAddr) { log("Connect wallet to resign.", "error"); return; }
@@ -674,6 +783,8 @@ export default function App() {
               gameMode={gameMode}
               pvpOpponent={pvpOpponent}
               pvpTurn={pvpTurn}
+              pvpMyMarker={pvpMyMarker}
+              pvpAwaitingMove={pvpAwaitingMove}
               makePvPMoveHandler={makePvPMoveHandler}
               txStatus={txStatus}
               onRematch={sendRematch}
